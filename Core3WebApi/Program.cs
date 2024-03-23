@@ -112,7 +112,6 @@ builder.Services.AddCors(options => options.AddPolicy("All", builder =>
 builder.Services.AddDbContext<ApplicationDbContext>(dcob =>
 {
 	var dbEngineDbContext = DbEngineDbContextLoader.CreateDbEngineDbContextFromAssemblyFile(dbEngineDbContextPlugins[0] + ".dll");
-	//var dbEngineDbContext = DbEngineDbContextLoader.CreateDbEngineDbContextFromAssemblyName(dbEngineDbContextPlugins[0]);
 	if (dbEngineDbContext == null)
 	{
 		Console.Error.WriteLine("No dbEngineDbContext");
@@ -169,18 +168,3 @@ app.UseStaticFiles(); //This may cause IIS rewrite rule to fail during login. So
 
 app.Run();
 Console.WriteLine("Run Done.");
-
-static void ConnectDatabase(DbContextOptionsBuilder dcob, string dbEngine, string connectionString)
-{
-	switch (dbEngine)
-	{
-		case "sqlite":
-			dcob.UseSqlite(connectionString);
-			break;
-		case "mysql":
-			dcob.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-			break;
-		default:
-			throw new ArgumentException("Must define dbEngine like sqlite or mysql");
-	}
-}
