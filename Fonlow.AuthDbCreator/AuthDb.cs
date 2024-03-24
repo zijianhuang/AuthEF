@@ -75,7 +75,7 @@ namespace Fonlow.AuthDbCreator
 		public DbContextOptions<ApplicationDbContext> GetOptions()
 		{
 			var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-			Console.WriteLine($"Ready to create {dbEngineDbContext.DbEngineName} db with {basicConnectionString} ...");
+			Console.WriteLine($"Ready to connect {dbEngineDbContext.DbEngineName} db with {basicConnectionString} ...");
 			dbEngineDbContext.ConnectDatabase(optionsBuilder, basicConnectionString);
 			return optionsBuilder.Options;
 		}
