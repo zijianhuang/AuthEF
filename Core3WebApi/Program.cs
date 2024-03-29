@@ -98,6 +98,9 @@ builder.Services.AddAuthentication(
 		ValidAudience = authSettings.Audience,
 		ValidIssuer = authSettings.Issuer,
 		IssuerSigningKey = issuerSigningKey,
+		#if DEBUG
+		ClockSkew=TimeSpan.FromSeconds(5), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
+		#endif
 	}; // Thanks to https://dotnetdetail.net/asp-net-core-3-0-web-api-token-based-authentication-example-using-jwt-in-vs2019/
 });
 

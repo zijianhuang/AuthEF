@@ -1,6 +1,5 @@
 ﻿using Fonlow.DateOnlyExtensions;
 using Fonlow.Testing;
-using System;
 
 namespace IntegrationTests
 {

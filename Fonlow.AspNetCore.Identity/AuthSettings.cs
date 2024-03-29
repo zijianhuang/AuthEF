@@ -35,6 +35,7 @@ namespace Fonlow.WebApp.Identity
 		string Audience { get; }
 		string Issuer { get; }
 		string SymmetricSecurityKeyString { get; }
+		long AuthTokenExpirySpanSeconds { get; }
 	}
 
 	/// <summary>
@@ -52,5 +53,7 @@ namespace Fonlow.WebApp.Identity
 		public string Issuer { get; set; }
 
 		public string Audience { get; set; }
+
+		public long AuthTokenExpirySpanSeconds { get; set; }
 	}
 }

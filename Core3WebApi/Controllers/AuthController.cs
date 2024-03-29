@@ -15,6 +15,12 @@ using System.Threading.Tasks;
 
 namespace PoemsApp.Controllers
 {
+
+	/// <summary>
+	/// Based on ASP.NET Core Identity, this controller takes care of authentication and authorization, as well as refresh token and oAuth2.
+	/// Account management functions should go to AccountController, which use the same set of Identity DB tables.
+	/// This also supports one user with multiple connections from different devices and browser tabs, governed by client generated uuid/GUID.
+	/// </summary>
 	[ApiExplorerSettings(IgnoreApi = true)]
 	[Route("token")]
 	public class AuthController : ControllerBase
@@ -35,19 +41,17 @@ namespace PoemsApp.Controllers
 		}
 
 		/// <summary>
-		/// Token expiration in 24 hours, however, in DEBUG build, 5 minutes plus default 5 minutes ClockSkew. https://stackoverflow.com/questions/47754556/is-there-a-minimum-expiration-time-for-jwtsecuritytoken However, keep-live connection is still working after the token expires. 
+		/// A client program calls to initialize login with returned bearer access token and refresh token
+		/// Token expiration in 24 hours, however, in DEBUG build, 5 minutes plus default 5 minutes ClockSkew. https://stackoverflow.com/questions/47754556/is-there-a-minimum-expiration-time-for-jwtsecuritytoken 
+		/// However, keep-live connection is still working after the token expires. 
 		/// The user login also return a unique Id for the connection: connectionId. The client should store this, to refresh token later.
 		/// </summary>
 		/// <param name="model"></param>
-		/// <param name="screenSize"></param>
-		/// <param name="viewport"></param>
-		/// <param name="pixelRatio"></param>
-		/// <returns></returns>
+		/// <returns>Access token and refresh token, along with other meta data.</returns>
 		[AllowAnonymous]
 		[Consumes("application/x-www-form-urlencoded")]
 		[HttpPost]
-		public async Task<ActionResult<TokenResponseModel>> Authenticate([FromForm] UsernameModel model,
-			[FromHeader(Name = "x-screen")] string screenSize, [FromHeader(Name = "x-viewport")] string viewport, [FromHeader(Name = "x-pixelRatio")] string pixelRatio)
+		public async Task<ActionResult<TokenResponseModel>> Authenticate([FromForm] UsernameModel model)
 		{
 			ApplicationUser user = await UserManager.FindByNameAsync(model.Username);
 			if (user == null)
@@ -61,13 +65,13 @@ namespace PoemsApp.Controllers
 				return Unauthorized(new { message = "Username or password is incorrect" });
 			}
 
-			//todo: In the future, I can use https://github.com/mycsharp/HttpUserAgentParser to get browser and OS, and let the other service to do statistics.
+			//todo: In the future, I can use https://github.com/mycsharp/HttpUserAgentParser to get browser and OS, and let the other service do statistics.
 			var connectionId = Guid.NewGuid();
 			return await GenerateJwtToken(user, model.Username, connectionId);
 		}
 
 		/// <summary>
-		/// 
+		/// Generate new JWT token according to refresh token and connectionId
 		/// </summary>
 		/// <param name="refreshToken"></param>
 		/// <param name="username"></param>
@@ -95,6 +99,8 @@ namespace PoemsApp.Controllers
 
 		/// <summary>
 		/// Generate token and refreshToken.
+		/// The claim is based on the roles of the user.
+		/// The refresh token is stored in the UserTokens table (aspnetusertokens) as JSON text data, for supporting multiple connections of the same user.
 		/// </summary>
 		/// <param name="user"></param>
 		/// <param name="username"></param>
@@ -105,12 +111,7 @@ namespace PoemsApp.Controllers
 			IList<string> roles = await UserManager.GetRolesAsync(user);
 			List<Claim> claims = roles.Select(d => new Claim(ClaimTypes.Role, d)).ToList();
 			claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName));
-
-#if DEBUG
-			TimeSpan span = TimeSpan.FromMinutes(5);
-#else
-			TimeSpan span = TimeSpan.FromHours(24);
-#endif
+			TimeSpan span = TimeSpan.FromSeconds(authSettings.AuthTokenExpirySpanSeconds);
 			DateTimeOffset expires = DateTimeOffset.UtcNow.Add(span);
 			JwtSecurityToken token = new JwtSecurityToken(
 				issuer: authSettings.Issuer,
@@ -144,6 +145,10 @@ namespace PoemsApp.Controllers
 		}
 	}
 
+	/// <summary>
+	/// Handler user tokens for various purposes, like refresh token of JWT and oAuth2.
+	/// The user tokens table (aspnetusertokens) has primary key: UserId+LoginProvider+Name.
+	/// </summary>
 	public class TokensHelper
 	{
 		public TokensHelper(ApplicationUserManager userManager, string tokenProviderName)
@@ -209,6 +214,15 @@ namespace PoemsApp.Controllers
 			return await userManager.SetAuthenticationTokenAsync(user, tokenProviderName, tokenName, newTokensText);
 		}
 
+		/// <summary>
+		/// Lookup user tokens and find 
+		/// </summary>
+		/// <param name="user"></param>
+		/// <param name="loginProvider"></param>
+		/// <param name="tokenName"></param>
+		/// <param name="tokenValue"></param>
+		/// <param name="connectionId"></param>
+		/// <returns></returns>
 		public async Task<bool> MatchToken(ApplicationUser user, string loginProvider, string tokenName, string tokenValue, Guid connectionId)
 		{
 			string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, tokenName);
