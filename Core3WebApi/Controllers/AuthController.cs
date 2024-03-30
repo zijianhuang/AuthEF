@@ -44,7 +44,7 @@ namespace PoemsApp.Controllers
 		/// A client program calls to initialize login with returned bearer access token and refresh token
 		/// Token expiration in 24 hours, however, in DEBUG build, 5 minutes plus default 5 minutes ClockSkew. https://stackoverflow.com/questions/47754556/is-there-a-minimum-expiration-time-for-jwtsecuritytoken 
 		/// However, keep-live connection is still working after the token expires. 
-		/// The user login also return a unique Id for the connection: connectionId. The client should store this, to refresh token later.
+		/// The user login also return a unique Id for the connection: connectionId. The client should store this connection ID created by the service, to refresh token later.
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns>Access token and refresh token, along with other meta data.</returns>
@@ -171,14 +171,15 @@ namespace PoemsApp.Controllers
 		/// <returns></returns>
 		public async Task<IdentityResult> UpsertToken(ApplicationUser user, string loginProvider, string tokenName, string newTokenValue, Guid connectionId)
 		{
-			CustomToken customToken = new CustomToken
-			{
-				TokenValue = newTokenValue,
-				ConnectionId = connectionId,
-				Stamp = DateTimeOffset.Now,
-			};
+			//CustomToken customToken = new CustomToken
+			//{
+			//	TokenValue = newTokenValue,
+			//	ConnectionId = connectionId,
+			//	Stamp = DateTimeOffset.Now,
+			//};
 
-			string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, tokenName);
+			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
+			string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
 			if (String.IsNullOrEmpty(tokensText))
 			{
 				tokensText = "[]";
@@ -208,10 +209,10 @@ namespace PoemsApp.Controllers
 				}
 			}
 
-			tokenList.Add(customToken);
-			string newTokensText = System.Text.Json.JsonSerializer.Serialize<CustomToken[]>(tokenList.ToArray());
-			await userManager.RemoveAuthenticationTokenAsync(user, tokenProviderName, tokenName); // need to remove it first, otherwise, Set won't work.
-			return await userManager.SetAuthenticationTokenAsync(user, tokenProviderName, tokenName, newTokensText);
+			//tokenList.Add(customToken);
+			//string newTokensText = System.Text.Json.JsonSerializer.Serialize<CustomToken[]>(tokenList.ToArray());
+			await userManager.RemoveAuthenticationTokenAsync(user, tokenProviderName, composedTokenName); // need to remove it first, otherwise, Set won't work.
+			return await userManager.SetAuthenticationTokenAsync(user, tokenProviderName, composedTokenName, newTokenValue);
 		}
 
 		/// <summary>
@@ -225,11 +226,9 @@ namespace PoemsApp.Controllers
 		/// <returns></returns>
 		public async Task<bool> MatchToken(ApplicationUser user, string loginProvider, string tokenName, string tokenValue, Guid connectionId)
 		{
-			string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, tokenName);
-			var customTokens = System.Text.Json.JsonSerializer.Deserialize<CustomToken[]>(tokensText);
-			var tokenList = new List<CustomToken>(customTokens);
-			var idx = tokenList.FindIndex(d => d.ConnectionId == connectionId && d.TokenValue == tokenValue);
-			return idx >= 0;
+			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
+			string storedToken = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
+			return tokenValue == storedToken;
 		}
 	}
 
