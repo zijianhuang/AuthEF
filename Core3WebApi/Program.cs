@@ -93,13 +93,15 @@ builder.Services.AddAuthentication(
 	options.RequireHttpsMetadata = false;
 	options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
 	{
-		ValidateIssuer = false,
-		ValidateAudience = false,
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
 		ValidAudience = authSettings.Audience,
 		ValidIssuer = authSettings.Issuer,
 		IssuerSigningKey = issuerSigningKey,
 		#if DEBUG
-		ClockSkew=TimeSpan.FromSeconds(5), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
+		ClockSkew=TimeSpan.FromSeconds(2), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
 		#endif
 	}; // Thanks to https://dotnetdetail.net/asp-net-core-3-0-web-api-token-based-authentication-example-using-jwt-in-vs2019/
 });
@@ -112,22 +114,19 @@ builder.Services.AddCors(options => options.AddPolicy("All", builder =>
 		   ;
 }));
 
+var dbEngineDbContext = DbEngineDbContextLoader.CreateDbEngineDbContextFromAssemblyFile(dbEngineDbContextPlugins[0] + ".dll");
+if (dbEngineDbContext == null)
+{
+	Console.Error.WriteLine("No dbEngineDbContext");
+	throw new ArgumentException("Need dbEngineDbContextPlugin");
+}
+
+Console.WriteLine($"DB Engine: {dbEngineDbContext.DbEngineName}");
+
 builder.Services.AddDbContext<ApplicationDbContext>(dcob =>
 {
-	var dbEngineDbContext = DbEngineDbContextLoader.CreateDbEngineDbContextFromAssemblyFile(dbEngineDbContextPlugins[0] + ".dll");
-	if (dbEngineDbContext == null)
-	{
-		Console.Error.WriteLine("No dbEngineDbContext");
-		throw new ArgumentException("Need dbEngineDbContextPlugin");
-	}
-
-	dbEngineDbContext.ConnectDatabase(dcob, identityConnectionString);
-	Console.WriteLine($"DB Engine: {dbEngineDbContext.DbEngineName}");
+	dbEngineDbContext.ConnectDatabase(dcob, identityConnectionString); // called by runtime everytime an instance of ApplicationDbContext is created.
 });
-
-//For usage not with DI
-//DbContextOptionsBuilder<ApplicationDbContext> dcobApplication = new();
-//ConfigApplicationDbContext(dcobApplication);
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationIdentityRole>()
 				.AddEntityFrameworkStores<ApplicationDbContext>()

@@ -91,7 +91,7 @@ namespace PoemsApp.Controllers
 			var tokenTextExisting = await tokenHelper.MatchToken(user, authSettings.TokenProviderName, "RefreshToken", refreshToken, connectionId);
 			if (!tokenTextExisting)
 			{
-				return StatusCode(406, new { message = "Invalid to retrieve token through refreshToken" });
+				return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
 			}
 
 			return await GenerateJwtToken(user, username, connectionId); //the old refresh token is removed
@@ -119,7 +119,9 @@ namespace PoemsApp.Controllers
 				expires: expires.UtcDateTime,
 				claims: claims,
 				signingCredentials: new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256)
-				);
+			);
+
+			Console.WriteLine($"JWT token expiry: expires: {expires.UtcDateTime}; ValidFrom: {token.ValidFrom}; ValidTo: {token.ValidTo}");
 
 			string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -151,6 +153,11 @@ namespace PoemsApp.Controllers
 	/// </summary>
 	public class TokensHelper
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="userManager"></param>
+		/// <param name="tokenProviderName">Your app token provider name, or oAuth2 token provider name.</param>
 		public TokensHelper(ApplicationUserManager userManager, string tokenProviderName)
 		{
 			this.userManager = userManager;
@@ -161,7 +168,7 @@ namespace PoemsApp.Controllers
 
 		readonly string tokenProviderName;
 		/// <summary>
-		/// Add or update a toke of an existing connection.
+		/// Add or update a token of an existing connection.
 		/// </summary>
 		/// <param name="user"></param>
 		/// <param name="loginProvider"></param>
@@ -171,46 +178,8 @@ namespace PoemsApp.Controllers
 		/// <returns></returns>
 		public async Task<IdentityResult> UpsertToken(ApplicationUser user, string loginProvider, string tokenName, string newTokenValue, Guid connectionId)
 		{
-			//CustomToken customToken = new CustomToken
-			//{
-			//	TokenValue = newTokenValue,
-			//	ConnectionId = connectionId,
-			//	Stamp = DateTimeOffset.Now,
-			//};
-
 			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
 			string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
-			if (String.IsNullOrEmpty(tokensText))
-			{
-				tokensText = "[]";
-			}
-
-			var customTokens = System.Text.Json.JsonSerializer.Deserialize<CustomToken[]>(tokensText);
-			var tokenList = new List<CustomToken>(customTokens);
-
-			var idx = tokenList.FindIndex(d => d.ConnectionId == connectionId); //remove the token of current connection from a browser tab
-			if (idx >= 0)
-			{
-				tokenList.RemoveAt(idx);
-			}
-
-#if DEBUG
-			DateTimeOffset tooOldDate = DateTimeOffset.Now.AddHours(-1);
-#else
-			DateTimeOffset tooOldDate = DateTimeOffset.Now.AddDays(-90);
-#endif
-			// Remove too old tokens
-			var tooOldTokens = tokenList.Where(d => d.Stamp < tooOldDate).ToArray();
-			if (tooOldTokens.Length > 0)
-			{
-				foreach (var item in tooOldTokens)
-				{
-					tokenList.Remove(item);
-				}
-			}
-
-			//tokenList.Add(customToken);
-			//string newTokensText = System.Text.Json.JsonSerializer.Serialize<CustomToken[]>(tokenList.ToArray());
 			await userManager.RemoveAuthenticationTokenAsync(user, tokenProviderName, composedTokenName); // need to remove it first, otherwise, Set won't work.
 			return await userManager.SetAuthenticationTokenAsync(user, tokenProviderName, composedTokenName, newTokenValue);
 		}
