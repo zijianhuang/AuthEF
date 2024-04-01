@@ -37,7 +37,7 @@ namespace PoemsApp.Controllers
 		{
 			UserManager = userManager;
 			this.authSettings = authSettings;
-			this.symmetricSecurityKey= symmetricSecurityKey;
+			this.symmetricSecurityKey = symmetricSecurityKey;
 		}
 
 		/// <summary>
@@ -71,7 +71,8 @@ namespace PoemsApp.Controllers
 		}
 
 		/// <summary>
-		/// Generate new JWT token according to refresh token and connectionId
+		/// Generate new JWT token according to refresh token and connectionId.
+		/// This call supports AllowAnonymous. So after the access token expires, the client may still acquire new one without login again.
 		/// </summary>
 		/// <param name="refreshToken"></param>
 		/// <param name="username"></param>
@@ -87,7 +88,7 @@ namespace PoemsApp.Controllers
 				return BadRequest(new { message = "Username or password is invalid" });
 			}
 
-			var tokenHelper = new TokensHelper(UserManager, authSettings.TokenProviderName);
+			var tokenHelper = new UserTokenHelper(UserManager, authSettings.TokenProviderName);
 			var tokenTextExisting = await tokenHelper.MatchToken(user, authSettings.TokenProviderName, "RefreshToken", refreshToken, connectionId);
 			if (!tokenTextExisting)
 			{
@@ -121,15 +122,13 @@ namespace PoemsApp.Controllers
 				signingCredentials: new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256)
 			);
 
-			Console.WriteLine($"JWT token expiry: expires: {expires.UtcDateTime}; ValidFrom: {token.ValidFrom}; ValidTo: {token.ValidTo}");
-
 			string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
 			const string tokenName = "RefreshToken";
 			//await UserManager.RemoveAuthenticationTokenAsync(user, Constants.AppCodeName, tokenName);
 			var refreshToken = await UserManager.GenerateUserTokenAsync(user, authSettings.TokenProviderName, tokenName);
 			//await UserManager.SetAuthenticationTokenAsync(user, Constants.AppCodeName, tokenName, refreshToken);
-			var tokenHelper = new TokensHelper(UserManager, authSettings.TokenProviderName);
+			var tokenHelper = new UserTokenHelper(UserManager, authSettings.TokenProviderName);
 			await tokenHelper.UpsertToken(user, authSettings.TokenProviderName, tokenName, refreshToken, connectionId);
 
 			return new TokenResponseModel()
@@ -150,15 +149,18 @@ namespace PoemsApp.Controllers
 	/// <summary>
 	/// Handler user tokens for various purposes, like refresh token of JWT and oAuth2.
 	/// The user tokens table (aspnetusertokens) has primary key: UserId+LoginProvider+Name.
+	/// All functions are based on the built-in functions of ApplicationUserManager.
+	/// Fonlow.WebApp.Accounts.IdentityHelper provides fine-grained DB operations based on ApplicationDbContext.
 	/// </summary>
-	public class TokensHelper
+	/// <remarks>The token here is not access token of JWT, while the naming of userManager.GetAuthenticationTokenAsync or alike may be misleading.</remarks>
+	public class UserTokenHelper
 	{
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="userManager"></param>
 		/// <param name="tokenProviderName">Your app token provider name, or oAuth2 token provider name.</param>
-		public TokensHelper(ApplicationUserManager userManager, string tokenProviderName)
+		public UserTokenHelper(ApplicationUserManager userManager, string tokenProviderName)
 		{
 			this.userManager = userManager;
 			this.tokenProviderName = tokenProviderName;
@@ -179,8 +181,8 @@ namespace PoemsApp.Controllers
 		public async Task<IdentityResult> UpsertToken(ApplicationUser user, string loginProvider, string tokenName, string newTokenValue, Guid connectionId)
 		{
 			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
-			string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
-			await userManager.RemoveAuthenticationTokenAsync(user, tokenProviderName, composedTokenName); // need to remove it first, otherwise, Set won't work.
+			//string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
+			await userManager.RemoveAuthenticationTokenAsync(user, tokenProviderName, composedTokenName); // need to remove it first, otherwise, Set won't work. Apparently by design the record is immutable.
 			return await userManager.SetAuthenticationTokenAsync(user, tokenProviderName, composedTokenName, newTokenValue);
 		}
 
@@ -199,6 +201,7 @@ namespace PoemsApp.Controllers
 			string storedToken = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
 			return tokenValue == storedToken;
 		}
+
 	}
 
 }

@@ -2,17 +2,26 @@
 
 namespace Fonlow.AspNetCore.Identity
 {
+	/// <summary>
+	/// For Microsoft.AspNetCore.Identity.UserManager.
+	/// </summary>
 	public static class UserManagerExtensions
 	{
 		/// <summary>
-		/// Create user with single role
+		/// Create user with single role. And application user consists of UserName, FulName and Email.
 		/// </summary>
-		/// <returns>User Id, or null if there's error</returns>
+		/// <returns>User Id, or Guid.Empty if there's error and throwException is false.</returns>
+		/// <exception cref="System.Security.SecurityException">Throws only if throwException is true and the user can not be added.</exception>
 		public static async Task<Guid> CreateUser(this UserManager<ApplicationUser> userManager, string userName, string email, string fullName, string password, string roleName, bool throwException = false)
 		{
 			return await userManager.CreateUser(new ApplicationUser() { UserName = userName, Email = email, FullName=fullName }, password, roleName, throwException);
 		}
 
+		/// <summary>
+		/// Create application user with single role.
+		/// </summary>
+		/// <returns>User Id, or Guid.Empty if there's error and throwException is false.</returns>
+		/// <exception cref="System.Security.SecurityException">Throws only if throwException is true and the user can not be added.</exception>
 		public static async Task<Guid> CreateUser(this UserManager<ApplicationUser> userManager, ApplicationUser user, string password, string roleName, bool throwException = false)
 		{
 			IdentityResult r = await userManager.CreateAsync(user, password);
@@ -33,6 +42,7 @@ namespace Fonlow.AspNetCore.Identity
 				string msg = String.Format("When assigning role {0} to user {1}, errors: {2}", roleName, user.UserName, String.Join(Environment.NewLine, r.Errors));
 				if (throwException)
 					throw new System.Security.SecurityException(msg);
+
 				System.Diagnostics.Trace.TraceWarning(msg);
 				return Guid.Empty;
 			}

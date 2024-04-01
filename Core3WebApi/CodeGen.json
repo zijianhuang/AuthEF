@@ -5,6 +5,7 @@
 
 		"DataModelAssemblyNames": [
 			"DemoWebApi.DemoDataCore",
+			"Fonlow.WebApp.Accounts",
 			"Core3WebApi"
 		],
 		"CherryPickingMethods": 3

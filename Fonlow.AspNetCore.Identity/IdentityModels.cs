@@ -67,13 +67,36 @@ namespace Fonlow.AspNetCore.Identity
 		}
 	}
 
+	public class ApplicationUserToken : IdentityUserToken<Guid>, INewEntity
+	{
+		DateTime createdUtc;
+
+		public DateTime CreatedUtc
+		{
+			get { return createdUtc; }
+			set
+			{
+				if (value.Kind != DateTimeKind.Utc)
+				{
+					createdUtc = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+				}
+				else
+				{
+					createdUtc = value;
+				}
+			}
+		}
+	}
+
+	public interface INewEntity{
+		DateTime CreatedUtc { get; set; }
+	}
+
 	/// <summary>
 	/// Give EF context a hint to update time stamps when SaveChanges(). A wholesale way of updating such columns.
 	/// </summary>
-	public interface ITrackableEntity
+	public interface ITrackableEntity : INewEntity
 	{
-		DateTime CreatedUtc { get; set; }
-
 		DateTime ModifiedUtc { get; set; }
 	}
 }

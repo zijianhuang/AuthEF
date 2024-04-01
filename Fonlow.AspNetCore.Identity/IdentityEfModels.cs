@@ -18,7 +18,9 @@ namespace Fonlow.AspNetCore.Identity.EntityFrameworkCore
 	/// <summary>
 	/// Db context for creating and managing tables for various authentication schems.
 	/// </summary>
-	public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationIdentityRole, Guid>
+	public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationIdentityRole, Guid, 
+	IdentityUserClaim<Guid>, IdentityUserRole<Guid>, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, 
+	ApplicationUserToken>
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 					: base(options)
@@ -50,15 +52,14 @@ namespace Fonlow.AspNetCore.Identity.EntityFrameworkCore
 
 		void UpdateStamps()
 		{
-			IEnumerable<EntityEntry> addedEntities = ChangeTracker.Entries().Where(x => x.Entity is ITrackableEntity && (x.State == EntityState.Added));
+			IEnumerable<EntityEntry> addedEntities = ChangeTracker.Entries().Where(x => x.Entity is INewEntity && (x.State == EntityState.Added));
 			IEnumerable<EntityEntry> modifiedEntities = ChangeTracker.Entries().Where(x => x.Entity is ITrackableEntity && (x.State == EntityState.Modified));
 
 			DateTime nowUtc = DateTime.UtcNow;
 
 			foreach (EntityEntry item in addedEntities)
 			{
-				(item.Entity as ITrackableEntity).CreatedUtc = nowUtc;
-				(item.Entity as ITrackableEntity).ModifiedUtc = nowUtc;
+				(item.Entity as INewEntity).CreatedUtc = nowUtc;
 			}
 
 			foreach (EntityEntry item in modifiedEntities)

@@ -238,6 +238,103 @@ export namespace DemoWebApi_Models_Client {
 
 }
 
+export namespace Fonlow_WebApp_Accounts_Client {
+	export interface AddExternalLoginBindingModel {
+		externalAccessToken?: string | null;
+	}
+
+	export interface ApiKey {
+		expiryTime?: Date | null;
+		key?: string | null;
+	}
+
+	export interface ChangePasswordBindingModel {
+		confirmPassword?: string | null;
+		newPassword?: string | null;
+		oldPassword?: string | null;
+	}
+
+	export interface CustomToken {
+		connectionId?: string | null;
+		stamp?: Date | null;
+		tokenValue?: string | null;
+	}
+
+	export interface ExternalLoginViewModel {
+		name?: string | null;
+		state?: string | null;
+		url?: string | null;
+	}
+
+	export interface ManageInfoViewModel {
+		email?: string | null;
+		externalLoginProviders?: Array<Fonlow_WebApp_Accounts_Client.ExternalLoginViewModel>;
+		localLoginProvider?: string | null;
+		logins?: Array<Fonlow_WebApp_Accounts_Client.UserLoginInfoViewModel>;
+	}
+
+	export interface RegisterBindingModel {
+		confirmPassword?: string | null;
+		email?: string | null;
+		fullName?: string | null;
+		password?: string | null;
+		userName?: string | null;
+	}
+
+	export interface RegisterExternalBindingModel {
+		email?: string | null;
+	}
+
+	export interface RemoveLoginBindingModel {
+		loginProvider?: string | null;
+		providerKey?: string | null;
+	}
+
+	export interface ResetPasswordViewModel {
+		code?: string | null;
+		confirmPassword?: string | null;
+		email?: string | null;
+		password?: string | null;
+	}
+
+	export interface SetPasswordBindingModel {
+		confirmPassword?: string | null;
+		newPassword?: string | null;
+	}
+
+	export interface SetUserPasswordBindingModel extends Fonlow_WebApp_Accounts_Client.SetPasswordBindingModel {
+		userId?: string | null;
+	}
+
+	export interface TokenResponseModel {
+		access_token: string;
+		api_key?: Fonlow_WebApp_Accounts_Client.ApiKey;
+		connection_id?: string | null;
+		expires: string;
+		expires_in: number;
+		refresh_token?: string | null;
+		token_type: string;
+		username: string;
+	}
+
+	export interface UserInfoViewModel {
+		createdUtc?: Date | null;
+		email?: string | null;
+		fullName?: string | null;
+		hasRegistered?: boolean | null;
+		id: string;
+		loginProvider?: string | null;
+		roles?: Array<string>;
+		userName: string;
+	}
+
+	export interface UserLoginInfoViewModel {
+		loginProvider?: string | null;
+		providerKey?: string | null;
+	}
+
+}
+
 export namespace Core3WebApi_Controllers_Client {
 	export class Statistics {
 		constructor(private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/') {
@@ -306,6 +403,175 @@ export namespace DemoCoreWeb_Controllers_Client {
 }
 
 export namespace DemoWebApi_Controllers_Client {
+	export class Account {
+		constructor(private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/') {
+		}
+
+		/**
+		 * POST api/Account/AddRole?userId={userId}&roleName={roleName}
+		 */
+		addRole(userId: string | null, roleName: string | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/AddRole?userId=' + (!userId ? '' : encodeURIComponent(userId)) + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), { method: 'post', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * PUT api/Account/ChangePassword
+		 */
+		changePassword(model: Fonlow_WebApp_Accounts_Client.ChangePasswordBindingModel | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/ChangePassword', { method: 'put', headers: headersHandler ? Object.assign(headersHandler(), { 'Content-Type': 'application/json;charset=UTF-8' }): { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(model) }).then(d => d.json());
+		}
+
+		/**
+		 * POST api/Account/ForgotPassword
+		 */
+		forgotPassword(email: string | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/ForgotPassword', { method: 'post', headers: headersHandler ? Object.assign(headersHandler(), { 'Content-Type': 'application/json;charset=UTF-8' }): { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(email) }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/AllRoleNames
+		 */
+		getAllRoleNames(headersHandler?: () => {[header: string]: string}): Promise<Array<string>> {
+			return fetch(this.baseUri + 'api/Account/AllRoleNames', { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * Get array of user name and full name.
+		 * GET api/Account/AllUsers
+		 * @return {Array<{item1: string, item2: string}>} userName, fullName
+		 */
+		getAllUsers(headersHandler?: () => {[header: string]: string}): Promise<Array<{item1: string, item2: string}>> {
+			return fetch(this.baseUri + 'api/Account/AllUsers', { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/Roles?userId={userId}
+		 */
+		getRoles(userId: string | null, headersHandler?: () => {[header: string]: string}): Promise<Array<string>> {
+			return fetch(this.baseUri + 'api/Account/Roles?userId=' + (!userId ? '' : encodeURIComponent(userId)), { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/idByEmail?email={email}
+		 * @return {string} Type: GUID
+		 */
+		getUserIdByEmail(email: string | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/idByEmail?email=' + (!email ? '' : encodeURIComponent(email)), { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/idByFullName?cn={cn}
+		 * @return {string} Type: GUID
+		 */
+		getUserIdByFullName(cn: string | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/idByFullName?cn=' + (!cn ? '' : encodeURIComponent(cn)), { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/UserIdByUser?username={username}
+		 * @return {string} Type: GUID
+		 */
+		getUserIdByUser(username: string | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/UserIdByUser?username=' + (!username ? '' : encodeURIComponent(username)), { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/UserIdFullNameDic
+		 */
+		getUserIdFullNameDic(headersHandler?: () => {[header: string]: string}): Promise<{[id: string]: string }> {
+			return fetch(this.baseUri + 'api/Account/UserIdFullNameDic', { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * Mapping between email address and user Id
+		 * GET api/Account/UserIdMapByEmail
+		 * @return {Array<{key: string, value: string }>} Key is email address, and value is user Id.
+		 */
+		getUserIdMapByEmail(headersHandler?: () => {[header: string]: string}): Promise<Array<{key: string, value: string }>> {
+			return fetch(this.baseUri + 'api/Account/UserIdMapByEmail', { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * Mapping between full user name and user Id
+		 * GET api/Account/UserIdMapByFullName
+		 * @return {Array<{key: string, value: string }>} Key is full name, and value is user Id.
+		 */
+		getUserIdMapByFullName(headersHandler?: () => {[header: string]: string}): Promise<Array<{key: string, value: string }>> {
+			return fetch(this.baseUri + 'api/Account/UserIdMapByFullName', { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/UserIdNameDic
+		 */
+		getUserIdNameDic(headersHandler?: () => {[header: string]: string}): Promise<{[id: string]: string }> {
+			return fetch(this.baseUri + 'api/Account/UserIdNameDic', { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/UserInfo
+		 */
+		getUserInfo(headersHandler?: () => {[header: string]: string}): Promise<Fonlow_WebApp_Accounts_Client.UserInfoViewModel> {
+			return fetch(this.baseUri + 'api/Account/UserInfo', { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * GET api/Account/UserInfoById?id={id}
+		 */
+		getUserInfoByIdOfstring(id: string | null, headersHandler?: () => {[header: string]: string}): Promise<Fonlow_WebApp_Accounts_Client.UserInfoViewModel> {
+			return fetch(this.baseUri + 'api/Account/UserInfoById?id=' + id, { method: 'get', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * POST api/Account/Logout
+		 */
+		logout(headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/Logout', { method: 'post', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * POST api/Account/Register
+		 * @return {string} Type: GUID
+		 */
+		register(model: Fonlow_WebApp_Accounts_Client.RegisterBindingModel | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/Register', { method: 'post', headers: headersHandler ? Object.assign(headersHandler(), { 'Content-Type': 'application/json;charset=UTF-8' }): { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(model) }).then(d => d.json());
+		}
+
+		/**
+		 * DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		 */
+		removeRole(userId: string | null, roleName: string | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/RemoveRole?userId=' + (!userId ? '' : encodeURIComponent(userId)) + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), { method: 'delete', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * DELETE api/Account/RemoveUser?userId={userId}
+		 */
+		removeUser(userId: string | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/RemoveUser?userId=' + userId, { method: 'delete', headers: headersHandler ? headersHandler() : undefined }).then(d => d.json());
+		}
+
+		/**
+		 * POST api/Account/ResetPassword
+		 */
+		resetPassword(model: Fonlow_WebApp_Accounts_Client.ResetPasswordViewModel | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/ResetPassword', { method: 'post', headers: headersHandler ? Object.assign(headersHandler(), { 'Content-Type': 'application/json;charset=UTF-8' }): { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(model) }).then(d => d.json());
+		}
+
+		/**
+		 * PUT api/Account/SetPassword
+		 */
+		setPassword(model: Fonlow_WebApp_Accounts_Client.SetPasswordBindingModel | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/SetPassword', { method: 'put', headers: headersHandler ? Object.assign(headersHandler(), { 'Content-Type': 'application/json;charset=UTF-8' }): { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(model) }).then(d => d.json());
+		}
+
+		/**
+		 * PUT api/Account/SetUserPassword
+		 */
+		setUserPassword(model: Fonlow_WebApp_Accounts_Client.SetUserPasswordBindingModel | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
+			return fetch(this.baseUri + 'api/Account/SetUserPassword', { method: 'put', headers: headersHandler ? Object.assign(headersHandler(), { 'Content-Type': 'application/json;charset=UTF-8' }): { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(model) }).then(d => d.json());
+		}
+	}
+
 	export class DateTypes {
 		constructor(private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/') {
 		}
