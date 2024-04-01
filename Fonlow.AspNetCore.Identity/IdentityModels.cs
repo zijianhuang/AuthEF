@@ -30,62 +30,14 @@ namespace Fonlow.AspNetCore.Identity
 		[MaxLength(128)]
 		public string FullName { get; set; }
 
-		DateTime createdUtc;
+		public DateTime CreatedUtc { get; set; }
 
-		public DateTime CreatedUtc
-		{
-			get { return createdUtc; }
-			set
-			{
-				if (value.Kind != DateTimeKind.Utc)
-				{
-					createdUtc = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-				}
-				else
-				{
-					createdUtc = value;
-				}
-			}
-		}
-
-		DateTime modifiedUtc;
-
-		public DateTime ModifiedUtc
-		{
-			get { return modifiedUtc; }
-			set
-			{
-				if (value.Kind != DateTimeKind.Utc)
-				{
-					modifiedUtc = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-				}
-				else
-				{
-					modifiedUtc = value;
-				}
-			}
-		}
+		public DateTime ModifiedUtc { get; set; }
 	}
 
 	public class ApplicationUserToken : IdentityUserToken<Guid>, INewEntity
 	{
-		DateTime createdUtc;
-
-		public DateTime CreatedUtc
-		{
-			get { return createdUtc; }
-			set
-			{
-				if (value.Kind != DateTimeKind.Utc)
-				{
-					createdUtc = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-				}
-				else
-				{
-					createdUtc = value;
-				}
-			}
-		}
+		public DateTime CreatedUtc { get; set; }
 	}
 
 	public interface INewEntity{

@@ -89,7 +89,7 @@ namespace PoemsApp.Controllers
 			}
 
 			var tokenHelper = new UserTokenHelper(UserManager, authSettings.TokenProviderName);
-			var tokenTextExisting = await tokenHelper.MatchToken(user, authSettings.TokenProviderName, "RefreshToken", refreshToken, connectionId);
+			var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshToken, connectionId);
 			if (!tokenTextExisting)
 			{
 				return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
@@ -129,7 +129,7 @@ namespace PoemsApp.Controllers
 			var refreshToken = await UserManager.GenerateUserTokenAsync(user, authSettings.TokenProviderName, tokenName);
 			//await UserManager.SetAuthenticationTokenAsync(user, Constants.AppCodeName, tokenName, refreshToken);
 			var tokenHelper = new UserTokenHelper(UserManager, authSettings.TokenProviderName);
-			await tokenHelper.UpsertToken(user, authSettings.TokenProviderName, tokenName, refreshToken, connectionId);
+			await tokenHelper.UpsertToken(user, tokenName, refreshToken, connectionId);
 
 			return new TokenResponseModel()
 			{
@@ -172,16 +172,10 @@ namespace PoemsApp.Controllers
 		/// <summary>
 		/// Add or update a token of an existing connection.
 		/// </summary>
-		/// <param name="user"></param>
-		/// <param name="loginProvider"></param>
-		/// <param name="tokenName"></param>
-		/// <param name="newTokenValue"></param>
-		/// <param name="connectionId"></param>
 		/// <returns></returns>
-		public async Task<IdentityResult> UpsertToken(ApplicationUser user, string loginProvider, string tokenName, string newTokenValue, Guid connectionId)
+		public async Task<IdentityResult> UpsertToken(ApplicationUser user, string tokenName, string newTokenValue, Guid connectionId)
 		{
 			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
-			//string tokensText = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
 			await userManager.RemoveAuthenticationTokenAsync(user, tokenProviderName, composedTokenName); // need to remove it first, otherwise, Set won't work. Apparently by design the record is immutable.
 			return await userManager.SetAuthenticationTokenAsync(user, tokenProviderName, composedTokenName, newTokenValue);
 		}
@@ -195,10 +189,10 @@ namespace PoemsApp.Controllers
 		/// <param name="tokenValue"></param>
 		/// <param name="connectionId"></param>
 		/// <returns></returns>
-		public async Task<bool> MatchToken(ApplicationUser user, string loginProvider, string tokenName, string tokenValue, Guid connectionId)
+		public async Task<bool> MatchToken(ApplicationUser user, string tokenName, string tokenValue, Guid connectionId)
 		{
 			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
-			string storedToken = await userManager.GetAuthenticationTokenAsync(user, loginProvider, composedTokenName);
+			string storedToken = await userManager.GetAuthenticationTokenAsync(user, tokenProviderName, composedTokenName);
 			return tokenValue == storedToken;
 		}
 
