@@ -417,6 +417,14 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
+		 * DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
+		 */
+		adminRemoveUserRefreshTokens(username: string | null, headersHandler?: () => {[header: string]: string}): Promise<number> {
+			return Axios.delete<number>(this.baseUri + 'api/Account/AdminRemoveUserRefreshTokens/' + (!username ? '' : encodeURIComponent(username)), { headers: headersHandler ? headersHandler() : undefined }).then(d => d.data);
+		}
+
+		/**
 		 * PUT api/Account/ChangePassword
 		 */
 		changePassword(model: Fonlow_WebApp_Accounts_Client.ChangePasswordBindingModel | null, headersHandler?: () => {[header: string]: string}): Promise<AxiosResponse<string>> {
@@ -524,10 +532,12 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
-		 * POST api/Account/Logout
+		 * Clear the existing external cookie to ensure a clean login process
+		 * and a little house keeping to remove refresh token
+		 * POST api/Account/Logout/{connectionId}
 		 */
-		logout(headersHandler?: () => {[header: string]: string}): Promise<AxiosResponse<string>> {
-			return Axios.post(this.baseUri + 'api/Account/Logout', null, { headers: headersHandler ? headersHandler() : undefined, responseType: 'text' });
+		logout(connectionId: string | null, headersHandler?: () => {[header: string]: string}): Promise<AxiosResponse<string>> {
+			return Axios.post(this.baseUri + 'api/Account/Logout/' + connectionId, null, { headers: headersHandler ? headersHandler() : undefined, responseType: 'text' });
 		}
 
 		/**
@@ -536,6 +546,15 @@ export namespace DemoWebApi_Controllers_Client {
 		 */
 		register(model: Fonlow_WebApp_Accounts_Client.RegisterBindingModel | null, headersHandler?: () => {[header: string]: string}): Promise<string> {
 			return Axios.post<string>(this.baseUri + 'api/Account/Register', JSON.stringify(model), { headers: headersHandler ? Object.assign(headersHandler(), { 'Content-Type': 'application/json;charset=UTF-8' }): { 'Content-Type': 'application/json;charset=UTF-8' } }).then(d => d.data);
+		}
+
+		/**
+		 * Admin or scheduler clean up old user tokens
+		 * DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
+		 */
+		removeOldUserTokens(pastDateUtc: Date | null, headersHandler?: () => {[header: string]: string}): Promise<number> {
+			return Axios.delete<number>(this.baseUri + 'api/Account/RemoveOldUserTokens/' + pastDateUtc?.toISOString(), { headers: headersHandler ? headersHandler() : undefined }).then(d => d.data);
 		}
 
 		/**
@@ -550,6 +569,15 @@ export namespace DemoWebApi_Controllers_Client {
 		 */
 		removeUser(userId: string | null, headersHandler?: () => {[header: string]: string}): Promise<AxiosResponse<string>> {
 			return Axios.delete(this.baseUri + 'api/Account/RemoveUser?userId=' + userId, { headers: headersHandler ? headersHandler() : undefined, responseType: 'text' });
+		}
+
+		/**
+		 * User to remove all user refresh tokens
+		 * DELETE api/Account/RemoveUserRefreshTokens
+		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
+		 */
+		removeUserRefreshTokens(headersHandler?: () => {[header: string]: string}): Promise<number> {
+			return Axios.delete<number>(this.baseUri + 'api/Account/RemoveUserRefreshTokens', { headers: headersHandler ? headersHandler() : undefined }).then(d => d.data);
 		}
 
 		/**

@@ -1082,6 +1082,50 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		/// </summary>
+		public async Task<int> AdminRemoveUserRefreshTokensAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				return System.Int32.Parse(jsonReader.ReadAsString());
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		/// </summary>
+		public int AdminRemoveUserRefreshTokens(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				return System.Int32.Parse(jsonReader.ReadAsString());
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
 		/// PUT api/Account/ChangePassword
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> ChangePasswordAsync(Fonlow.WebApp.Accounts.Client.ChangePasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1718,11 +1762,13 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// POST api/Account/Logout
+		/// Clear the existing external cookie to ensure a clean login process
+		/// and a little house keeping to remove refresh token
+		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/Logout";
+			var requestUri = "api/Account/Logout/"+connectionId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
@@ -1730,11 +1776,13 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// POST api/Account/Logout
+		/// Clear the existing external cookie to ensure a clean login process
+		/// and a little house keeping to remove refresh token
+		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
-		public System.Net.Http.HttpResponseMessage Logout(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public System.Net.Http.HttpResponseMessage Logout(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/Logout";
+			var requestUri = "api/Account/Logout/"+connectionId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
@@ -1798,6 +1846,52 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Admin or scheduler clean up old user tokens
+		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		/// </summary>
+		public async Task<int> RemoveOldUserTokensAsync(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				return System.Int32.Parse(jsonReader.ReadAsString());
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Admin or scheduler clean up old user tokens
+		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		/// </summary>
+		public int RemoveOldUserTokens(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				return System.Int32.Parse(jsonReader.ReadAsString());
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
 		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> RemoveRoleAsync(string userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1847,6 +1941,52 @@ namespace DemoWebApi.Controllers.Client
 			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
+		}
+		
+		/// <summary>
+		/// User to remove all user refresh tokens
+		/// DELETE api/Account/RemoveUserRefreshTokens
+		/// </summary>
+		public async Task<int> RemoveUserRefreshTokensAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveUserRefreshTokens";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				return System.Int32.Parse(jsonReader.ReadAsString());
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// User to remove all user refresh tokens
+		/// DELETE api/Account/RemoveUserRefreshTokens
+		/// </summary>
+		public int RemoveUserRefreshTokens(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveUserRefreshTokens";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				return System.Int32.Parse(jsonReader.ReadAsString());
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
 		}
 		
 		/// <summary>

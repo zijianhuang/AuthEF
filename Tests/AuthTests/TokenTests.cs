@@ -2,6 +2,7 @@ using Fonlow.Net.Http;
 using Fonlow.Testing;
 using Fonlow.WebApp.Accounts;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using Xunit.Abstractions;
 
@@ -88,7 +89,7 @@ namespace AuthTests
 
 		/// <summary>
 		/// Access token should expire after expiry time + clock skew.
-		/// It should not expiry just after expiry time if clock skew is not zero.
+		/// It should not expire just after expiry time if clock skew is not zero.
 		/// </summary>
 		[Fact]
 		public void TestAccessTokenExpiry()
@@ -204,6 +205,77 @@ namespace AuthTests
 
 			TestAuthorizedConnection(tokenModel.TokenType, tokenModel.AccessToken); // old token is till working. To revoke, refer to https://stackoverflow.com/questions/62874537/jwt-token-forcefully-expire-in-asp-net-core-3-1, as JWT is by design not revokeable, and ASP.NET (Core) security hornor this. Another way simplier, just to set the expiry with 5 minutes span, if 5 minutes is accetable by your enterprise security policy.
 		}
+
+		[Fact]
+		public void TestLogoutThenRefreshTokenThrows()
+		{
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
+			Assert.NotEmpty(tokenText);
+
+			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
+			Assert.NotNull(tokenModel.RefreshToken);
+
+			var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
+			Assert.Equal(tokenModel.Username, newTokenModel.Username);
+			Assert.NotEqual(tokenModel.RefreshToken, newTokenModel.RefreshToken);
+			TestAuthorizedConnection(tokenModel.TokenType, newTokenModel.AccessToken);
+
+			GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId);
+			using var httpClient = new HttpClient();
+			httpClient.BaseAddress = baseUri;
+			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
+			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			accountApi.Logout(newTokenModel.ConnectionId); // this will remove the refresh token of the user on connnectionId
+			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+		}
+
+		[Fact]
+		public void TestRemoveOldUserTokensThenRefreshTokenThrows()
+		{
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
+			Assert.NotEmpty(tokenText);
+
+			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
+			Assert.NotNull(tokenModel.RefreshToken);
+
+			var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
+			Assert.Equal(tokenModel.Username, newTokenModel.Username);
+			Assert.NotEqual(tokenModel.RefreshToken, newTokenModel.RefreshToken);
+			TestAuthorizedConnection(tokenModel.TokenType, newTokenModel.AccessToken);
+
+			GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId);
+			using var httpClient = new HttpClient();
+			httpClient.BaseAddress = baseUri;
+			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
+			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			accountApi.RemoveOldUserTokens(DateTime.UtcNow); // Remove all user tokens, typically refresh tokens
+			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+		}
+
+		[Fact]
+		public void TestAdminRemoveUserTokensThenRefreshTokenThrows()
+		{
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
+			Assert.NotEmpty(tokenText);
+
+			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
+			Assert.NotNull(tokenModel.RefreshToken);
+
+			var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
+			Assert.Equal(tokenModel.Username, newTokenModel.Username);
+			Assert.NotEqual(tokenModel.RefreshToken, newTokenModel.RefreshToken);
+			TestAuthorizedConnection(tokenModel.TokenType, newTokenModel.AccessToken);
+
+			GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId);
+			using var httpClient = new HttpClient();
+			httpClient.BaseAddress = baseUri;
+			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
+			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			accountApi.AdminRemoveUserRefreshTokens(newTokenModel.Username); 
+			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+		}
+
+
 
 		void TestAuthorizedConnection(string tokenType, string accessToken)
 		{
