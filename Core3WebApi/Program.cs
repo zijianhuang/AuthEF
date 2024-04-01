@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.IO;
 
 System.Reflection.Assembly appAssembly = System.Reflection.Assembly.GetExecutingAssembly();
 string dirOfAppAssembly = System.IO.Path.GetDirectoryName(appAssembly.Location);
@@ -137,7 +136,12 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationIdentityRole>()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+//IHostApplicationLifetime lifetime = app.Lifetime;
+//lifetime.ApplicationStopped.Register(() =>
+//{
+//	//clean up
+//});
+
 
 if (app.Environment.IsDevelopment()) //ASPNETCORE_ENVIRONMENT=Development in web.config
 {

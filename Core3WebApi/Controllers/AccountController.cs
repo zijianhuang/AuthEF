@@ -250,7 +250,7 @@ namespace DemoWebApi.Controllers
 			if (userId == currentUserId)
 			{
 				Debug.WriteLine("Attempted to delete self.");
-				ModelState.AddModelError("APS_NotAllowedDeleteSelf", "Not allowed to delete self.");
+				ModelState.AddModelError("NotAllowedDeleteSelf", "Not allowed to delete self.");
 				return BadRequest(ModelState);
 			}
 
