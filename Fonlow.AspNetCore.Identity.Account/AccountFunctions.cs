@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
-using Fonlow.AspNetCore.Identity;
 
 namespace Fonlow.AspNetCore.Identity.Account
 {

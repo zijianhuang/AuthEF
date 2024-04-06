@@ -345,7 +345,7 @@ namespace DemoWebApi.Models.Client
 		/// String length: inclusive between 6 and 100
 		/// Data type: Password
 		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
 		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength=6, ErrorMessage="The {0} must be at least {2} characters long.")]
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
 		public string NewPassword { get; set; }
@@ -1038,6 +1038,9 @@ namespace DemoWebApi.Controllers.Client
 	using Fonlow.Net.Http;
 	
 	
+	/// <summary>
+	/// Authorize: Bearer
+	/// </summary>
 	public partial class Account
 	{
 		
@@ -1083,6 +1086,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<int> AdminRemoveUserRefreshTokensAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -1105,6 +1109,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public int AdminRemoveUserRefreshTokens(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -1791,6 +1796,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// POST api/Account/Register
+		/// Authorize: Roles: admin,manager; 
 		/// </summary>
 		public async Task<System.Guid> RegisterAsync(Fonlow.WebApp.Accounts.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -1819,6 +1825,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// POST api/Account/Register
+		/// Authorize: Roles: admin,manager; 
 		/// </summary>
 		public System.Guid Register(Fonlow.WebApp.Accounts.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -1848,6 +1855,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <summary>
 		/// Admin or scheduler clean up old user tokens
 		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<int> RemoveOldUserTokensAsync(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -1871,6 +1879,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <summary>
 		/// Admin or scheduler clean up old user tokens
 		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public int RemoveOldUserTokens(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -2063,6 +2072,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// PUT api/Account/SetUserPassword
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> SetUserPasswordAsync(Fonlow.WebApp.Accounts.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -2081,6 +2091,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// PUT api/Account/SetUserPassword
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage SetUserPassword(Fonlow.WebApp.Accounts.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -2098,6 +2109,10 @@ namespace DemoWebApi.Controllers.Client
 		}
 	}
 	
+	/// <summary>
+	/// For testing different commbinations of parameters and returns
+	/// Authorize: Bearer
+	/// </summary>
 	public partial class DateTypes
 	{
 		
@@ -4030,6 +4045,10 @@ namespace DemoWebApi.Controllers.Client
 		}
 	}
 	
+	/// <summary>
+	/// Heroes operations
+	/// Authorize: Bearer
+	/// </summary>
 	public partial class Heroes
 	{
 		
@@ -4488,6 +4507,10 @@ namespace DemoWebApi.Controllers.Client
 		}
 	}
 	
+	/// <summary>
+	/// For testing different commbinations of parameters and returns
+	/// Authorize: Bearer
+	/// </summary>
 	public partial class SuperDemo
 	{
 		
@@ -4607,6 +4630,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// GET api/SuperDemo/ActionStringResult
+		/// Status Codes: 200:OK
 		/// </summary>
 		public async Task<string> GetActionStringResultAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -4630,6 +4654,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// GET api/SuperDemo/ActionStringResult
+		/// Status Codes: 200:OK
 		/// </summary>
 		public string GetActionStringResult(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -7394,6 +7419,9 @@ namespace DemoWebApi.Controllers.Client
 		}
 	}
 	
+	/// <summary>
+	/// https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#3.3.3
+	/// </summary>
 	public partial class Tuple
 	{
 		

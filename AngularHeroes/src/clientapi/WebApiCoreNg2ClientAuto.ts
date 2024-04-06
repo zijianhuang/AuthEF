@@ -232,7 +232,7 @@ export namespace DemoWebApi_Models_Client {
 		 * String length: inclusive between 6 and 100
 		 * Data type: Password
 		 */
-		newPassword?: string | null;
+		newPassword: string;
 
 		/**
 		 * Required
@@ -454,6 +454,10 @@ export namespace DemoCoreWeb_Controllers_Client {
 }
 
 export namespace DemoWebApi_Controllers_Client {
+
+	/**
+	 * Authorize: Bearer
+	 */
 	@Injectable()
 	export class Account {
 		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
@@ -468,6 +472,7 @@ export namespace DemoWebApi_Controllers_Client {
 
 		/**
 		 * DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		 * Authorize: Roles: admin; 
 		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
 		 */
 		adminRemoveUserRefreshTokens(username: string | null, headersHandler?: () => HttpHeaders): Observable<number> {
@@ -594,6 +599,7 @@ export namespace DemoWebApi_Controllers_Client {
 
 		/**
 		 * POST api/Account/Register
+		 * Authorize: Roles: admin,manager; 
 		 * @return {string} Type: GUID
 		 */
 		register(model: Fonlow_WebApp_Accounts_Client.RegisterBindingModel | null, headersHandler?: () => HttpHeaders): Observable<string> {
@@ -603,6 +609,7 @@ export namespace DemoWebApi_Controllers_Client {
 		/**
 		 * Admin or scheduler clean up old user tokens
 		 * DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		 * Authorize: Roles: admin; 
 		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
 		 */
 		removeOldUserTokens(pastDateUtc: Date | null, headersHandler?: () => HttpHeaders): Observable<number> {
@@ -649,12 +656,18 @@ export namespace DemoWebApi_Controllers_Client {
 
 		/**
 		 * PUT api/Account/SetUserPassword
+		 * Authorize: Roles: admin; 
 		 */
 		setUserPassword(model: Fonlow_WebApp_Accounts_Client.SetUserPasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
 			return this.http.put(this.baseUri + 'api/Account/SetUserPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
 		}
 	}
 
+
+	/**
+	 * For testing different commbinations of parameters and returns
+	 * Authorize: Bearer
+	 */
 	@Injectable()
 	export class DateTypes {
 		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
@@ -944,6 +957,11 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 	}
 
+
+	/**
+	 * Heroes operations
+	 * Authorize: Bearer
+	 */
 	@Injectable()
 	export class Heroes {
 		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
@@ -1028,6 +1046,11 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 	}
 
+
+	/**
+	 * For testing different commbinations of parameters and returns
+	 * Authorize: Bearer
+	 */
 	@Injectable()
 	export class SuperDemo {
 		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
@@ -1057,6 +1080,7 @@ export namespace DemoWebApi_Controllers_Client {
 
 		/**
 		 * GET api/SuperDemo/ActionStringResult
+		 * Status Codes: 200:OK
 		 */
 		getActionStringResult(headersHandler?: () => HttpHeaders): Observable<string> {
 			return this.http.get(this.baseUri + 'api/SuperDemo/ActionStringResult', { headers: headersHandler ? headersHandler() : undefined, responseType: 'text' });
@@ -1501,6 +1525,10 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 	}
 
+
+	/**
+	 * https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#3.3.3
+	 */
 	@Injectable()
 	export class Tuple {
 		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {

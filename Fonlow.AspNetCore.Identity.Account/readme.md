@@ -1,0 +1,1 @@
+﻿Common account management functions based on Fonlow.AspNetCore.Identity.EntityFrameworkCore.

@@ -4,12 +4,12 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>ASP.NET Identity with GUID for ID.</Description>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
-		<PackageProjectUrl>https://github.com/zijianhuang/webapiclientgen</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/zijianhuang/AuthEF</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>

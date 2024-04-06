@@ -6,4 +6,6 @@ set packCmd=dotnet pack --no-build --output C:\NugetLocalFeeds --configuration R
 %packCmd% Fonlow.EntityFrameworkCore.Sqlite/Fonlow.EntityFrameworkCore.Sqlite.csproj
 %packCmd% Fonlow.WebApp.Accounts/Fonlow.WebApp.Accounts.csproj
 %packCmd% Fonlow.AuthDbCreator/Fonlow.AuthDbCreator.csproj
+%packCmd% Fonlow.AspNetCore.Identity.Account/Fonlow.AspNetCore.Identity.Account.csproj
+
 
