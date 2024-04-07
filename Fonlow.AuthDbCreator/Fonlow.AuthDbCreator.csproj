@@ -4,7 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<Version>1.0.2</Version>
+		<Version>1.1</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>Helper functions to established a new Identity database, and optionally seed with predefined roles and users.</Description>
 		<PackageReleaseNotes></PackageReleaseNotes>

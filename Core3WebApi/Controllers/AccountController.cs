@@ -22,6 +22,10 @@ using Fonlow.WebApp.Identity;
 
 namespace DemoWebApi.Controllers
 {
+	/// <summary>
+	/// Manage user accounts stored in ASP.NET Core Identity database.
+	/// </summary>
+	/// <remarks>Majorty of the codes were originally from ASP.NET MVC scarfolding codes with slight modification for ASP.NET Core Web API. And it is not a universal solution for real worlds scenarios. Please consult with IT security guys.</remarks>
 	[Authorize(AuthenticationSchemes = ApiConstants.DefaultAuthenticationScheme)]
 	[Route("api/[controller]")]
 	public class AccountController : ControllerBase
@@ -405,7 +409,6 @@ namespace DemoWebApi.Controllers
 				}
 
 				IList<string> r = await UserManager.GetRolesAsync(user);
-				Trace.TraceInformation("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 				return r.ToArray();
 
 			}
@@ -647,27 +650,6 @@ namespace DemoWebApi.Controllers
 				};
 			}
 		}
-
-		//private static class RandomOAuthStateGenerator
-		//{
-		//	private static readonly RandomNumberGenerator _random = RandomNumberGenerator.Create();// new RNGCryptoServiceProvider();
-
-		//	public static string Generate(int strengthInBits)
-		//	{
-		//		const int bitsPerByte = 8;
-
-		//		if (strengthInBits % bitsPerByte != 0)
-		//		{
-		//			throw new AppArgumentException("strengthInBits must be evenly divisible by 8.", nameof(strengthInBits));
-		//		}
-
-		//		int strengthInBytes = strengthInBits / bitsPerByte;
-
-		//		byte[] data = new byte[strengthInBytes];
-		//		_random.GetBytes(data);
-		//		return System.Web.HttpUtility.UrlEncode(data);//.UrlTokenEncode(data);
-		//	}
-		//}
 
 		#endregion
 	}
