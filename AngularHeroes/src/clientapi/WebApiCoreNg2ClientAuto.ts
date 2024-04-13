@@ -456,6 +456,7 @@ export namespace DemoCoreWeb_Controllers_Client {
 export namespace DemoWebApi_Controllers_Client {
 
 	/**
+	 * Manage user accounts stored in ASP.NET Core Identity database.
 	 * Authorize: Bearer
 	 */
 	@Injectable()
