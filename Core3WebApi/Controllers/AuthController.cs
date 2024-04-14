@@ -73,6 +73,7 @@ namespace PoemsApp.Controllers
 		/// <summary>
 		/// Generate new JWT token according to refresh token and connectionId.
 		/// This call supports AllowAnonymous. So after the access token expires, the client may still acquire new one without login again.
+		/// However, ask your PO and IT security expert for further advice regarding UX and security.
 		/// </summary>
 		/// <param name="refreshToken"></param>
 		/// <param name="username"></param>
@@ -124,12 +125,10 @@ namespace PoemsApp.Controllers
 
 			string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-			const string tokenName = "RefreshToken";
-			//await UserManager.RemoveAuthenticationTokenAsync(user, Constants.AppCodeName, tokenName);
-			var refreshToken = await UserManager.GenerateUserTokenAsync(user, authSettings.TokenProviderName, tokenName);
-			//await UserManager.SetAuthenticationTokenAsync(user, Constants.AppCodeName, tokenName, refreshToken);
+			const string tokenPurpose = "RefreshToken";
+			var refreshToken = await UserManager.GenerateUserTokenAsync(user, authSettings.TokenProviderName, tokenPurpose);
 			var tokenHelper = new UserTokenHelper(UserManager, authSettings.TokenProviderName);
-			await tokenHelper.UpsertToken(user, tokenName, refreshToken, connectionId);
+			await tokenHelper.UpsertToken(user, tokenPurpose, refreshToken, connectionId);
 
 			return new TokenResponseModel()
 			{
@@ -152,7 +151,7 @@ namespace PoemsApp.Controllers
 	/// All functions are based on the built-in functions of ApplicationUserManager.
 	/// Fonlow.WebApp.Accounts.IdentityHelper provides fine-grained DB operations based on ApplicationDbContext.
 	/// </summary>
-	/// <remarks>The token here is not access token of JWT, while the naming of userManager.GetAuthenticationTokenAsync or alike may be misleading.</remarks>
+	/// <remarks>There are token usages that should not be limited by the same connection Id. In those cases, don't use this help class.</remarks>
 	public class UserTokenHelper
 	{
 		/// <summary>
@@ -181,17 +180,18 @@ namespace PoemsApp.Controllers
 		}
 
 		/// <summary>
-		/// Lookup user tokens and find 
+		/// Lookup user tokens and find. There's no explicit checking of expiry date here, 
+		/// however, your system should have house keeping functions to regularly clean up expired refresh token, and revoke anytime for any user, selected users and all users.
 		/// </summary>
 		/// <param name="user"></param>
-		/// <param name="loginProvider"></param>
-		/// <param name="tokenName"></param>
+		/// <param name="purpose"></param>
 		/// <param name="tokenValue"></param>
 		/// <param name="connectionId"></param>
 		/// <returns></returns>
-		public async Task<bool> MatchToken(ApplicationUser user, string tokenName, string tokenValue, Guid connectionId)
+		public async Task<bool> MatchToken(ApplicationUser user, string purpose, string tokenValue, Guid connectionId)
 		{
-			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
+			//var isValid = await userManager.VerifyUserTokenAsync(user, tokenProviderName, "RefreshToken", tokenValue); probably no need to call this to avoid mix token purpose usages?
+			string composedTokenName = $"{purpose}_{connectionId.ToString("N")}";
 			string storedToken = await userManager.GetAuthenticationTokenAsync(user, tokenProviderName, composedTokenName);
 			return tokenValue == storedToken;
 		}

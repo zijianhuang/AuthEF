@@ -82,7 +82,7 @@ builder.Services.AddControllers(configure =>
 builder.Services.AddAuthentication(
 	options =>
 	{
-		options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+		options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; //Bearer
 		options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 		options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 	}
