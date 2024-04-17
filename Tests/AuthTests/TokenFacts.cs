@@ -15,11 +15,11 @@ namespace AuthTests
 
 
 	[Collection(IntegrationTests.TestConstants.LaunchWebApiAndInit)]
-	public class TokenTests : IClassFixture<TokenTestsFixture>
+	public class TokenFacts : IClassFixture<TokenTestsFixture>
 	{
 		private readonly ITestOutputHelper output;
 
-		public TokenTests(TokenTestsFixture fixture, ITestOutputHelper output)
+		public TokenFacts(TokenTestsFixture fixture, ITestOutputHelper output)
 		{
 			baseUri = fixture.BaseUri;
 			httpClient = fixture.HttpClient;
@@ -135,6 +135,9 @@ namespace AuthTests
 			Assert.NotEqual(tokenModel.AccessToken, newTokenModel.AccessToken);
 		}
 
+		/// <summary>
+		/// Corrupted token should result in Unauthorized
+		/// </summary>
 		[Fact]
 		public void TestRefreshTokenWithCorruptedDataThrows()
 		{
@@ -150,6 +153,9 @@ namespace AuthTests
 			output.WriteLine("throws");
 		}
 
+		/// <summary>
+		/// User John may have multiple logins at the same time, using refresh token not from current login instance (connection Id) should result in Unauthorized.
+		/// </summary>
 		[Fact]
 		public void TestRefreshTokenWithInvalidConnectionIdDataThrows()
 		{
@@ -206,6 +212,9 @@ namespace AuthTests
 			TestAuthorizedConnection(tokenModel.TokenType, tokenModel.AccessToken); // old token is till working. To revoke, refer to https://stackoverflow.com/questions/62874537/jwt-token-forcefully-expire-in-asp-net-core-3-1, as JWT is by design not revokeable, and ASP.NET (Core) security hornor this. Another way simplier, just to set the expiry with 5 minutes span, if 5 minutes is accetable by your enterprise security policy.
 		}
 
+		/// <summary>
+		/// Logout should have the refresh token removed from the DB, thus using the refresh token afterward should throw 
+		/// </summary>
 		[Fact]
 		public void TestLogoutThenRefreshTokenThrows()
 		{
@@ -215,20 +224,20 @@ namespace AuthTests
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
 			Assert.NotNull(tokenModel.RefreshToken);
 
-			var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
-			Assert.Equal(tokenModel.Username, newTokenModel.Username);
-			Assert.NotEqual(tokenModel.RefreshToken, newTokenModel.RefreshToken);
-			TestAuthorizedConnection(tokenModel.TokenType, newTokenModel.AccessToken);
-
-			GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId);
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
-			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
+			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, tokenModel.AccessToken);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
-			accountApi.Logout(newTokenModel.ConnectionId); // this will remove the refresh token of the user on connnectionId
-			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+			accountApi.Logout(tokenModel.ConnectionId); // this will remove the refresh token of the user on connnectionId
+			var ex = Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId));
+			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+
+			TestAuthorizedConnection(tokenModel.TokenType, tokenModel.AccessToken); // still working, because JWT is stateless. This is a normal behavior.
 		}
 
+		/// <summary>
+		/// After admin or house keeping removes all refresh tokens, using refresh token should throws 
+		/// </summary>
 		[Fact]
 		public void TestRemoveOldUserTokensThenRefreshTokenThrows()
 		{
@@ -249,7 +258,8 @@ namespace AuthTests
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			accountApi.RemoveOldUserTokens(DateTime.UtcNow); // Remove all user tokens, typically refresh tokens
-			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+			var ex = Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 		}
 
 		[Fact]
@@ -271,11 +281,9 @@ namespace AuthTests
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
-			accountApi.AdminRemoveUserRefreshTokens(newTokenModel.Username); 
+			accountApi.AdminRemoverRefreshTokensOfUsers(newTokenModel.Username); 
 			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
 		}
-
-
 
 		void TestAuthorizedConnection(string tokenType, string accessToken)
 		{
@@ -300,12 +308,7 @@ namespace AuthTests
 			try
 			{
 				var response = client.PostAsync(new Uri(baseUri, "Token"), content).Result;
-				if (!response.IsSuccessStatusCode)
-				{
-					var error = String.Format("Please check app.config or appsettings.json or Web dependencies. Cannot get token for {0}:{1} with Uri {2}, with status code {3} and message {4}", userName, password, baseUri, response.StatusCode, response.ReasonPhrase);
-					Trace.TraceError(error);
-					throw new System.Security.Authentication.AuthenticationException(error);
-				}
+				response.EnsureSuccessStatusCodeEx();
 
 				var text = response.Content.ReadAsStringAsync().Result;
 				return text;

@@ -466,9 +466,10 @@ export namespace DemoWebApi_Controllers_Client {
 
 		/**
 		 * POST api/Account/AddRole?userId={userId}&roleName={roleName}
+		 * @param {string} userId Type: GUID
 		 */
 		addRole(userId: string | null, roleName: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/Account/AddRole?userId=' + (!userId ? '' : encodeURIComponent(userId)) + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), null, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+			return this.http.post(this.baseUri + 'api/Account/AddRole?userId=' + userId + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), null, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
 		}
 
 		/**
@@ -476,7 +477,7 @@ export namespace DemoWebApi_Controllers_Client {
 		 * Authorize: Roles: admin; 
 		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
 		 */
-		adminRemoveUserRefreshTokens(username: string | null, headersHandler?: () => HttpHeaders): Observable<number> {
+		adminRemoverRefreshTokensOfUsers(username: string | null, headersHandler?: () => HttpHeaders): Observable<number> {
 			return this.http.delete<number>(this.baseUri + 'api/Account/AdminRemoveUserRefreshTokens/' + (!username ? '' : encodeURIComponent(username)), { headers: headersHandler ? headersHandler() : undefined });
 		}
 
@@ -488,6 +489,9 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
+		 * Just a demo, but revealing some basic ForgotPassword features:
+		 * 1. If user not found, return NoContent
+		 * 2. Otherwise, send the reset token via Email or other means.
 		 * POST api/Account/ForgotPassword
 		 */
 		forgotPassword(email: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
@@ -499,22 +503,6 @@ export namespace DemoWebApi_Controllers_Client {
 		 */
 		getAllRoleNames(headersHandler?: () => HttpHeaders): Observable<Array<string>> {
 			return this.http.get<Array<string>>(this.baseUri + 'api/Account/AllRoleNames', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * Get array of user name and full name.
-		 * GET api/Account/AllUsers
-		 * @return {Array<{item1: string, item2: string}>} userName, fullName
-		 */
-		getAllUsers(headersHandler?: () => HttpHeaders): Observable<Array<{item1: string, item2: string}>> {
-			return this.http.get<Array<{item1: string, item2: string}>>(this.baseUri + 'api/Account/AllUsers', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * GET api/Account/Roles?userId={userId}
-		 */
-		getRoles(userId: string | null, headersHandler?: () => HttpHeaders): Observable<Array<string>> {
-			return this.http.get<Array<string>>(this.baseUri + 'api/Account/Roles?userId=' + (!userId ? '' : encodeURIComponent(userId)), { headers: headersHandler ? headersHandler() : undefined });
 		}
 
 		/**
@@ -542,13 +530,6 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
-		 * GET api/Account/UserIdFullNameDic
-		 */
-		getUserIdFullNameDic(headersHandler?: () => HttpHeaders): Observable<{[id: string]: string }> {
-			return this.http.get<{[id: string]: string }>(this.baseUri + 'api/Account/UserIdFullNameDic', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
 		 * Mapping between email address and user Id
 		 * GET api/Account/UserIdMapByEmail
 		 * @return {Array<{key: string, value: string }>} Key is email address, and value is user Id.
@@ -567,13 +548,7 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
-		 * GET api/Account/UserIdNameDic
-		 */
-		getUserIdNameDic(headersHandler?: () => HttpHeaders): Observable<{[id: string]: string }> {
-			return this.http.get<{[id: string]: string }>(this.baseUri + 'api/Account/UserIdNameDic', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
+		 * Get user info of current logged user
 		 * GET api/Account/UserInfo
 		 */
 		getUserInfo(headersHandler?: () => HttpHeaders): Observable<Fonlow_WebApp_Accounts_Client.UserInfoViewModel> {
@@ -581,7 +556,9 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
+		 * : InternalRoles
 		 * GET api/Account/UserInfoById?id={id}
+		 * Authorize: Roles: admin,manager; 
 		 * @param {string} id Type: GUID
 		 */
 		getUserInfoByIdOfstring(id: string | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_WebApp_Accounts_Client.UserInfoViewModel> {
@@ -589,8 +566,6 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
-		 * Clear the existing external cookie to ensure a clean login process
-		 * and a little house keeping to remove refresh token
 		 * POST api/Account/Logout/{connectionId}
 		 * @param {string} connectionId Type: GUID
 		 */
@@ -599,6 +574,7 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
+		 * Create user, but without role
 		 * POST api/Account/Register
 		 * Authorize: Roles: admin,manager; 
 		 * @return {string} Type: GUID
@@ -618,27 +594,29 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
-		 * DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		 * User to remove all refresh tokens of user
+		 * DELETE api/Account/RemoveRefreshTokensOfUser
+		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
 		 */
-		removeRole(userId: string | null, roleName: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.delete(this.baseUri + 'api/Account/RemoveRole?userId=' + (!userId ? '' : encodeURIComponent(userId)) + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		removeRefreshTokensOfUser(headersHandler?: () => HttpHeaders): Observable<number> {
+			return this.http.delete<number>(this.baseUri + 'api/Account/RemoveRefreshTokensOfUser', { headers: headersHandler ? headersHandler() : undefined });
 		}
 
 		/**
+		 * DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		 * @param {string} userId Type: GUID
+		 */
+		removeRole(userId: string | null, roleName: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.delete(this.baseUri + 'api/Account/RemoveRole?userId=' + userId + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * Remove user and also remove from the entities table.
 		 * DELETE api/Account/RemoveUser?userId={userId}
 		 * @param {string} userId Type: GUID
 		 */
 		removeUser(userId: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
 			return this.http.delete(this.baseUri + 'api/Account/RemoveUser?userId=' + userId, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * User to remove all user refresh tokens
-		 * DELETE api/Account/RemoveUserRefreshTokens
-		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
-		 */
-		removeUserRefreshTokens(headersHandler?: () => HttpHeaders): Observable<number> {
-			return this.http.delete<number>(this.baseUri + 'api/Account/RemoveUserRefreshTokens', { headers: headersHandler ? headersHandler() : undefined });
 		}
 
 		/**
@@ -656,8 +634,9 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 
 		/**
+		 * : AdminOrManager
 		 * PUT api/Account/SetUserPassword
-		 * Authorize: Roles: admin; 
+		 * Authorize: Roles: admin,manager; 
 		 */
 		setUserPassword(model: Fonlow_WebApp_Accounts_Client.SetUserPasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
 			return this.http.put(this.baseUri + 'api/Account/SetUserPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });

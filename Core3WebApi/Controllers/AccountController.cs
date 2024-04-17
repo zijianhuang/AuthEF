@@ -1,15 +1,20 @@
 ﻿using DemoApp.Accounts;
+using DemoWebApi.DemoData;
 using Fonlow.AspNetCore.Identity;
 using Fonlow.AspNetCore.Identity.Account;
 using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
+using Fonlow.CodeDom.Web;
 using Fonlow.DemoApp;
 using Fonlow.WebApp.Accounts;
+using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,8 +22,6 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using DemoWebApi.DemoData;
-using Fonlow.WebApp.Identity;
 
 namespace DemoWebApi.Controllers
 {
@@ -32,38 +35,37 @@ namespace DemoWebApi.Controllers
 	{
 		readonly DbContextOptions<ApplicationDbContext> options;
 		readonly AccountFunctions accountFunctions;
+		readonly ILogger<WebApiTrace> apiLogger;
+
+		readonly ApplicationUserManager userManager;
+		readonly IConfiguration config;
 		readonly IAuthSettings authSettings;
+		readonly SymmetricSecurityKey symmetricSecurityKey;
 
-		readonly ILogger houseKeepingLogger;
-		readonly ILogger apiLogger;
-
-		public AccountController(ApplicationUserManager userManager, DbContextOptions<ApplicationDbContext> options, IAuthSettings authSettings,
-		ILogger<HouseKeepingTrace> houseKeepingLogger, ILogger<WebApiTrace> apiLogger)
+		public AccountController(ApplicationUserManager userManager, DbContextOptions<ApplicationDbContext> options, SymmetricSecurityKey symmetricSecurityKey, IAuthSettings authSettings, ILogger<WebApiTrace> apiLogger,
+			IConfiguration config)
 		{
-			UserManager = userManager;
-			this.authSettings = authSettings;
-			this.houseKeepingLogger = houseKeepingLogger;
+			this.config = config;
+			this.userManager = userManager;
 			this.apiLogger = apiLogger;
 			this.options = options;
+			this.authSettings = authSettings;
+			this.symmetricSecurityKey = symmetricSecurityKey;
 			accountFunctions = new AccountFunctions(options);
 		}
 
-		public ApplicationUserManager UserManager
-		{
-			get; private set;
-		}
 
-		///// <summary>
-		///// Get user info of current logged user
-		///// </summary>
-		///// <returns></returns>
+		/// <summary>
+		/// Get user info of current logged user
+		/// </summary>
+		/// <returns></returns>
 		//[Authorize(AuthenticationSchemes = "ExternalBearer")]
 		[HttpGet("UserInfo")]
 		public async Task<UserInfoViewModel> GetUserInfo()
 		{
-			ApplicationUser applicationUser = await UserManager.FindByNameAsync(User.Identity.Name);//todo: not working: .GetUserAsync(User);
-			IList<string> roleNames = await UserManager.GetRolesAsync(applicationUser);
-			var userId = applicationUser.Id;
+			ApplicationUser applicationUser = await userManager.FindByNameAsync(User.Identity.Name);// .GetUserAsync(User) not working
+			IList<string> roleNames = await userManager.GetRolesAsync(applicationUser);
+			Guid userId = applicationUser.Id;
 			return new UserInfoViewModel
 			{
 				Id = userId,
@@ -83,6 +85,7 @@ namespace DemoWebApi.Controllers
 		{
 			return accountFunctions.GetUserIdByFullName(cn);
 		}
+
 
 		[HttpGet("idByEmail")]
 		public Guid GetUserIdByEmail([FromQuery] string email)
@@ -110,18 +113,6 @@ namespace DemoWebApi.Controllers
 			return accountFunctions.GetUserIdMapByEmail();
 		}
 
-		[HttpGet("UserIdNameDic")]
-		public IDictionary<Guid, string> GetUserIdNameDic()
-		{
-			return accountFunctions.GetUserIdNameDic();
-		}
-
-		[HttpGet("UserIdFullNameDic")]
-		public IDictionary<Guid, string> GetUserIdFullNameDic()
-		{
-			return accountFunctions.GetUserIdFullNameDic();
-		}
-
 		/// <summary>
 		/// Get user info of a user ID.
 		/// </summary>
@@ -129,50 +120,46 @@ namespace DemoWebApi.Controllers
 		/// <returns></returns>
 		UserInfoViewModel GetUserInfoViewModel(Guid userId)
 		{
-			//using (var context = new ApplicationDbContext())
-			//using (var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context), null, null, null, null, null, null, null, null))
+			ApplicationUser user = userManager.FindByIdAsync(userId).Result;
+			string[] roleNames = userManager.GetRolesAsync(user).Result.ToArray();
+
+			return new UserInfoViewModel
 			{
-				ApplicationUser user = UserManager.FindByIdAsync(userId).Result;
-				string[] roleNames = UserManager.GetRolesAsync(user).Result.ToArray();
-
-				return new UserInfoViewModel
-				{
-					Id = userId,
-					Email = user.Email,
-					UserName = user.UserName,
-					HasRegistered = true,
-					LoginProvider = null,
-					Roles = roleNames,
-					FullName = user.FullName,
-					CreatedUtc = user.CreatedUtc,
-				};
-
-			}
+				Id = userId,
+				Email = user.Email,
+				UserName = user.UserName,
+				HasRegistered = true,
+				LoginProvider = null,
+				Roles = roleNames,
+				FullName = user.FullName,
+				CreatedUtc = user.CreatedUtc,
+			};
 		}
 
+		/// <summary>
+		/// : InternalRoles
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[Authorize(Roles = RoleConstants.AdminOrManager)]
 		[HttpGet("UserInfoById")]
 		public UserInfoViewModel GetUserInfo([FromQuery] Guid id)
 		{
 			return GetUserInfoViewModel(id);
 		}
 
-		/// <summary>
-		/// Clear the existing external cookie to ensure a clean login process
-		/// and a little house keeping to remove refresh token
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>Technically it is possible John on iPHone removes user refresh token of the same John on Android phone if John use the connectionId on Android. However, apparently this is not a big deal.</remarks>
 		[HttpPost("Logout/{connectionId}")]
 		public async Task<IActionResult> Logout(Guid connectionId)
 		{
 			// https://learn.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x#use-httpcontext-authentication-extensions
 			await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-			ApplicationUser currentUser = await UserManager.FindByNameAsync(User.Identity.Name);
+			ApplicationUser currentUser = await userManager.FindByNameAsync(User.Identity.Name);
 			await accountFunctions.RemoveUserToken(currentUser.Id, authSettings.TokenProviderName, "RefreshToken", connectionId);
 			return StatusCode((int)HttpStatusCode.NoContent);
 		}
 
+		// POST api/Account/ChangePassword
 		[HttpPut("ChangePassword")]
 		public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordBindingModel model)
 		{
@@ -181,9 +168,9 @@ namespace DemoWebApi.Controllers
 				return BadRequest(ModelState);
 			}
 
-			ApplicationUser applicationUser = await UserManager.FindByNameAsync(User.Identity.Name);
+			ApplicationUser applicationUser = await userManager.FindByNameAsync(User.Identity.Name);
 
-			IdentityResult result = await UserManager.ChangePasswordAsync(applicationUser, model.OldPassword,
+			IdentityResult result = await userManager.ChangePasswordAsync(applicationUser, model.OldPassword,
 				model.NewPassword);
 
 			if (!result.Succeeded)
@@ -203,8 +190,8 @@ namespace DemoWebApi.Controllers
 				return BadRequest(ModelState);
 			}
 
-			ApplicationUser applicationUser = await UserManager.FindByNameAsync(User.Identity.Name);
-			IdentityResult result = await UserManager.AddPasswordAsync(applicationUser, model.NewPassword);
+			ApplicationUser applicationUser = await userManager.FindByNameAsync(User.Identity.Name);
+			IdentityResult result = await userManager.AddPasswordAsync(applicationUser, model.NewPassword);
 
 			if (!result.Succeeded)
 			{
@@ -214,17 +201,22 @@ namespace DemoWebApi.Controllers
 			return StatusCode((int)HttpStatusCode.NoContent);
 		}
 
-		// POST api/Account/SetPassword
-		[Authorize(Roles = RoleConstants.Admin)]
+		/// <summary>
+		/// : AdminOrManager
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		/// <exception cref="AppArgumentException"></exception>
+		[Authorize(Roles = RoleConstants.AdminOrManager)]
 		[HttpPut("SetUserPassword")]
 		public async Task<IActionResult> SetUserPassword([FromBody] SetUserPasswordBindingModel model)
 		{
 			if (model.NewPassword != model.ConfirmPassword)
 				throw new AppArgumentException("Passwords mismached.");
 
-			ApplicationUser applicationUser = await UserManager.FindByIdAsync(model.UserId);
+			ApplicationUser applicationUser = await userManager.FindByIdAsync(model.UserId);
 
-			IdentityResult pwdValidateResult = await UserManager.PasswordValidators.First().ValidateAsync(UserManager, applicationUser, model.NewPassword);
+			IdentityResult pwdValidateResult = await userManager.PasswordValidators.First().ValidateAsync(userManager, applicationUser, model.NewPassword);
 			if (!pwdValidateResult.Succeeded)
 			{
 				return GetErrorResult(pwdValidateResult);
@@ -234,8 +226,8 @@ namespace DemoWebApi.Controllers
 			{
 				return NotFound();
 			}
-			applicationUser.PasswordHash = UserManager.PasswordHasher.HashPassword(applicationUser, model.NewPassword);
-			IdentityResult result = await UserManager.UpdateAsync(applicationUser);
+			applicationUser.PasswordHash = userManager.PasswordHasher.HashPassword(applicationUser, model.NewPassword);
+			IdentityResult result = await userManager.UpdateAsync(applicationUser);
 
 			if (!result.Succeeded)
 			{
@@ -245,13 +237,16 @@ namespace DemoWebApi.Controllers
 			return StatusCode((int)HttpStatusCode.NoContent);
 		}
 
+		/// <summary>
+		/// Remove user and also remove from the entities table.
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <returns></returns>
 		[HttpDelete("RemoveUser")]
 		public async Task<IActionResult> RemoveUser([FromQuery] Guid userId)
 		{
-			ApplicationUser currentUser = await UserManager.FindByNameAsync(User.Identity.Name);
-			var currentUserId = currentUser.Id;
-
-			if (userId == currentUserId)
+			ApplicationUser currentUser = await userManager.FindByNameAsync(User.Identity.Name);
+			if (userId == currentUser.Id)
 			{
 				Debug.WriteLine("Attempted to delete self.");
 				ModelState.AddModelError("NotAllowedDeleteSelf", "Not allowed to delete self.");
@@ -260,32 +255,39 @@ namespace DemoWebApi.Controllers
 
 			try
 			{
-				ApplicationUser user = await UserManager.FindByIdAsync(userId);
+				ApplicationUser user = await userManager.FindByIdAsync(userId);
 				if (user == null)
 				{
-					houseKeepingLogger.LogWarning("User {0} not found, so it can't be deleted.", userId);
+					//transaction.Rollback();
+					apiLogger.LogWarning("User {0} not found, so it can't be deleted.", userId);
 					return StatusCode((int)HttpStatusCode.NoContent);
 				}
 
-				IList<string> roleNames = await UserManager.GetRolesAsync(user);
-				bool isAdmin = roleNames.Contains(RoleConstants.Admin);
+				const string adminRoleName = "admin";
+				IList<string> roleNames = await userManager.GetRolesAsync(user);
+				bool isAdmin = roleNames.Contains(adminRoleName);
 				if (isAdmin)
 				{
-					if (accountFunctions.GetUserCountOfRole(RoleConstants.Admin) == 1)
+					if (accountFunctions.GetUserCountOfRole(adminRoleName) == 1)
 					{
 						ModelState.AddModelError("LastAdmin", "Last admin account.");
 						return BadRequest(ModelState);
 					}
 				}
 
-				await UserManager.RemoveFromRolesAsync(user, roleNames.ToArray());//because of the foreigh key constraints, need to remove roles first.
+				await userManager.RemoveFromRolesAsync(user, roleNames.ToArray());//because of the foreigh key constraints, need to remove roles first.
 																				  //this is part of the fix against some bugs in Identity 2.1
 
-				IdentityResult result = await UserManager.DeleteAsync(user);
+				await userManager.RemoveAuthenticationTokenAsync(user, authSettings.TokenProviderName, "RefreshToken");
+				apiLogger.LogInformation($"User {User.Identity.Name} removed from userTokens.");
+				IdentityResult result = await userManager.DeleteAsync(user);
 				if (!result.Succeeded)
 				{
 					return GetErrorResult(result);
 				}
+
+				apiLogger.LogInformation($"User {User.Identity.Name} removed from identity DB.");
+				//todo: add some codes to remove from internal CRM
 
 				return StatusCode((int)HttpStatusCode.NoContent);
 
@@ -293,41 +295,142 @@ namespace DemoWebApi.Controllers
 			}
 			catch (Exception ex)
 			{
-				houseKeepingLogger.LogError($"Cannot delete user: {ex}");
+				apiLogger.LogError("Cannot delete user: " + ex.ToString());
 				throw;
 			}
 
 		}
 
-		[Authorize(Roles = RoleConstants.AdminOrManager)]
+		//// GET api/Account/ExternalLogin
+		//[OverrideAuthentication]
+		//[HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
+		//[AllowAnonymous]
+		//[Route("ExternalLogin", Name = "ExternalLogin")]
+		//public async Task<IActionResult> GetExternalLogin(string provider, string error = null)
+		//{
+		//	if (error != null)
+		//	{
+		//		return Redirect(Url.Content("~/") + "#error=" + Uri.EscapeDataString(error));
+		//	}
+
+		//	if (!User.Identity.IsAuthenticated)
+		//	{
+		//		return new ChallengeResult(provider, this);
+		//	}
+
+		//	ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
+
+		//	if (externalLogin == null)
+		//	{
+		//		return InternalServerError();
+		//	}
+
+		//	if (externalLogin.LoginProvider != provider)
+		//	{
+		//		Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+		//		return new ChallengeResult(provider, this);
+		//	}
+
+		//	ApplicationUser user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
+		//		externalLogin.ProviderKey));
+
+		//	bool hasRegistered = user != null;
+
+		//	if (hasRegistered)
+		//	{
+		//		Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+
+		//		ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+		//		   OAuthDefaults.AuthenticationType);
+		//		ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
+		//			CookieAuthenticationDefaults.AuthenticationType);
+
+		//		AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
+		//		Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
+		//	}
+		//	else
+		//	{
+		//		IEnumerable<Claim> claims = externalLogin.GetClaims();
+		//		ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
+		//		Authentication.SignIn(identity);
+		//	}
+
+		//	return StatusCode((int)HttpStatusCode.NoContent);
+		//}
+
+		//// GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
+		//[AllowAnonymous]
+		//[Route("ExternalLogins")]
+		//public IEnumerable<ExternalLoginViewModel> GetExternalLogins(string returnUrl, bool generateState = false)
+		//{
+		//	IEnumerable<AuthenticationDescription> descriptions = Authentication.GetExternalAuthenticationTypes();
+		//	List<ExternalLoginViewModel> logins = new List<ExternalLoginViewModel>();
+
+		//	string state;
+
+		//	if (generateState)
+		//	{
+		//		const int strengthInBits = 256;
+		//		state = RandomOAuthStateGenerator.Generate(strengthInBits);
+		//	}
+		//	else
+		//	{
+		//		state = null;
+		//	}
+
+		//	foreach (AuthenticationDescription description in descriptions)
+		//	{
+		//		ExternalLoginViewModel login = new ExternalLoginViewModel
+		//		{
+		//			Name = description.Caption,
+		//			Url = Url.Route("ExternalLogin", new
+		//			{
+		//				provider = description.AuthenticationType,
+		//				response_type = "token",
+		//				client_id = Startup.PublicClientId,
+		//				redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
+		//				state = state
+		//			}),
+		//			State = state
+		//		};
+		//		logins.Add(login);
+		//	}
+
+		//	return logins;
+		//}
+
+		/// <summary>
+		/// Create user, but without role
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		//[Authorize(Roles = RoleConstants.AdminOrManager)]
 		[HttpPost("Register")]
 		public async Task<ActionResult<Guid>> Register([FromBody] RegisterBindingModel model)
 		{
 			Debug.WriteLine($"Register user: {model.UserName}, fullName: {model.FullName}, email: {model.Email}");
 			if (!ModelState.IsValid)//Though not explicitly verify in codes, ConfirmPassword is verified apparently by the runtime.
 			{
-				houseKeepingLogger.LogWarning("Bad request. Why?");
+				apiLogger.LogWarning("Bad request. Why?");
 				return new BadRequestObjectResult("ModelState");
 			}
 
-			ApplicationUser user = new() { UserName = model.UserName, Email = model.Email, FullName = model.FullName };
+			ApplicationUser user = new ApplicationUser() { UserName = model.UserName, Email = model.Email, FullName = model.FullName };
 
-			IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+			IdentityResult result = await userManager.CreateAsync(user, model.Password);
 
 			if (!result.Succeeded)
 			{
-				string errors = String.Join(Environment.NewLine, result.Errors);
-				houseKeepingLogger.LogError(errors);
-				return new BadRequestObjectResult("NotGood");
+				string errors = String.Join(Environment.NewLine, result.Errors.Select(d => d.Description));
+				apiLogger.LogError(errors);
+				return new ConflictObjectResult(errors);
 			}
 
-			ApplicationUser u = await UserManager.FindByNameAsync(user.UserName);
-			var id = u.Id;
-			return id;
+			return user.Id;
 		}
 
 		[HttpPost("AddRole")]
-		public async Task<IActionResult> AddRole([FromQuery] string userId, [FromQuery] string roleName)
+		public async Task<IActionResult> AddRole([FromQuery] Guid userId, [RequiredFromQuery] string roleName)
 		{
 			bool toAddAdmin = roleName.Equals(RoleConstants.Admin, StringComparison.CurrentCultureIgnoreCase);
 			bool currentUserIsNotAdmin = !User.IsInRole(RoleConstants.Admin);
@@ -337,15 +440,14 @@ namespace DemoWebApi.Controllers
 			}
 
 			var roleNames = accountFunctions.GetAllRoleNames();
-
 			bool roleNameIsValid = roleNames.Any(d => d == roleName);
 			if (!roleNameIsValid)
 			{
 				return new BadRequestObjectResult("BadRole");
 			}
 
-			ApplicationUser user = await UserManager.FindByIdAsync(userId);
-			IdentityResult result = await UserManager.AddToRoleAsync(user, roleName);
+			ApplicationUser user = await userManager.FindByIdAsync(userId);
+			IdentityResult result = await userManager.AddToRoleAsync(user, roleName);
 			if (result.Succeeded)
 			{
 				apiLogger.LogInformation(String.Format("added role {0}", roleName));
@@ -359,20 +461,20 @@ namespace DemoWebApi.Controllers
 		}
 
 		[HttpDelete("RemoveRole")]
-		public async Task<IActionResult> RemoveRole([FromQuery] string userId, [FromQuery] string roleName)
+		public async Task<IActionResult> RemoveRole([FromQuery] Guid userId, [RequiredFromQuery] string roleName)
 		{
 			if (roleName.Equals(RoleConstants.Admin, StringComparison.CurrentCultureIgnoreCase)
 				&& (!User.IsInRole(RoleConstants.Admin)))
 			{
-				houseKeepingLogger.LogWarning("Only admin could remove role.");
+				apiLogger.LogWarning("Only admin could remove role.");
 				return new BadRequestResult();
 				//throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.BadRequest) { ReasonPhrase = "OnlyAdmin" });
 			}
 
 
-			ApplicationUser user = await UserManager.FindByIdAsync(userId);
+			ApplicationUser user = await userManager.FindByIdAsync(userId);
 
-			IdentityResult result = await UserManager.RemoveFromRoleAsync(user, roleName);
+			IdentityResult result = await userManager.RemoveFromRoleAsync(user, roleName);
 			if (result.Succeeded)
 			{
 				apiLogger.LogInformation(String.Format("removed role {0}", roleName));
@@ -392,137 +494,6 @@ namespace DemoWebApi.Controllers
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="userId"></param>
-		/// <returns></returns>
-		/// <remarks>System.InvalidOperationException: UserId not found. But this function will just return empty array.</remarks>
-		[HttpGet("Roles")]
-		public async Task<string[]> GetRoles([FromQuery] string userId)
-		{
-			try
-			{
-				ApplicationUser user = await UserManager.FindByIdAsync(userId);
-				if (user == null)
-				{
-					throw new ArgumentException("userId does not indicate an existing user.");
-				}
-
-				IList<string> r = await UserManager.GetRolesAsync(user);
-				return r.ToArray();
-
-			}
-			catch (InvalidOperationException ex)
-			{
-				houseKeepingLogger.LogWarning(ex.Message);
-				return Array.Empty<string>();
-			}
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		[AllowAnonymous]
-		[HttpPost("ForgotPassword")]
-		public async Task<IActionResult> ForgotPassword([FromBody] string email)
-		{
-			if (ModelState.IsValid)
-			{
-				ApplicationUser user = await UserManager.FindByEmailAsync(email);
-				if (user == null)// || !(await UserManager.IsEmailConfirmedAsync(user.Id))) the default is to confirm Email, not sure BM would like it
-				{
-					// Don't reveal that the user does not exist or is not confirmed
-					return StatusCode((int)HttpStatusCode.NoContent);
-				}
-
-				// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-				// Send an email with this link
-				string code = await UserManager.GeneratePasswordResetTokenAsync(user);
-				Debug.WriteLine("Reset code is : " + code);
-				//var requestUrl = new Uri(Request.GetDisplayUrl());
-				//var requestHostUri = new Uri(requestUrl.Host);
-				var uiHost = Request.Headers["origin"];
-				var requestHostUri = new Uri(uiHost);
-				string resetQuery = $"resetpassword?userId={user.Id}&code={Uri.EscapeDataString(code)}";
-
-				Uri resetUri = new(requestHostUri, resetQuery);
-				string callbackUrl = resetUri.ToString();
-				Debug.WriteLine("Reset uri is: " + callbackUrl);
-				try
-				{
-					//	string emailAddress = await UserManager.GetEmailAsync(user);
-					//	using var message = new System.Net.Mail.MailMessage(sender.From, emailAddress)
-					//	{
-					//		Subject = "Reset Password for Medilink's Web applications",
-					//		Body = "<p>Please reset your password by clicking the link<a href=\"" + callbackUrl + "\"> here</a>, and you will be prompted to input the Email address associated with your account.</p>" +
-					//"<p>If your Email program or Web browser blocks such link, you may copy and paste the link below to the Web browser's address bar.</p><pre>" +
-					//callbackUrl + "</pre>",
-					//		IsBodyHtml = true
-					//	};
-
-					//	await sender.SendAsync(message);
-				}
-				catch (InvalidOperationException ex)
-				{
-					houseKeepingLogger.LogError(ex.ToString());
-				}
-				catch (System.Net.Mail.SmtpException ex)
-				{
-					houseKeepingLogger.LogError(ex.ToString());
-					throw new AppException($"Not able to send password reset link, because {ex.Message}");
-				}
-
-				return StatusCode((int)HttpStatusCode.NoContent);
-			}
-
-			// If we got this far, something failed, redisplay form
-			return StatusCode((int)HttpStatusCode.NoContent);
-		}
-
-		[AllowAnonymous]
-		[HttpPost("ResetPassword")]
-		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)
-		{
-			if (!ModelState.IsValid)
-			{
-				return StatusCode((int)HttpStatusCode.BadRequest);
-			}
-			ApplicationUser user = await UserManager.FindByEmailAsync(model.Email);
-			if (user == null)
-			{
-				// Don't reveal that the user does not exist
-				return StatusCode((int)HttpStatusCode.NoContent);
-			}
-
-			Debug.WriteLine($"userId: {user.Id} password: {model.Password} code: {model.Code}");
-			IdentityResult result = await UserManager.ResetPasswordAsync(user, model.Code, model.Password);
-			if (result.Succeeded)
-			{
-				houseKeepingLogger.LogInformation($"Successfully reset password for user {user.UserName}");
-				return Ok();
-			}
-			houseKeepingLogger.LogError($"Failed to reset password for user {user.UserName}");
-			return StatusCode((int)HttpStatusCode.Conflict);
-		}
-
-		/// <summary>
-		/// Get array of user name and full name.
-		/// </summary>
-		/// <returns>userName, fullName</returns>
-		[HttpGet("AllUsers")]
-		public Tuple<string, string>[] GetAllUsers()
-		{
-			return accountFunctions.GetAllUsers().Select(d => Tuple.Create(d.Item2, d.Item3)).ToArray();
-		}
-
-		[HttpGet("UserIdByUser")]
-		public Guid GetUserIdByUser([FromQuery] string username)
-		{
-			return accountFunctions.GetUserIdByUser(username);
-		}
-
-		/// <summary>
 		/// Admin or scheduler clean up old user tokens
 		/// </summary>
 		/// <param name="pastDateUtc"></param>
@@ -535,27 +506,89 @@ namespace DemoWebApi.Controllers
 		}
 
 		/// <summary>
-		/// User to remove all user refresh tokens
+		/// User to remove all refresh tokens of user
 		/// </summary>
 		/// <returns></returns>
-		[HttpDelete("RemoveUserRefreshTokens")]
-		public async Task<int> RemoveUserRefreshTokens()
+		[HttpDelete("RemoveRefreshTokensOfUser")]
+		public async Task<int> RemoveRefreshTokensOfUser()
 		{
-			ApplicationUser currentUser = await UserManager.FindByNameAsync(User.Identity.Name);
+			ApplicationUser currentUser = await userManager.FindByNameAsync(User.Identity.Name);
 			var currentUserId = currentUser.Id;
-			return await accountFunctions.RemoveUserTokens(currentUserId, authSettings.TokenProviderName, "RefreshToken");
+			return await accountFunctions.RemoveTokensOfUser(currentUserId, authSettings.TokenProviderName, "RefreshToken");
 		}
 
 		[Authorize(Roles = RoleConstants.Admin)]
 		[HttpDelete("AdminRemoveUserRefreshTokens/{username}")]
-		public async Task<int> AdminRemoveUserRefreshTokens(string username)
+		public async Task<int> AdminRemoverRefreshTokensOfUsers(string username)
 		{
-			ApplicationUser currentUser = await UserManager.FindByNameAsync(username);
+			ApplicationUser currentUser = await userManager.FindByNameAsync(username);
 			var currentUserId = currentUser.Id;
-			return await accountFunctions.RemoveUserTokens(currentUserId, authSettings.TokenProviderName, "RefreshToken");
+			return await accountFunctions.RemoveTokensOfUser(currentUserId, authSettings.TokenProviderName, "RefreshToken");
 		}
 
-		#region Helpers
+		/// <summary>
+		/// Just a demo, but revealing some basic ForgotPassword features:
+		/// 1. If user not found, return NoContent
+		/// 2. Otherwise, send the reset token via Email or other means.
+		/// </summary>
+		/// <returns></returns>
+		[AllowAnonymous]
+		[HttpPost("ForgotPassword")]
+		public async Task<IActionResult> ForgotPassword([FromBody] string email)
+		{
+
+			ApplicationUser user = await userManager.FindByEmailAsync(email);
+			if (user == null)// || !(await UserManager.IsEmailConfirmedAsync(user.Id))) the default is to confirm Email, not sure BM would like it
+			{
+				// Don't reveal that the user does not exist or is not confirmed
+				return StatusCode((int)HttpStatusCode.NoContent);
+			}
+
+			// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+			// Send an email with this link
+			string code = await userManager.GeneratePasswordResetTokenAsync(user);
+			Debug.WriteLine("Reset code is : " + code);
+			var uiHost = Request.Headers["origin"];
+			var requestHostUri = new Uri(uiHost);
+			string resetQuery = $"resetpassword?userId={user.Id}&code={Uri.EscapeDataString(code)}";
+
+			Uri resetUri = new Uri(requestHostUri, resetQuery);
+			string callbackUrl = resetUri.ToString();
+			Debug.WriteLine("Reset uri is: " + callbackUrl);
+			// ...
+
+			throw new NotImplementedException("This is DemoApp, No Email will be sent");
+		}
+
+		[AllowAnonymous]
+		[HttpPost("ResetPassword")]
+		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)
+		{
+			ApplicationUser user = await userManager.FindByEmailAsync(model.Email);
+			if (user == null)
+			{
+				// Don't reveal that the user does not exist
+				return StatusCode((int)HttpStatusCode.NoContent);
+			}
+
+			Debug.WriteLine($"userId: {user.Id} password: {model.Password} code: {model.Code}");
+			IdentityResult result = await userManager.ResetPasswordAsync(user, model.Code, model.Password);
+			if (result.Succeeded)
+			{
+				apiLogger.LogInformation($"Successfully reset password for user {user.UserName}");
+				return Ok();
+			}
+			apiLogger.LogError($"Failed to reset password for user {user.UserName}");
+			return StatusCode((int)HttpStatusCode.Conflict);
+		}
+
+
+		[HttpGet("UserIdByUser")]
+		public Guid GetUserIdByUser([FromQuery] string username)
+		{
+			return accountFunctions.GetUserIdByUser(username);
+		}
+
 
 		/// <summary>
 		/// Add IdentityResult.Errors to ModelState. And ModelState.IsValid will then become false.
@@ -572,7 +605,7 @@ namespace DemoWebApi.Controllers
 				}
 
 				var errorMessage = String.Join(Environment.NewLine, result.Errors.Select(d => $"{d.Code} : {d.Description}"));
-				houseKeepingLogger.LogError(errorMessage);
+				apiLogger.LogError(errorMessage);
 				return errorMessage;
 			}
 
@@ -650,7 +683,5 @@ namespace DemoWebApi.Controllers
 				};
 			}
 		}
-
-		#endregion
 	}
 }

@@ -245,7 +245,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// Typically called by admin or the user (depending on your security policy as vendor) to force the user to login again since all refresh tokens of all user connections are removed.
 		/// </summary>
 		/// <returns>Total removed</returns>
-		public async Task<int> RemoveUserTokens(Guid userId, string loginProvider, string tokenName)
+		public async Task<int> RemoveTokensOfUser(Guid userId, string loginProvider, string tokenName)
 		{
 			using ApplicationDbContext context = new(options);
 			return await context.UserTokens.Where(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name.StartsWith(tokenName)).ExecuteDeleteAsync();

@@ -1078,9 +1078,9 @@ namespace DemoWebApi.Controllers.Client
 		/// <summary>
 		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
 		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> AddRoleAsync(string userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<System.Net.Http.HttpResponseMessage> AddRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/AddRole?userId="+(userId == null ? "" : Uri.EscapeDataString(userId))+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
@@ -1090,9 +1090,9 @@ namespace DemoWebApi.Controllers.Client
 		/// <summary>
 		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
 		/// </summary>
-		public System.Net.Http.HttpResponseMessage AddRole(string userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public System.Net.Http.HttpResponseMessage AddRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/AddRole?userId="+(userId == null ? "" : Uri.EscapeDataString(userId))+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
@@ -1103,7 +1103,7 @@ namespace DemoWebApi.Controllers.Client
 		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
 		/// Authorize: Roles: admin; 
 		/// </summary>
-		public async Task<int> AdminRemoveUserRefreshTokensAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<int> AdminRemoverRefreshTokensOfUsersAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
@@ -1126,7 +1126,7 @@ namespace DemoWebApi.Controllers.Client
 		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
 		/// Authorize: Roles: admin; 
 		/// </summary>
-		public int AdminRemoveUserRefreshTokens(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public int AdminRemoverRefreshTokensOfUsers(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
@@ -1182,6 +1182,9 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Just a demo, but revealing some basic ForgotPassword features:
+		/// 1. If user not found, return NoContent
+		/// 2. Otherwise, send the reset token via Email or other means.
 		/// POST api/Account/ForgotPassword
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> ForgotPasswordAsync(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1200,6 +1203,9 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Just a demo, but revealing some basic ForgotPassword features:
+		/// 1. If user not found, return NoContent
+		/// 2. Otherwise, send the reset token via Email or other means.
 		/// POST api/Account/ForgotPassword
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage ForgotPassword(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1247,106 +1253,6 @@ namespace DemoWebApi.Controllers.Client
 		public string[] GetAllRoleNames(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "api/Account/AllRoleNames";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<string[]>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Get array of user name and full name.
-		/// GET api/Account/AllUsers
-		/// </summary>
-		/// <returns>userName, fullName</returns>
-		public async Task<System.Tuple<string, string>[]> GetAllUsersAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AllUsers";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<System.Tuple<string, string>[]>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Get array of user name and full name.
-		/// GET api/Account/AllUsers
-		/// </summary>
-		/// <returns>userName, fullName</returns>
-		public System.Tuple<string, string>[] GetAllUsers(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AllUsers";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<System.Tuple<string, string>[]>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/Roles?userId={userId}
-		/// </summary>
-		public async Task<string[]> GetRolesAsync(string userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/Roles?userId="+(userId == null ? "" : Uri.EscapeDataString(userId));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<string[]>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/Roles?userId={userId}
-		/// </summary>
-		public string[] GetRoles(string userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/Roles?userId="+(userId == null ? "" : Uri.EscapeDataString(userId));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.SendAsync(httpRequestMessage).Result;
@@ -1504,52 +1410,6 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// GET api/Account/UserIdFullNameDic
-		/// </summary>
-		public async Task<System.Collections.Generic.IDictionary<System.Guid, string>> GetUserIdFullNameDicAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdFullNameDic";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<System.Collections.Generic.IDictionary<System.Guid, string>>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/UserIdFullNameDic
-		/// </summary>
-		public System.Collections.Generic.IDictionary<System.Guid, string> GetUserIdFullNameDic(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdFullNameDic";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<System.Collections.Generic.IDictionary<System.Guid, string>>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
 		/// Mapping between email address and user Id
 		/// GET api/Account/UserIdMapByEmail
 		/// </summary>
@@ -1654,52 +1514,7 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// GET api/Account/UserIdNameDic
-		/// </summary>
-		public async Task<System.Collections.Generic.IDictionary<System.Guid, string>> GetUserIdNameDicAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdNameDic";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<System.Collections.Generic.IDictionary<System.Guid, string>>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/UserIdNameDic
-		/// </summary>
-		public System.Collections.Generic.IDictionary<System.Guid, string> GetUserIdNameDic(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdNameDic";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create(jsonSerializerSettings);
-				return serializer.Deserialize<System.Collections.Generic.IDictionary<System.Guid, string>>(jsonReader);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
+		/// Get user info of current logged user
 		/// GET api/Account/UserInfo
 		/// </summary>
 		public async Task<Fonlow.WebApp.Accounts.Client.UserInfoViewModel> GetUserInfoAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1724,6 +1539,7 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Get user info of current logged user
 		/// GET api/Account/UserInfo
 		/// </summary>
 		public Fonlow.WebApp.Accounts.Client.UserInfoViewModel GetUserInfo(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1748,7 +1564,9 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// : InternalRoles
 		/// GET api/Account/UserInfoById?id={id}
+		/// Authorize: Roles: admin,manager; 
 		/// </summary>
 		public async Task<Fonlow.WebApp.Accounts.Client.UserInfoViewModel> GetUserInfoAsync(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -1772,7 +1590,9 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// : InternalRoles
 		/// GET api/Account/UserInfoById?id={id}
+		/// Authorize: Roles: admin,manager; 
 		/// </summary>
 		public Fonlow.WebApp.Accounts.Client.UserInfoViewModel GetUserInfo(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -1796,8 +1616,6 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// Clear the existing external cookie to ensure a clean login process
-		/// and a little house keeping to remove refresh token
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1810,8 +1628,6 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// Clear the existing external cookie to ensure a clean login process
-		/// and a little house keeping to remove refresh token
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage Logout(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -1824,6 +1640,7 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Create user, but without role
 		/// POST api/Account/Register
 		/// Authorize: Roles: admin,manager; 
 		/// </summary>
@@ -1853,6 +1670,7 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Create user, but without role
 		/// POST api/Account/Register
 		/// Authorize: Roles: admin,manager; 
 		/// </summary>
@@ -1930,64 +1748,12 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		/// User to remove all refresh tokens of user
+		/// DELETE api/Account/RemoveRefreshTokensOfUser
 		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> RemoveRoleAsync(string userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<int> RemoveRefreshTokensOfUserAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveRole?userId="+(userId == null ? "" : Uri.EscapeDataString(userId))+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage RemoveRole(string userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveRole?userId="+(userId == null ? "" : Uri.EscapeDataString(userId))+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// DELETE api/Account/RemoveUser?userId={userId}
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> RemoveUserAsync(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveUser?userId="+userId;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// DELETE api/Account/RemoveUser?userId={userId}
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage RemoveUser(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveUser?userId="+userId;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// User to remove all user refresh tokens
-		/// DELETE api/Account/RemoveUserRefreshTokens
-		/// </summary>
-		public async Task<int> RemoveUserRefreshTokensAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveUserRefreshTokens";
+			var requestUri = "api/Account/RemoveRefreshTokensOfUser";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -2005,12 +1771,12 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
-		/// User to remove all user refresh tokens
-		/// DELETE api/Account/RemoveUserRefreshTokens
+		/// User to remove all refresh tokens of user
+		/// DELETE api/Account/RemoveRefreshTokensOfUser
 		/// </summary>
-		public int RemoveUserRefreshTokens(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public int RemoveRefreshTokensOfUser(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveUserRefreshTokens";
+			var requestUri = "api/Account/RemoveRefreshTokensOfUser";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.SendAsync(httpRequestMessage).Result;
@@ -2025,6 +1791,60 @@ namespace DemoWebApi.Controllers.Client
 			{
 				responseMessage.Dispose();
 			}
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> RemoveRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage RemoveRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// Remove user and also remove from the entities table.
+		/// DELETE api/Account/RemoveUser?userId={userId}
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> RemoveUserAsync(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveUser?userId="+userId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// Remove user and also remove from the entities table.
+		/// DELETE api/Account/RemoveUser?userId={userId}
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage RemoveUser(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveUser?userId="+userId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
 		}
 		
 		/// <summary>
@@ -2100,8 +1920,9 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// : AdminOrManager
 		/// PUT api/Account/SetUserPassword
-		/// Authorize: Roles: admin; 
+		/// Authorize: Roles: admin,manager; 
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> SetUserPasswordAsync(Fonlow.WebApp.Accounts.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -2119,8 +1940,9 @@ namespace DemoWebApi.Controllers.Client
 		}
 		
 		/// <summary>
+		/// : AdminOrManager
 		/// PUT api/Account/SetUserPassword
-		/// Authorize: Roles: admin; 
+		/// Authorize: Roles: admin,manager; 
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage SetUserPassword(Fonlow.WebApp.Accounts.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{

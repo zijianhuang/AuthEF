@@ -76,7 +76,7 @@ builder.Services.AddControllers(configure =>
 {
 	options.SerializerSettings.Converters.Add(new DateOnlyJsonConverter());
 	options.SerializerSettings.Converters.Add(new DateOnlyNullableJsonConverter());
-	options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; //So when controller will ignore null fileds when returing data
+	options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
 });
 
 builder.Services.AddAuthentication(
@@ -135,13 +135,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationIdentityRole>()
 
 
 var app = builder.Build();
-
-//IHostApplicationLifetime lifetime = app.Lifetime;
-//lifetime.ApplicationStopped.Register(() =>
-//{
-//	//clean up
-//});
-
 
 if (app.Environment.IsDevelopment()) //ASPNETCORE_ENVIRONMENT=Development in web.config
 {
