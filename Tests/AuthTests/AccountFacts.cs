@@ -85,7 +85,7 @@ namespace AuthTests
 		//[Fact] // for creating base of stress testing
 		public void _RegisterManyManyUsers()
 		{
-			using var httpClient = GetAdminHttpClient();
+			using var httpClient = CreateAdminHttpClient();
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			for (int i = 0; i < 100000; i++)
 			{
@@ -95,12 +95,12 @@ namespace AuthTests
 
 		string RegisterUser()
 		{
-			using var httpClient = GetAdminHttpClient();
+			using var httpClient = CreateAdminHttpClient();
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			return RegisterUserWithOneConnection(accountApi);
 		}
 
-		HttpClient GetAdminHttpClient(){
+		HttpClient CreateAdminHttpClient(){
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
 			var httpClient = new HttpClient();

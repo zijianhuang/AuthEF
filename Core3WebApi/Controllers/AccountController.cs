@@ -404,7 +404,7 @@ namespace DemoWebApi.Controllers
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		//[Authorize(Roles = RoleConstants.AdminOrManager)]
+		[Authorize(Roles = RoleConstants.AdminOrManager)]
 		[HttpPost("Register")]
 		public async Task<ActionResult<Guid>> Register([FromBody] RegisterBindingModel model)
 		{
