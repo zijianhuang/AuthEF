@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Fonlow.AspNetCore.Identity.Account
 {
 	/// <summary>
-	/// Common account management functions based on ApplicationDbContext
+	/// Common account management functions based on ApplicationDbContext.
 	/// </summary>
 	public class AccountFunctions
 	{
