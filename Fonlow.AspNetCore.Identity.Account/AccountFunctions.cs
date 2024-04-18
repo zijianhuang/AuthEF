@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fonlow.AspNetCore.Identity.Account
 {
+	/// <summary>
+	/// Common account management functions based on ApplicationDbContext
+	/// </summary>
 	public class AccountFunctions
 	{
 		public AccountFunctions(DbContextOptions<ApplicationDbContext> options)
@@ -10,7 +13,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 			this.options = options;
 		}
 
-		readonly DbContextOptions<ApplicationDbContext> options;
+		readonly protected DbContextOptions<ApplicationDbContext> options;
 
 		/// <summary>
 		/// Guid.empty if not found
