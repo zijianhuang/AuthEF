@@ -1,10 +1,14 @@
-import { HttpClient, HttpClientModule, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpErrorResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { async, TestBed } from '@angular/core/testing';
 import { DemoWebApi_DemoData_Client, DemoWebApi_Controllers_Client } from './WebApiCoreNg2ClientAuto';
+import { TokenInterceptor, AuthService } from '../app/_services/tokenInterceptor';
+import { AUTH_STATUSES, AuthFunctions, LoginService } from '../app/_services/tokenInterceptor';
 
 //const apiBaseUri = 'http://fonlow.org/'; // for DemoCoreWeb hosted in server of different timezone.
 const apiBaseUri = 'http://localhost:5000/'; // for DemoCoreWeb
 
+AUTH_STATUSES.username = 'admin';
+const password = 'Pppppp*8';
 
 export function valuesClientFactory(http: HttpClient) {
 	return new DemoWebApi_Controllers_Client.Values(apiBaseUri, http);
@@ -68,21 +72,56 @@ export function errorResponseBodyToString(error: HttpErrorResponse | any,): stri
 
 describe('Heroes API', () => {
 	let service: DemoWebApi_Controllers_Client.Heroes;
-
+	let loginService: LoginService;
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
 			imports: [HttpClientModule],
 			providers: [
+				{
+					provide: HTTP_INTERCEPTORS,
+					useClass: TokenInterceptor,
+					multi: true
+				},
+
+				{
+					provide: 'BACKEND_URLS',
+					useValue: [apiBaseUri]
+				},
+
 				{
 					provide: DemoWebApi_Controllers_Client.Heroes,
 					useFactory: heroesClientFactory,
 					deps: [HttpClient],
 
 				},
+				{
+					provide: 'auth.tokenUrl',
+					useValue: apiBaseUri + 'token'
+				},
+				{
+					provide: 'IAuthService',
+					useFactory: (http: HttpClient) => new AuthService(apiBaseUri, http),
+					deps: [HttpClient],
+				},
+				{
+					provide: LoginService,
+					useClass: LoginService,
+				}
+
 
 			]
 		});
 
+		loginService = TestBed.get(LoginService);
+		loginService.login(AUTH_STATUSES.username!, password).subscribe(
+			data => {
+				AuthFunctions.saveJwtToken(data);
+			},
+			error => {
+				fail(errorResponseToString(error));
+				
+			}
+		)
 		service = TestBed.get(DemoWebApi_Controllers_Client.Heroes);
 	}));
 
