@@ -4525,7 +4525,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// GET api/SuperDemo/ActionStringResult
-		/// Status Codes: 200:OK
+		/// Status Codes: 200:OK : System.String
 		/// </summary>
 		public async Task<string> GetActionStringResultAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -4549,7 +4549,7 @@ namespace DemoWebApi.Controllers.Client
 		
 		/// <summary>
 		/// GET api/SuperDemo/ActionStringResult
-		/// Status Codes: 200:OK
+		/// Status Codes: 200:OK : System.String
 		/// </summary>
 		public string GetActionStringResult(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{

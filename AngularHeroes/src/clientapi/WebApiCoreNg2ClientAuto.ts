@@ -1060,7 +1060,7 @@ export namespace DemoWebApi_Controllers_Client {
 
 		/**
 		 * GET api/SuperDemo/ActionStringResult
-		 * Status Codes: 200:OK
+		 * Status Codes: 200:OK : System.String
 		 */
 		getActionStringResult(headersHandler?: () => HttpHeaders): Observable<string> {
 			return this.http.get(this.baseUri + 'api/SuperDemo/ActionStringResult', { headers: headersHandler ? headersHandler() : undefined, responseType: 'text' });
