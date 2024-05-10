@@ -18,6 +18,7 @@ In addition to testing correctness, this test suite:
 **Remarks:**
 
 * HttpClient is threadsafe supporting concurrent usages.
+* With "AuthTest", 1 or 2 tests may fail from time to time with "Internal Server Error". If you can confirm the server fail because of Sqlite DB image corruption, you may use the one in Core3WebApi\DemoApp_Data to replace those in Core3WebApi\bin\Debug\x.0\DemoApp_Data".
 
 **Hints:**
 

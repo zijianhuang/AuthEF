@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthTests", "Tests\AuthTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.AspNetCore.Identity.Account", "Fonlow.AspNetCore.Identity.Account\Fonlow.AspNetCore.Identity.Account.csproj", "{D3568256-DB19-4550-A885-262C235A008C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthRemoteTests", "Tests\AuthRemoteTests\AuthRemoteTests.csproj", "{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,10 @@ Global
 		{D3568256-DB19-4550-A885-262C235A008C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3568256-DB19-4550-A885-262C235A008C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3568256-DB19-4550-A885-262C235A008C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,6 +132,7 @@ Global
 		{291F469A-A1C7-4381-96B0-DC77C82981B3} = {03B8AB6F-9686-44AF-9AF1-6DCC6E742808}
 		{423C910B-96BB-4855-B3FB-94C060A3B8DA} = {39445712-FE9F-4406-A103-F181E9DC2233}
 		{D3568256-DB19-4550-A885-262C235A008C} = {03B8AB6F-9686-44AF-9AF1-6DCC6E742808}
+		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642} = {39445712-FE9F-4406-A103-F181E9DC2233}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3EFB0EB-BFFA-4C16-B235-B121695229EF}

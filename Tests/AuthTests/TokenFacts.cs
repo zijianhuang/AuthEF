@@ -2,6 +2,7 @@ using DemoWebApi.Controllers.Client;
 using Fonlow.Net.Http;
 using Fonlow.Testing;
 using Fonlow.WebApp.Accounts;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
@@ -11,7 +12,16 @@ namespace AuthTests
 {
 	public class TokenTestsFixture : DefaultHttpClient
 	{
+		public TokenTestsFixture()
+		{
+			IConfiguration config = new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json")
+				.Build();
 
+			ClockSkewMilliseconds = int.Parse(config["ClockSkewSeconds"]) * 1000;
+		}
+
+		public int ClockSkewMilliseconds { get; private set; }
 	}
 
 
@@ -25,11 +35,14 @@ namespace AuthTests
 			baseUri = fixture.BaseUri;
 			httpClient = fixture.HttpClient;
 			this.output = output;
+			this.clockSkewSeconds = fixture.ClockSkewMilliseconds;
 		}
 
 		readonly Uri baseUri;
 
 		readonly HttpClient httpClient;
+
+		readonly int clockSkewSeconds;
 
 
 		[Fact]
@@ -105,7 +118,7 @@ namespace AuthTests
 			TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken);
 			Thread.Sleep(5050); // expiry is 5 seconds in appsetings.json of the Web service.
 			TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken); // should work because of the 2-seconds clock skew.
-			Thread.Sleep(2000);
+			Thread.Sleep(clockSkewSeconds);
 			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 		}
@@ -121,7 +134,7 @@ namespace AuthTests
 			heroesApi.GetAsyncHeroes();
 			Thread.Sleep(5050); // expiry is 5 seconds in appsetings.json of the Web service.
 			heroesApi.GetHeros();
-			Thread.Sleep(2000);
+			Thread.Sleep(clockSkewSeconds);
 
 			heroesApi.GetHeros(); //even the access token expired,the existing HTTP connection still work well, this seems to be a by-design behavior.
 		}
