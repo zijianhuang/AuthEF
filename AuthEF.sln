@@ -47,7 +47,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthTests", "Tests\AuthTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.AspNetCore.Identity.Account", "Fonlow.AspNetCore.Identity.Account\Fonlow.AspNetCore.Identity.Account.csproj", "{D3568256-DB19-4550-A885-262C235A008C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthRemoteTests", "Tests\AuthRemoteTests\AuthRemoteTests.csproj", "{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthRemoteTests", "Tests\AuthRemoteTests\AuthRemoteTests.csproj", "{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetWebApi", "PetWebApi\PetWebApi.csproj", "{0681DD72-68A5-432F-B05B-97404371A07F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetStoreClientApi", "Tests\PetStoreClientApi\PetStoreClientApi.csproj", "{F77720BE-FC42-4F03-95DF-CE2953D46EEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetStoreApiTests", "Tests\PetStoreApiTests\PetStoreApiTests.csproj", "{CE535556-92D3-405E-94AB-2B0B85E1EFF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +123,18 @@ Global
 		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0681DD72-68A5-432F-B05B-97404371A07F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0681DD72-68A5-432F-B05B-97404371A07F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0681DD72-68A5-432F-B05B-97404371A07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0681DD72-68A5-432F-B05B-97404371A07F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F77720BE-FC42-4F03-95DF-CE2953D46EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F77720BE-FC42-4F03-95DF-CE2953D46EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F77720BE-FC42-4F03-95DF-CE2953D46EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F77720BE-FC42-4F03-95DF-CE2953D46EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE535556-92D3-405E-94AB-2B0B85E1EFF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE535556-92D3-405E-94AB-2B0B85E1EFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE535556-92D3-405E-94AB-2B0B85E1EFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE535556-92D3-405E-94AB-2B0B85E1EFF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -133,6 +151,8 @@ Global
 		{423C910B-96BB-4855-B3FB-94C060A3B8DA} = {39445712-FE9F-4406-A103-F181E9DC2233}
 		{D3568256-DB19-4550-A885-262C235A008C} = {03B8AB6F-9686-44AF-9AF1-6DCC6E742808}
 		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642} = {39445712-FE9F-4406-A103-F181E9DC2233}
+		{F77720BE-FC42-4F03-95DF-CE2953D46EEC} = {39445712-FE9F-4406-A103-F181E9DC2233}
+		{CE535556-92D3-405E-94AB-2B0B85E1EFF8} = {39445712-FE9F-4406-A103-F181E9DC2233}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3EFB0EB-BFFA-4C16-B235-B121695229EF}

@@ -152,7 +152,8 @@ namespace AuthTests
 			output.WriteLine($"token ExpiresIn {tokenModel.ExpiresIn}; Expires: {tokenModel.Expires}");
 
 			TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken);
-			Thread.Sleep(7050);
+			Thread.Sleep(5000);
+			Thread.Sleep(clockSkewSeconds);
 			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 

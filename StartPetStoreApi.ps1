@@ -1,11 +1,10 @@
 ﻿#Launch WebApi Website and POST a request for generating client APIs
 cd $PSScriptRoot
-$path = "$PSScriptRoot\Core3WebApi\bin\Debug\net8.0"
+$path = "$PSScriptRoot\PetWebApi\bin\Debug\net8.0"
 $procArgs = @{
     FilePath         = "dotnet.exe"
-    ArgumentList     = "$path\Core3WebApi.dll"
+    ArgumentList     = "$path\PetWebApi.dll"
     WorkingDirectory = $path
     PassThru         = $true
 }
 $process = Start-Process @procArgs
-
