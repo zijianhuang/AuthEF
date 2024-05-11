@@ -1,13 +1,12 @@
+using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using Fonlow.WebApp.Identity;
 
 System.Reflection.Assembly appAssembly = System.Reflection.Assembly.GetExecutingAssembly();
 string dirOfAppAssembly = System.IO.Path.GetDirectoryName(appAssembly.Location);
@@ -55,7 +54,6 @@ builder.Services.AddSingleton(authSettings);
 
 builder.Services.AddControllers(configure =>
 {
-	//configure.Filters.Add(new WebApp.Utilities.ValidateModelAttribute());
 
 }).AddNewtonsoftJson(options =>
 {

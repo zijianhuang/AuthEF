@@ -1,10 +1,9 @@
 ﻿using Fonlow.Net.Http;
+using Fonlow.Testing;
 using My.Pet.Client;
 using System;
 using System.Threading.Tasks;
 using Xunit;
-using Fonlow.Testing;
-using System.Net.Http.Headers;
 
 namespace IntegrationTests
 {

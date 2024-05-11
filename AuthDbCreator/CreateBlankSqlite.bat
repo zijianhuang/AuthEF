@@ -1,4 +1,4 @@
-# Create Sqlite DB for Core3WebApi
+rem Create Sqlite DB for Core3WebApi
 cd %~dp0
 set "connectionString=Data Source=..\Core3WebApi\DemoApp_Data\auth.db"
 
