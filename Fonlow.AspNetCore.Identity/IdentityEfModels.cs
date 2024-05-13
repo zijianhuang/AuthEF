@@ -38,7 +38,6 @@ namespace Fonlow.AspNetCore.Identity.EntityFrameworkCore
 		/// <param name="modelBuilder"></param>
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.UseCollation("utf8_general_ci"); //case insensitive
 			base.OnModelCreating(modelBuilder);
 
 			modelBuilder.Entity<ApplicationIdentityRole>()

@@ -55,6 +55,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetStoreClientApi", "Tests\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetStoreApiTests", "Tests\PetStoreApiTests\PetStoreApiTests.csproj", "{CE535556-92D3-405E-94AB-2B0B85E1EFF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fonlow.EntityFrameworkCore.MsSql", "Fonlow.EntityFrameworkCore.MsSql\Fonlow.EntityFrameworkCore.MsSql.csproj", "{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,10 @@ Global
 		{CE535556-92D3-405E-94AB-2B0B85E1EFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE535556-92D3-405E-94AB-2B0B85E1EFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE535556-92D3-405E-94AB-2B0B85E1EFF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,6 +159,7 @@ Global
 		{ED35CF2D-5DFD-46D0-A5BF-2B912B072642} = {39445712-FE9F-4406-A103-F181E9DC2233}
 		{F77720BE-FC42-4F03-95DF-CE2953D46EEC} = {39445712-FE9F-4406-A103-F181E9DC2233}
 		{CE535556-92D3-405E-94AB-2B0B85E1EFF8} = {39445712-FE9F-4406-A103-F181E9DC2233}
+		{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8} = {03B8AB6F-9686-44AF-9AF1-6DCC6E742808}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F3EFB0EB-BFFA-4C16-B235-B121695229EF}
