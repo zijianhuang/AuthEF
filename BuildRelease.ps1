@@ -1,0 +1,1 @@
+﻿dotnet build AuthEF.sln  --configuration Release --no-incremental
