@@ -10,10 +10,13 @@ using Xunit.Abstractions;
 
 namespace AuthTests
 {
-	public class TokenTestsFixture : DefaultHttpClient
+	public class TokenTestsFixture : BasicHttpClient
 	{
 		public TokenTestsFixture()
 		{
+			var c = TestingSettings.Instance.ServiceCommands[0];
+			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
+
 			IConfiguration config = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json")
 				.Build();
@@ -32,7 +35,7 @@ namespace AuthTests
 
 		public TokenFacts(TokenTestsFixture fixture, ITestOutputHelper output)
 		{
-			baseUri = fixture.BaseUri;
+			baseUri = fixture.HttpClient.BaseAddress;
 			httpClient = fixture.HttpClient;
 			this.output = output;
 			this.clockSkewSeconds = fixture.ClockSkewMilliseconds;

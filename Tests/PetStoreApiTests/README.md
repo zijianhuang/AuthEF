@@ -1,4 +1,4 @@
-This is to test PetStore Web API that requires authentication and authorization however without built-in auth and login features, but simily trush bearer token of agreeed server side secret.
+This is to test PetStore Web API that requires authentication and authorization however without built-in auth and login features, but simily trust the bearer token of agreeed server side secret.
 
 Prerequsites:
 1. Launch "Core3WebApi" via "StartCoreWebApi.ps1" on localhost:5000. And this provide auth service.

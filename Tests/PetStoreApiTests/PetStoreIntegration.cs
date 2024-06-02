@@ -2,12 +2,13 @@
 using Fonlow.Testing;
 using My.Pet.Client;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace IntegrationTests
 {
-	public class PetsFixture : DefaultHttpClientWithUsername
+	public class PetsFixture : AuthEfHttpClientWithUsername
 	{
 		public PetsFixture()
 		{
@@ -54,6 +55,7 @@ namespace IntegrationTests
 		#endregion
 	}
 
+	[Collection(TestConstants.LaunchWebApiAndInit)]
 	public partial class PetsApiIntegration : IClassFixture<PetsFixture>
 	{
 		public PetsApiIntegration(PetsFixture fixture)

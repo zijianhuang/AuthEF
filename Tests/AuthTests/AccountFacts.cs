@@ -17,7 +17,7 @@ namespace AuthTests
 
 		public AccountTests(TokenTestsFixture fixture, ITestOutputHelper output)
 		{
-			baseUri = fixture.BaseUri;
+			baseUri = fixture.HttpClient.BaseAddress;
 			httpClient = fixture.HttpClient;
 			this.output = output;
 		}

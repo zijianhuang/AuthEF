@@ -8,6 +8,7 @@ using Xunit;
 
 namespace IntegrationTests
 {
+	[Collection(TestConstants.LaunchWebApiAndInit)]
 	public partial class PetStoreNegativeFacts : IClassFixture<PetsFixture>
 	{
 		public PetStoreNegativeFacts(PetsFixture fixture)
