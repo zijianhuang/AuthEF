@@ -3,7 +3,7 @@ using System;
 
 namespace IntegrationTests
 {
-	public class HeroesFixture : DefaultHttpClientWithUsername
+	public class HeroesFixture : AuthEfHttpClientWithUsername
 	{
 		public HeroesFixture()
 		{

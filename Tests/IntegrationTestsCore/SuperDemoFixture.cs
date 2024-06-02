@@ -4,7 +4,7 @@ using System;
 
 namespace IntegrationTests
 {
-	public class SuperDemoFixture : DefaultHttpClientWithUsername
+	public class SuperDemoFixture : AuthEfHttpClientWithUsername
 	{
 		public SuperDemoFixture()
 		{

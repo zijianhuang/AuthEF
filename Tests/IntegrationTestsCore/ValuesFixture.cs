@@ -3,10 +3,12 @@ using System;
 
 namespace IntegrationTests
 {
-	public class ValuesFixture : DefaultHttpClient
+	public class ValuesFixture : BasicHttpClient
 	{
 		public ValuesFixture()
 		{
+			var c = TestingSettings.Instance.ServiceCommands[0];
+			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
 			Api = new DemoWebApi.Controllers.Client.Values(HttpClient);
 		}
 

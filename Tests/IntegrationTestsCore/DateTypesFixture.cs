@@ -4,7 +4,7 @@ using System;
 
 namespace IntegrationTests
 {
-	public class DateTypesFixture : DefaultHttpClientWithUsername
+	public class DateTypesFixture : AuthEfHttpClientWithUsername
 	{
 		public DateTypesFixture()
 		{
