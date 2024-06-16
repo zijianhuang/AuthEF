@@ -104,11 +104,15 @@ namespace AuthTests
 			TestAuthorizedNewConnection(newTokenModel.TokenType, newTokenModel.AccessToken);
 		}
 
-		/// <summary>
-		/// Access token should expire after expiry time + clock skew.
-		/// It should not expire just after expiry time if clock skew is not zero.
-		/// </summary>
+        /// <summary>
+        /// Access token should expire after expiry time + clock skew.
+        /// It should not expire just after expiry time if clock skew is not zero.
+        /// </summary>
+#if DEBUG
 		[Fact]
+#else
+        [Fact(Skip = "Available for Debug build with clock skew 5 seconds")]
+#endif
 		public void TestAccessTokenExpiry()
 		{
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
@@ -142,11 +146,15 @@ namespace AuthTests
 			heroesApi.GetHeros(); //even the access token expired,the existing HTTP connection still work well, this seems to be a by-design behavior.
 		}
 
-		/// <summary>
-		/// After expiry, use refresh token to accquire new access token.
-		/// </summary>
+        /// <summary>
+        /// After expiry, use refresh token to accquire new access token.
+        /// </summary>
+#if DEBUG
 		[Fact]
-		public void TestAccessTokenExpiryThenGetNewViaRefreshToken()
+#else
+        [Fact(Skip = "Available for Debug build with clock skew 5 seconds")]
+#endif
+        public void TestAccessTokenExpiryThenGetNewViaRefreshToken()
 		{
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
 			Assert.NotEmpty(tokenText);

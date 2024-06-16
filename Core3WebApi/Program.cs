@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 
 System.Reflection.Assembly appAssembly = System.Reflection.Assembly.GetExecutingAssembly();
 string dirOfAppAssembly = System.IO.Path.GetDirectoryName(appAssembly.Location);
@@ -58,7 +59,7 @@ var options = new WebApplicationOptions
 
 var builder = WebApplication.CreateBuilder(options);
 builder.Configuration.AddConfiguration(config);
-Console.WriteLine($"Start at contentRootPath: {builder.Environment.ContentRootPath}; WebRootPath: {builder.Environment.WebRootPath}");
+Console.WriteLine($"Start at contentRootPath: {builder.Environment.ContentRootPath}; WebRootPath: {builder.Environment.WebRootPath}; Current: {Directory.GetCurrentDirectory()}");
 
 var issuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(authSetupSettings.SymmetricSecurityKeyString));
 builder.Services.AddSingleton(issuerSigningKey);

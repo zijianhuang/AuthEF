@@ -1,14 +1,11 @@
 using DemoWebApi.Controllers.Client;
 using Fonlow.Net.Http;
-using Fonlow.Testing;
 using Fonlow.WebApp.Accounts;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Net.WebSockets;
 using Xunit.Abstractions;
 
-namespace AuthTests
+namespace AuthRemoteTests
 {
 	public class AccountTests : IClassFixture<TokenTestsFixture>
 	{
@@ -16,7 +13,7 @@ namespace AuthTests
 
 		public AccountTests(TokenTestsFixture fixture, ITestOutputHelper output)
 		{
-			baseUri = fixture.BaseUri;
+			baseUri = fixture.HttpClient.BaseAddress;
 			httpClient = fixture.HttpClient;
 			this.output = output;
 		}

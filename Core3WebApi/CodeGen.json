@@ -12,7 +12,7 @@
 	},
 
 	"ClientApiOutputs": {
-		"ClientLibraryProjectFolderName": "..\\..\\..\\..\\CoreWebApi.ClientApi",
+		"ClientLibraryProjectFolderName": "../../../../CoreWebApi.ClientApi",
 		"GenerateBothAsyncAndSync": true,
 		"StringAsString": true,
 		"CamelCase": true,
@@ -24,7 +24,7 @@
 		"Plugins": [
 			{
 				"AssemblyName": "Fonlow.WebApiClientGenCore.NG2",
-				"TargetDir": "..\\..\\..\\..\\AngularHeroes\\src\\clientapi",
+				"TargetDir": "../../../../AngularHeroes/src/clientapi",
 				"TSFile": "WebApiCoreNg2ClientAuto.ts",
 				"AsModule": true,
 				"DataAnnotationsToComments": true,
