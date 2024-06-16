@@ -23,7 +23,7 @@
   </ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="pwsh -Command copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator/$(OutDir) -Filter Fonlow.EntityFrameworkCore*" />
+		<Exec Command="pwsh -Command copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator/$(OutDir) -Filter Fonlow.EntityFrameworkCore.MySql*" />
 	</Target>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
