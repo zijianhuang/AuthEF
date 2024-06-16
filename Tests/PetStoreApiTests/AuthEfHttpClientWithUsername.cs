@@ -17,7 +17,7 @@ namespace Fonlow.Testing
 		/// 
 		/// </summary>
 		/// <param name="handler">Default AcceptAnyCertificateHandler. Injected handler should generally contains ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator </param>
-		public AuthEfHttpClientWithUsername(HttpMessageHandler handler) : base(new Uri(TestingSettings.Instance.ServiceCommands[0].BaseUrl), TestingSettings.Instance.ServiceCommands[0].Username, TestingSettings.Instance.ServiceCommands[0].Password, handler)
+		public AuthEfHttpClientWithUsername(HttpMessageHandler handler) : base(new Uri(TestingSettings.Instance.ServiceCommands[0].BaseUrl), TestingSettings.Instance.ServiceCommands[0].Users[0].Username, TestingSettings.Instance.ServiceCommands[0].Users[0].Password, handler)
 		{
 
 		}

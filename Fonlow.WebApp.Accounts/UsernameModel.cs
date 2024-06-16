@@ -41,12 +41,13 @@ namespace Fonlow.WebApp.Accounts
 		[DataMember(Name = "refresh_token")]
 		public string RefreshToken { get; set; }
 
-		/// <summary>
-		/// Custom
-		/// </summary>
-		[JsonPropertyName("api_key")]
-		[DataMember(Name = "api_key")]
-		public ApiKey ApiKey { get; set; }
+		[JsonPropertyName("scope")]
+		[DataMember(Name = "scope")]
+		public string Scope { get; set; }
+
+		[JsonPropertyName("state")]
+		[DataMember(Name = "state")]
+		public string State {get;set;}
 
 		/// <summary>
 		/// Custom
