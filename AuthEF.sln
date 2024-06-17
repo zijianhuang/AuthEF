@@ -22,17 +22,15 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core3WebApi", "Core3WebApi\Core3WebApi.csproj", "{5C64D0FE-B283-4A4F-B235-49C5F6FD0229}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthDbCreator", "AuthDbCreator\AuthDbCreator.csproj", "{FD9639DD-7BE9-4CA5-8CA2-EF9FF5E5ACC4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8} = {C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}
-		{ED067E5C-399B-4FAD-8FDB-731E92B08147} = {ED067E5C-399B-4FAD-8FDB-731E92B08147}
-		{F60582D7-8AF7-4032-9B27-A8CCE1F8E291} = {F60582D7-8AF7-4032-9B27-A8CCE1F8E291}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.AuthDbCreator", "Fonlow.AuthDbCreator\Fonlow.AuthDbCreator.csproj", "{87BFDA71-1DA5-4743-9E36-C10B7CE2D497}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetWebApi", "PetWebApi\PetWebApi.csproj", "{0681DD72-68A5-432F-B05B-97404371A07F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.EntityFrameworkCore.MsSql", "Fonlow.EntityFrameworkCore.MsSql\Fonlow.EntityFrameworkCore.MsSql.csproj", "{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD9639DD-7BE9-4CA5-8CA2-EF9FF5E5ACC4} = {FD9639DD-7BE9-4CA5-8CA2-EF9FF5E5ACC4}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.WebApp.Accounts", "Fonlow.WebApp.Accounts\Fonlow.WebApp.Accounts.csproj", "{42FA39E6-1A9F-49E7-800D-5ADF8A0EFD9E}"
 EndProject
@@ -41,8 +39,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.EntityFrameworkCore.Abstract", "Fonlow.EntityFrameworkCore.Abstract\Fonlow.EntityFrameworkCore.Abstract.csproj", "{AB03E004-65FB-4DE2-88D4-5B1748F7BB9C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.EntityFrameworkCore.MySql", "Fonlow.EntityFrameworkCore.MySql\Fonlow.EntityFrameworkCore.MySql.csproj", "{ED067E5C-399B-4FAD-8FDB-731E92B08147}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD9639DD-7BE9-4CA5-8CA2-EF9FF5E5ACC4} = {FD9639DD-7BE9-4CA5-8CA2-EF9FF5E5ACC4}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.EntityFrameworkCore.Sqlite", "Fonlow.EntityFrameworkCore.Sqlite\Fonlow.EntityFrameworkCore.Sqlite.csproj", "{F60582D7-8AF7-4032-9B27-A8CCE1F8E291}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FD9639DD-7BE9-4CA5-8CA2-EF9FF5E5ACC4} = {FD9639DD-7BE9-4CA5-8CA2-EF9FF5E5ACC4}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.AspNetCore.Identity", "Fonlow.AspNetCore.Identity\Fonlow.AspNetCore.Identity.csproj", "{291F469A-A1C7-4381-96B0-DC77C82981B3}"
 EndProject
@@ -59,9 +63,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetStoreApiTests", "Tests\PetStoreApiTests\PetStoreApiTests.csproj", "{CE535556-92D3-405E-94AB-2B0B85E1EFF8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0681DD72-68A5-432F-B05B-97404371A07F} = {0681DD72-68A5-432F-B05B-97404371A07F}
+		{5C64D0FE-B283-4A4F-B235-49C5F6FD0229} = {5C64D0FE-B283-4A4F-B235-49C5F6FD0229}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthTests", "Tests\AuthTests\AuthTests.csproj", "{423C910B-96BB-4855-B3FB-94C060A3B8DA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5C64D0FE-B283-4A4F-B235-49C5F6FD0229} = {5C64D0FE-B283-4A4F-B235-49C5F6FD0229}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
