@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Fonlow.DemoApp;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace DemoWebApi.Controllers
@@ -7,6 +9,7 @@ namespace DemoWebApi.Controllers
 	/// https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#3.3.3
 	/// </summary>
 	[Route("api/[controller]")]
+	[Authorize(AuthenticationSchemes = ApiConstants.DefaultAuthenticationScheme)]
 	public class TupleController : ControllerBase
 	{
 		[HttpPost]

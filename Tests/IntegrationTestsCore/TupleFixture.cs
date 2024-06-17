@@ -4,7 +4,7 @@ using System;
 
 namespace IntegrationTests
 {
-	public class TupleFixture : BasicHttpClient
+	public class TupleFixture : AuthEfHttpClientWithUsername
 	{
 		public TupleFixture()
 		{
@@ -15,10 +15,7 @@ namespace IntegrationTests
 
 			jsonSerializerSettings.Converters.Add(new DateOnlyJsonConverter());
 			jsonSerializerSettings.Converters.Add(new DateOnlyNullableJsonConverter());
-
-			var c = TestingSettings.Instance.ServiceCommands[0];
-			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
-			Api = new DemoWebApi.Controllers.Client.Tuple(HttpClient, jsonSerializerSettings);
+			Api = new DemoWebApi.Controllers.Client.Tuple(AuthorizedClient, jsonSerializerSettings);
 		}
 
 		public DemoWebApi.Controllers.Client.Tuple Api { get; private set; }

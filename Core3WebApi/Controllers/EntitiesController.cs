@@ -1,4 +1,6 @@
 ﻿using DemoWebApi.DemoData;
+using Fonlow.DemoApp;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ namespace DemoWebApi.Controllers
 	// [EnableCors(origins: "*", headers:"*", methods:"*")] set globally in WebApiConfig.cs
 	//   [Authorize]
 	[Route("api/[controller]")]
+	[Authorize(AuthenticationSchemes = ApiConstants.DefaultAuthenticationScheme)]
 	public class EntitiesController : ControllerBase
 	{
 		/// <summary>

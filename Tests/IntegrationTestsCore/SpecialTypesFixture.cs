@@ -3,13 +3,11 @@ using System;
 
 namespace IntegrationTests
 {
-	public class SpecialTypesFixture : BasicHttpClient
+	public class SpecialTypesFixture : AuthEfHttpClientWithUsername
 	{
 		public SpecialTypesFixture()
 		{
-			var c = TestingSettings.Instance.ServiceCommands[0];
-			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
-			Api = new DemoCoreWeb.Controllers.Client.SpecialTypes(HttpClient);
+			Api = new DemoCoreWeb.Controllers.Client.SpecialTypes(AuthorizedClient);
 		}
 
 		public DemoCoreWeb.Controllers.Client.SpecialTypes Api { get; private set; }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Fonlow.DemoApp;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +11,7 @@ namespace DemoCoreWeb.Controllers
 {
 	[Produces("application/json")] //.net core difference: .net core 2.0 does not support these.let's see 2.1 upcoming. issue #40
 	[Route("api/SpecialTypes")]
+	[Authorize(AuthenticationSchemes = ApiConstants.DefaultAuthenticationScheme)]
 	public class SpecialTypesController : Controller
 	{
 		/// <summary>

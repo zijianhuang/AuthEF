@@ -15,7 +15,7 @@ namespace IntegrationTests
 	}
 
 	*/
-	public class EntitiesFixture : BasicHttpClient
+	public class EntitiesFixture : AuthEfHttpClientWithUsername
 	{
 		public EntitiesFixture()
 		{
@@ -27,9 +27,7 @@ namespace IntegrationTests
 			jsonSerializerSettings.Converters.Add(new DateOnlyJsonConverter());
 			jsonSerializerSettings.Converters.Add(new DateOnlyNullableJsonConverter());
 
-			var c = TestingSettings.Instance.ServiceCommands[0];
-			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
-			Api = new DemoWebApi.Controllers.Client.Entities(HttpClient, jsonSerializerSettings);
+			Api = new DemoWebApi.Controllers.Client.Entities(AuthorizedClient, jsonSerializerSettings);
 		}
 
 		public DemoWebApi.Controllers.Client.Entities Api { get; private set; }
