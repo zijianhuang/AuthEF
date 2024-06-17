@@ -19,8 +19,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Powershell version
-      run: (get-host).version
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -31,3 +29,5 @@ jobs:
       run: dotnet build --no-restore --configuration Release --no-incremental
     - name: Test
       run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName!~RemoteTests
+    - name: Powershell version
+      run: (get-host).version
