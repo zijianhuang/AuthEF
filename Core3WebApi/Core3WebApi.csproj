@@ -36,7 +36,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="pwsh -Command &quot;&amp; {remove-item $(OutDir)DemoApp_Data/auth.db* -Force}&#xD;&#xA;pwsh -Command &quot;&amp; {new-item -Path $(OutDir) -Name &quot;DemoApp_Data&quot; -ItemType &quot;directory&quot;}&#xD;&#xA;pwsh -Command &quot;&amp; {copy-item -Path DemoApp_Data/auth.db -Destination $(OutDir)DemoApp_Data/ -Force}&quot;" />
+	  <Exec Command="pwsh -Command &quot;&amp; {remove-item $(OutDir)DemoApp_Data/auth.db* -Force}&#xD;&#xA;pwsh -Command &quot;&amp; {New-Item -Path $(OutDir) -Name &quot;DemoApp_Data&quot; -ItemType &quot;directory&quot;}&#xD;&#xA;pwsh -Command &quot;&amp; {copy-item -Path DemoApp_Data/auth.db -Destination $(OutDir)DemoApp_Data/ -Force}&quot;" />
 	</Target>
 
 </Project>
