@@ -57,6 +57,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetStoreClientApi", "Tests\PetStoreClientApi\PetStoreClientApi.csproj", "{F77720BE-FC42-4F03-95DF-CE2953D46EEC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetStoreApiTests", "Tests\PetStoreApiTests\PetStoreApiTests.csproj", "{CE535556-92D3-405E-94AB-2B0B85E1EFF8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0681DD72-68A5-432F-B05B-97404371A07F} = {0681DD72-68A5-432F-B05B-97404371A07F}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthTests", "Tests\AuthTests\AuthTests.csproj", "{423C910B-96BB-4855-B3FB-94C060A3B8DA}"
 EndProject
