@@ -23,7 +23,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="pwsh -Command copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator/$(OutDir) -Filter Fonlow.EntityFrameworkCore.Sqlite*" />
+		<Exec Command="pwsh -Command copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator/$(OutDir) -Filter 'Fonlow.EntityFrameworkCore.Sqlite*'" />
 	</Target>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
