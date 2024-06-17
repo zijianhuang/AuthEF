@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthDbCreator", "AuthDbCrea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.AuthDbCreator", "Fonlow.AuthDbCreator\Fonlow.AuthDbCreator.csproj", "{87BFDA71-1DA5-4743-9E36-C10B7CE2D497}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetWebApi", "PetWebApi\PetWebApi.csproj", "{0681DD72-68A5-432F-B05B-97404371A07F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.EntityFrameworkCore.MsSql", "Fonlow.EntityFrameworkCore.MsSql\Fonlow.EntityFrameworkCore.MsSql.csproj", "{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.WebApp.Accounts", "Fonlow.WebApp.Accounts\Fonlow.WebApp.Accounts.csproj", "{42FA39E6-1A9F-49E7-800D-5ADF8A0EFD9E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{03B8AB6F-9686-44AF-9AF1-6DCC6E742808}"
@@ -40,10 +44,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.AspNetCore.Identity.Account", "Fonlow.AspNetCore.Identity.Account\Fonlow.AspNetCore.Identity.Account.csproj", "{D3568256-DB19-4550-A885-262C235A008C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthRemoteTests", "Tests\AuthRemoteTests\AuthRemoteTests.csproj", "{ED35CF2D-5DFD-46D0-A5BF-2B912B072642}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetWebApi", "PetWebApi\PetWebApi.csproj", "{0681DD72-68A5-432F-B05B-97404371A07F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fonlow.EntityFrameworkCore.MsSql", "Fonlow.EntityFrameworkCore.MsSql\Fonlow.EntityFrameworkCore.MsSql.csproj", "{C3E43BB5-39F4-4BE6-A397-DD872AD13DD8}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "IntegrationTestShared", "Tests\IntegrationTestShared\IntegrationTestShared.shproj", "{60B7393D-9285-4D0A-A368-877ED60C6C11}"
 EndProject
