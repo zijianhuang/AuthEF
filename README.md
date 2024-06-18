@@ -1,3 +1,7 @@
+This repository serve multiple purposes:
+1. Demostrate 
+
+
 ## Decoupling Entity Framework and DB Engines
 
 Provides a few libraries to decouple business modules from concrete SQL database engines:

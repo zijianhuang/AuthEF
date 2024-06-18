@@ -8,7 +8,7 @@
 		<Description>MsSqlDbEngineDbContext: Implementation of IDbEngineDbContext for MS SQL Server</Description>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
-		<PackageProjectUrl>https://github.com/zijianhuang/webapiclientgen</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/zijianhuang/AuthEF</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

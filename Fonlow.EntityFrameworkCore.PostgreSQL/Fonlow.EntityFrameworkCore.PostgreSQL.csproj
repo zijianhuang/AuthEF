@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Version>1.0</Version>
 		<Authors>Zijian Huang</Authors>
-		<Description>SqliteDbEngineDbContext: Implementation of IDbEngineDbContext for Sqlite</Description>
+		<Description>PostgreSQLDbEngineDbContext: Implementation of IDbEngineDbContext for PostgreSQL</Description>
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
 		<PackageProjectUrl>https://github.com/zijianhuang/AuthEF</PackageProjectUrl>
@@ -15,27 +15,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.6" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Abstract\Fonlow.EntityFrameworkCore.Abstract.csproj" />
 	</ItemGroup>
-
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="pwsh -Command &quot;&amp; {copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator\$(OutDir) -Filter Fonlow.EntityFrameworkCore.Sqlite*}&quot;" />
+		<Exec Command="pwsh -Command &quot;&amp; {copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator\$(OutDir) -Filter Fonlow.EntityFrameworkCore.Postgre*}&quot;" />
 	</Target>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-		<CopyDebugSymbolFilesFromPackages>true</CopyDebugSymbolFilesFromPackages>
-		<CopyDocumentationFilesFromPackages>true</CopyDocumentationFilesFromPackages>
-	</PropertyGroup>
-
 	<ItemGroup>
-		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="README.md" />
 	</ItemGroup>
-
 </Project>
