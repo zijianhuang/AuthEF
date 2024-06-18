@@ -31,6 +31,11 @@ namespace Fonlow.EntityFrameworkCore
 				throw;
 			}
 
+			if (assembly == null)
+			{
+				return null;
+			}
+
 			return CreateDbEngineDbContextFromAssembly(assembly);
 		}
 
@@ -96,7 +101,7 @@ namespace Fonlow.EntityFrameworkCore
 		{
 			try
 			{
-				return Assembly.LoadFile(assemblyFilePath);
+				return Assembly.LoadFrom(assemblyFilePath);
 			}
 			catch (Exception ex) when (ex is System.IO.FileLoadException || ex is BadImageFormatException || ex is System.IO.FileNotFoundException || ex is ArgumentException)
 			{

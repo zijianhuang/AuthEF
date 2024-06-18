@@ -21,6 +21,9 @@ namespace AuthDbCreator
 			IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 			var appSettings = config.GetSection("appSettings");
 
+			//AppDomain appDomain = AppDomain.CurrentDomain;
+			//appDomain.AssemblyResolve += AppDomain_AssemblyResolve;
+
 			if (args.Length == 0)//for internal development
 			{
 				Console.WriteLine("Create database with connection string in appsetings.json ...");
@@ -32,7 +35,8 @@ namespace AuthDbCreator
 				}
 
 				var dbEngineDbContext = DbEngineDbContextLoader.CreateDbEngineDbContextFromAssemblyFile(plugins[0] + ".dll");
-				if (dbEngineDbContext == null){
+				if (dbEngineDbContext == null)
+				{
 					Console.Error.WriteLine("No dbEngineDbContext");
 					return 11;
 				}
@@ -61,7 +65,7 @@ namespace AuthDbCreator
 			return 0;
 		}
 
-		//static System.Reflection.Assembly AppDomain_AssemblyResolve(object sender, ResolveEventArgs args) Not needed in .NET Core
+		//private static System.Reflection.Assembly AppDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		//{
 		//	System.Reflection.Assembly assembly;
 		//	try
@@ -76,9 +80,9 @@ namespace AuthDbCreator
 		//	catch (System.IO.FileNotFoundException e)
 		//	{
 		//		Console.WriteLine(e.ToString());
-		//		var dirOfRequestingAssembly = System.IO.Path.GetDirectoryName(args.RequestingAssembly.Location);
-		//		var assemblyShortName = args.Name.Substring(0, args.Name.IndexOf(','));
-		//		var assemblyFullPath = System.IO.Path.Combine(dirOfRequestingAssembly, assemblyShortName + ".dll");//hopefully nobody would use exe for the dependency.
+		//		string dirOfRequestingAssembly = System.IO.Path.GetDirectoryName(args.RequestingAssembly.Location);
+		//		string assemblyShortName = args.Name.Substring(0, args.Name.IndexOf(','));
+		//		string assemblyFullPath = System.IO.Path.Combine(dirOfRequestingAssembly, assemblyShortName + ".dll");//hopefully nobody would use exe for the dependency.
 		//		assembly = System.Reflection.Assembly.LoadFrom(assemblyFullPath);
 		//		return assembly;
 		//	}

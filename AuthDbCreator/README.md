@@ -53,3 +53,6 @@ The program expects such optional settings:
 * This program is basically a shell program of "Fonlow.AuthDbCreator.dll", it should be easy to write a PowerShell script to do the same things and extend.
 * In some real world scenarios, you may want to deploy multiple instances of ASP.NET applications for business clients, you may use either this program or PowerShell scripts calling "Fonlow.AuthDbCreator.dll" in your CD pipeline.
 * In some scenarios you may want to maintain the auth DB during daily operations without GUI, this program (or respective PS scripts) could be easily extended for adding or removing users and resetting password etc.
+
+## Software Engineering
+

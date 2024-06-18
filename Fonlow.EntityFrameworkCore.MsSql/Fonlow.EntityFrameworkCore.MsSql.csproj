@@ -22,10 +22,6 @@
 		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Abstract\Fonlow.EntityFrameworkCore.Abstract.csproj" />
 	</ItemGroup>
 
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="pwsh -Command &quot;&amp; {copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator\$(OutDir) -Filter Fonlow.EntityFrameworkCore.MsSql*}&quot;" />
-	</Target>
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>

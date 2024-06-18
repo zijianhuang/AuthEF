@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AuthDbCreator": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "Fonlow.EntityFrameworkCore.Sqlite \"Data Source=c:/temp/auth.db\""
     }
   }
 }

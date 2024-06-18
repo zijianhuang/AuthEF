@@ -18,13 +18,9 @@
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
 	</ItemGroup>
 
-  <ItemGroup>
-	<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Abstract\Fonlow.EntityFrameworkCore.Abstract.csproj" />
-  </ItemGroup>
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="pwsh -Command &quot;&amp; {copy-item -Path $(OutDir)* -Destination $(SolutionDir)AuthDbCreator\$(OutDir) -Filter Fonlow.EntityFrameworkCore.MySql*}&quot;" />
-	</Target>
+	<ItemGroup>
+		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Abstract\Fonlow.EntityFrameworkCore.Abstract.csproj" />
+	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<IncludeSymbols>true</IncludeSymbols>
