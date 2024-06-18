@@ -65,12 +65,14 @@ namespace AuthDbCreator
 			return 0;
 		}
 
-		//private static System.Reflection.Assembly AppDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+		static readonly Assembly currentAssembly = Assembly.GetExecutingAssembly();
+
+		//private static System.Reflection.Assembly AppDomain_AssemblyResolve(object sender, ResolveEventArgs args) good for inspecting the cascaded loading of assemblies
 		//{
 		//	System.Reflection.Assembly assembly;
 		//	try
 		//	{
-		//		if (args.RequestingAssembly == null)
+		//		if (args.RequestingAssembly == null || args.RequestingAssembly == currentAssembly)
 		//			return null;
 
 		//		assembly = System.Reflection.Assembly.Load(args.Name);
@@ -84,9 +86,18 @@ namespace AuthDbCreator
 		//		string assemblyShortName = args.Name.Substring(0, args.Name.IndexOf(','));
 		//		string assemblyFullPath = System.IO.Path.Combine(dirOfRequestingAssembly, assemblyShortName + ".dll");//hopefully nobody would use exe for the dependency.
 		//		assembly = System.Reflection.Assembly.LoadFrom(assemblyFullPath);
+
+
 		//		return assembly;
 		//	}
+		//	catch (Exception ex)
+		//	{
+		//		var s = ex.ToString();
+		//		Console.Error.WriteLine(s);
+		//		throw;
+		//	}
 		//}
+
 	}
 
 }
