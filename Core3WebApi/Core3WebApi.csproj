@@ -16,9 +16,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.6" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
-		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,7 +24,6 @@
 		<ProjectReference Include="..\Fonlow.AspNetCore.Identity.Account\Fonlow.AspNetCore.Identity.Account.csproj" />
 		<ProjectReference Include="..\Fonlow.AspNetCore.Identity\Fonlow.AspNetCore.Identity.csproj" />
 		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Abstract\Fonlow.EntityFrameworkCore.Abstract.csproj" />
-		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.MySql\Fonlow.EntityFrameworkCore.MySql.csproj" />
 		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Sqlite\Fonlow.EntityFrameworkCore.Sqlite.csproj" />
 		<ProjectReference Include="..\Fonlow.WebApp.Accounts\Fonlow.WebApp.Accounts.csproj" />
 	</ItemGroup>
