@@ -1,8 +1,7 @@
-# Use a published assemblies of Fonlow.EntityFrameworkCore.MyDbEngine.csproj as a plug-in, after running dotnet publish;
-# Or use MyDbEngine related assemblies published of Fonlow.EntityFrameworkCore.MyDbEngine.csproj as a plug-in;
-# There may be other ways, depending how you would test and deploy.
+# For Sqlite, the cascade loading of assemblies is not working well with reflection probably due to some native runtime dll files of Sqlite have to be used.
+# Error: Unhandled exception. System.TypeInitializationException: The type initializer for 'Microsoft.Data.Sqlite.SqliteConnection' threw an exception.
+# And it seems that the .NET runtime can only resolve through AuthDbCreator.deps.json rather than Fonlow.EntityFrameworkCore.Sqlite.deps.json
 cd $PSScriptRoot
 $netVersion = "net8.0"
-#dotnet publish ../Fonlow.EntityFrameworkCore.Sqlite/Fonlow.EntityFrameworkCore.Sqlite.csproj --configuration Release --output bin/Release/$netVersion
 $connectionString = "Data Source=../Core3WebApi/DemoApp_Data/auth.db"
 bin/Release/net8.0/AuthDbCreator.exe Fonlow.EntityFrameworkCore.Sqlite $connectionString
