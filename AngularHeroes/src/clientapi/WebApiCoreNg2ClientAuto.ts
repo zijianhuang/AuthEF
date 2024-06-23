@@ -376,6 +376,10 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 	}
 
+
+	/**
+	 * Authorize: Bearer
+	 */
 	@Injectable()
 	export class Entities {
 		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
@@ -1067,6 +1071,7 @@ export namespace DemoWebApi_Controllers_Client {
 
 	/**
 	 * https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#3.3.3
+	 * Authorize: Bearer
 	 */
 	@Injectable()
 	export class Tuple {
@@ -1681,11 +1686,12 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	export interface TokenResponseModel {
 		access_token: string;
-		api_key?: Fonlow_WebApp_Accounts_Client.ApiKey;
 		connection_id?: string | null;
 		expires: string;
 		expires_in: number;
 		refresh_token?: string | null;
+		scope?: string | null;
+		state?: string | null;
 		token_type: string;
 		username: string;
 	}
@@ -1725,6 +1731,10 @@ export namespace Core3WebApi_Controllers_Client {
 }
 
 export namespace DemoCoreWeb_Controllers_Client {
+
+	/**
+	 * Authorize: Bearer
+	 */
 	@Injectable()
 	export class SpecialTypes {
 		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
