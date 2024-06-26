@@ -21,7 +21,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Fonlow.DateOnlyExtensions" Version="1.3.0" />
-		<PackageReference Include="Fonlow.Testing.ServiceCore" Version="3.6.2" />
+		<PackageReference Include="Fonlow.Testing.Integration" Version="1.0.0-Alpha" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="coverlet.collector" Version="6.0.2">
 		  <PrivateAssets>all</PrivateAssets>
