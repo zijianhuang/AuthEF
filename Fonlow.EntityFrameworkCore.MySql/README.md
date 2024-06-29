@@ -5,3 +5,21 @@ For Dependency Injection, `IDbEngineDbContext` can be used with various design p
 Example codes are provided in Core3WebApi/Program.cs with reflection.
 
 This library is for MySql.
+
+## Docker
+
+References:
+
+* [MariaDb](https://hub.docker.com/_/mariadb)
+
+After pulling the MySql/MariaDb image, use the following to launch:
+
+```
+docker run --name demomysql -p:3306:3306 -e MYSQL_ROOT_PASSWORD=Secured321* -d mysql:latest
+```
+
+or 
+
+```
+docker run --name demomariadb --detach -p:3306:3306 -e MARIADB_ROOT_PASSWORD=Secured321* -d mariadb:latest
+```

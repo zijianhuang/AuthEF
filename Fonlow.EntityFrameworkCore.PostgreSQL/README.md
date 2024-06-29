@@ -5,3 +5,15 @@ For Dependency Injection, `IDbEngineDbContext` can be used with various design p
 Example codes are provided in Core3WebApi/Program.cs with reflection.
 
 This library is for PostgreSQL.
+
+## Docker
+
+References:
+
+* [Postgres](https://hub.docker.com/_/postgres)
+
+After pulling the image, use the following to launch:
+
+```
+docker run --name demopostgres -p:5432:5432 -e POSTGRES_PASSWORD=Secured321* -d postgres
+```

@@ -6,5 +6,5 @@ $netVersion = "net8.0"
 #dotnet publish ../Fonlow.EntityFrameworkCore.PostgreSQL/Fonlow.EntityFrameworkCore.PostgreSQL.csproj --configuration Release --output bin/Release/$netVersion
 copy-item -Path ../Fonlow.EntityFrameworkCore.PostgreSQL/bin/Release/$netVersion/publish/* -Destination bin/Release/$netVersion/ -Filter *Npgsql*
 copy-item -Path ../Fonlow.EntityFrameworkCore.PostgreSQL/bin/Release/$netVersion/publish/* -Destination bin/Release/$netVersion/ -Filter *PostgreSQL*
-$connectionString = "server=localhost;port=5432;username=postgres; password=zzzzzzzz; database=DemoAppAuth_Test; Persist Security Info=True"
+$connectionString = "server=localhost;port=5432;username=postgres; password=Secured321*; database=DemoAppAuth_Test; Persist Security Info=True"
 bin/Release/net8.0/AuthDbCreator.exe Fonlow.EntityFrameworkCore.PostgreSQL $connectionString
