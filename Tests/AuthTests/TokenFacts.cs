@@ -14,7 +14,7 @@ namespace AuthTests
 	{
 		public TokenTestsFixture()
 		{
-			var c = TestingSettings.Instance.ServiceCommands[0];
+			var c = TestingSettings.Instance.ServiceCommands["LaunchIdentityWebApi"];
 			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
 
 			IConfiguration config = new ConfigurationBuilder()

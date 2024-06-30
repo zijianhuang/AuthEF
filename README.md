@@ -1,5 +1,5 @@
-This repository serve multiple purposes:
-1. Demostrate 
+This repository serves multiple purposes:
+1. Demonstrate how to  
 
 
 ## Decoupling Entity Framework and DB Engines

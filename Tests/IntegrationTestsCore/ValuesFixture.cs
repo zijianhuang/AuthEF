@@ -7,7 +7,7 @@ namespace IntegrationTests
 	{
 		public ValuesFixture()
 		{
-			var c = TestingSettings.Instance.ServiceCommands[0];
+			var c = TestingSettings.Instance.ServiceCommands["LaunchWebApi"];
 			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
 			Api = new DemoWebApi.Controllers.Client.Values(HttpClient);
 		}
