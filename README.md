@@ -1,6 +1,9 @@
 This repository serves multiple purposes:
-1. Demonstrate how to  
-
+1. Demonstrate "[Decouple ASP.NET Core Identity, Authentication and Database Engines](https://www.codeproject.com/Articles/5378824/Decouple-ASP-NET-Core-Identity-Authentication-and)"
+2. Demonstrate "[Share Identity Bear Tokens among ASP.NET Core Web APIs](https://www.codeproject.com/Articles/5382165/Share-Identity-Bear-Tokens-among-ASP-NET-Core-Web)" 
+3. Provide some plugin components that decouple business modules from concrete SQL database engines.
+4. Provide some components that decouple ASP.NET Core Identity with concrete database engines.
+5. Demonstrate how to craft integration tests and run on local dev PC as much as possible, and the artifacts could be easily reused in a team CI server like GitHub Actions/Workflow.
 
 ## Decoupling Entity Framework and DB Engines
 
@@ -8,8 +11,10 @@ Provides a few libraries to decouple business modules from concrete SQL database
 1. Fonlow.EntityFrameworkCore.Abstract
 1. Fonlow.EntityFrameworkCore.MySql
 1. Fonlow.EntityFrameworkCore.Sqlite
+1. Fonlow.EntityFrameworkCore.MsSql
+1. Fonlow.EntityFrameworkCore.PostgreSQL
 
-Therefore, through altering a connection string in the app settings, your app can switch to another DB engine during deployment.
+Therefore, through altering a connection string in the app settings, your app can switch to another DB engine during deployment, along with the plugin assembly and its dependencies.
 
 **Hints:**
 

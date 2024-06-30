@@ -39,10 +39,8 @@ jobs:
     - name: Build
       run: ./BuildRelease.ps1
     - name: Setup Auth Db
-      run: ./AuthDbCreator/CreateBlankMySqlOnLinux.ps1
+      run: ./AuthDbCreator/CreateBlankMySql.ps1
     - name: Publish MySql Plugin to WebApi
       run: ./PublishMySqlPluginToWebApi.ps1
     - name: Test
       run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName!~RemoteTests
-    - name: Powershell version
-      run: (get-host).version
