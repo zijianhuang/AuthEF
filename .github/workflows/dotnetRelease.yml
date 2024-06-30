@@ -43,6 +43,6 @@ jobs:
     - name: Publish MySql Plugin to WebApi
       run: ./PublishMySqlPluginToWebApi.ps1
     - name: Test
-      run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName\!~RemoteTests
+      run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName!~RemoteTests
     - name: Powershell version
       run: (get-host).version
