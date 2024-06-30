@@ -37,10 +37,12 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build AuthEF.sln --no-restore --configuration Release --no-incremental
+      run: ./BuildRelease.ps1
     - name: Setup Auth Db
       run: ./AuthDbCreator/CreateBlankMySqlOnLinux.ps1
+    - name: Publish MySql Plugin to WebApi
+      run: ./PublishMySqlPluginToWebApi.ps1
     - name: Test
-      run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName!~RemoteTests
+      run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName\!~RemoteTests
     - name: Powershell version
       run: (get-host).version
