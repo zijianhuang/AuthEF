@@ -7,5 +7,5 @@ $RuntimeId = ([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdenti
 $ExecutableExt = If ($IsWindows) {".exe"} Else {""}
 dotnet publish ../Fonlow.EntityFrameworkCore.MySql/Fonlow.EntityFrameworkCore.MySql.csproj -r $RuntimeId --configuration Release --output bin/Release/$netVersion
 $connectionString = "server=localhost;port=3306;Uid=root; password=Secured321*; database=DemoAppAuth_Test; Persist Security Info=True;Allow User Variables=true"
-$CreatorExe = "AuthDbCreator" + $ExecutableExt;
+$CreatorExe = "AuthDbCreator" + $ExecutableExt
 Invoke-Expression "&./bin/Release/net8.0/$CreatorExe Fonlow.EntityFrameworkCore.MySql '$connectionString'"

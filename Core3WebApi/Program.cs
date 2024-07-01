@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using WebApp.Utilities;
 
 System.Reflection.Assembly appAssembly = System.Reflection.Assembly.GetExecutingAssembly();
 string dirOfAppAssembly = System.IO.Path.GetDirectoryName(appAssembly.Location);
@@ -69,15 +70,15 @@ builder.Services.AddSingleton(authSettings);
 builder.Services.AddControllers(configure =>
 {
 #if DEBUG
-	configure.Conventions.Add(new Fonlow.CodeDom.Web.ApiExplorerVisibilityEnabledConvention());//To make ApiExplorer be visible to WebApiClientGen
+	configure.Conventions.Add(new Fonlow.CodeDom.Web.ApiExplorerVisibilityEnabledConvention());//To make ApiExplorer be visible to WebApiClientGen	
 #endif
-	configure.Filters.Add(new WebApp.Utilities.ValidateModelAttribute());
-
-}).AddNewtonsoftJson(options =>
+	configure.ModelBinderProviders.Insert(0, new OAuth2RequestBinderProvider());
+})
+.AddJsonOptions(// as of .NET 7/8, could not handle JS/CS test cases getInt2D, postInt2D and PostDictionaryOfPeople, around 14 C# test cases fail.
+options =>
 {
-	options.SerializerSettings.Converters.Add(new DateOnlyJsonConverter());
-	options.SerializerSettings.Converters.Add(new DateOnlyNullableJsonConverter());
-	options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+
+
 });
 
 builder.Services.AddAuthentication(

@@ -16,31 +16,28 @@ namespace DemoWebApi.Controllers.Client
 	using System.Net.Http;
 	using Newtonsoft.Json;
 	using Fonlow.Net.Http;
-
-
-	/// <summary>
-	/// Complex hero type
-	/// </summary>
+	
+	
 	public class Hero : object
 	{
-
+		
 		public long Id { get; set; }
-
+		
 		public string Name { get; set; }
 	}
-
+	
 	/// <summary>
 	/// Manage user accounts stored in ASP.NET Core Identity database.
 	/// Authorize: Bearer
 	/// </summary>
 	public partial class Account
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public Account(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Account(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -51,38 +48,38 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> AddRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/AddRole?userId=" + userId + "&roleName=" + (roleName == null ? "" : Uri.EscapeDataString(roleName));
+			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage AddRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/AddRole?userId=" + userId + "&roleName=" + (roleName == null ? "" : Uri.EscapeDataString(roleName));
+			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = client.Send(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
 		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<int> AdminRemoverRefreshTokensOfUsersAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/" + (username == null ? "" : Uri.EscapeDataString(username));
+			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -98,14 +95,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
 		/// Authorize: Roles: admin; 
 		/// </summary>
 		public int AdminRemoverRefreshTokensOfUsers(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/" + (username == null ? "" : Uri.EscapeDataString(username));
+			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -121,7 +118,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// PUT api/Account/ChangePassword
 		/// </summary>
@@ -139,7 +136,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// PUT api/Account/ChangePassword
 		/// </summary>
@@ -157,7 +154,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// Just a demo, but revealing some basic ForgotPassword features:
 		/// 1. If user not found, return NoContent
@@ -178,7 +175,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// Just a demo, but revealing some basic ForgotPassword features:
 		/// 1. If user not found, return NoContent
@@ -199,7 +196,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/AllRoleNames
 		/// </summary>
@@ -223,7 +220,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/AllRoleNames
 		/// </summary>
@@ -247,13 +244,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/idByEmail?email={email}
 		/// </summary>
 		public async Task<System.Guid> GetUserIdByEmailAsync(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/idByEmail?email=" + (email == null ? "" : Uri.EscapeDataString(email));
+			var requestUri = "api/Account/idByEmail?email="+(email == null ? "" : Uri.EscapeDataString(email));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -270,13 +267,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/idByEmail?email={email}
 		/// </summary>
 		public System.Guid GetUserIdByEmail(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/idByEmail?email=" + (email == null ? "" : Uri.EscapeDataString(email));
+			var requestUri = "api/Account/idByEmail?email="+(email == null ? "" : Uri.EscapeDataString(email));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -293,13 +290,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/idByFullName?cn={cn}
 		/// </summary>
 		public async Task<System.Guid> GetUserIdByFullNameAsync(string cn, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/idByFullName?cn=" + (cn == null ? "" : Uri.EscapeDataString(cn));
+			var requestUri = "api/Account/idByFullName?cn="+(cn == null ? "" : Uri.EscapeDataString(cn));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -316,13 +313,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/idByFullName?cn={cn}
 		/// </summary>
 		public System.Guid GetUserIdByFullName(string cn, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/idByFullName?cn=" + (cn == null ? "" : Uri.EscapeDataString(cn));
+			var requestUri = "api/Account/idByFullName?cn="+(cn == null ? "" : Uri.EscapeDataString(cn));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -339,13 +336,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/UserIdByUser?username={username}
 		/// </summary>
 		public async Task<System.Guid> GetUserIdByUserAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/UserIdByUser?username=" + (username == null ? "" : Uri.EscapeDataString(username));
+			var requestUri = "api/Account/UserIdByUser?username="+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -362,13 +359,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Account/UserIdByUser?username={username}
 		/// </summary>
 		public System.Guid GetUserIdByUser(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/UserIdByUser?username=" + (username == null ? "" : Uri.EscapeDataString(username));
+			var requestUri = "api/Account/UserIdByUser?username="+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -385,7 +382,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Mapping between email address and user Id
 		/// GET api/Account/UserIdMapByEmail
@@ -411,7 +408,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Mapping between email address and user Id
 		/// GET api/Account/UserIdMapByEmail
@@ -437,7 +434,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Mapping between full user name and user Id
 		/// GET api/Account/UserIdMapByFullName
@@ -463,7 +460,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Mapping between full user name and user Id
 		/// GET api/Account/UserIdMapByFullName
@@ -489,7 +486,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get user info of current logged user
 		/// GET api/Account/UserInfo
@@ -514,7 +511,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get user info of current logged user
 		/// GET api/Account/UserInfo
@@ -539,7 +536,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// : InternalRoles
 		/// GET api/Account/UserInfoById?id={id}
@@ -547,7 +544,7 @@ namespace DemoWebApi.Controllers.Client
 		/// </summary>
 		public async Task<Fonlow.WebApp.Accounts.Client.UserInfoViewModel> GetUserInfoAsync(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/UserInfoById?id=" + id;
+			var requestUri = "api/Account/UserInfoById?id="+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -565,7 +562,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// : InternalRoles
 		/// GET api/Account/UserInfoById?id={id}
@@ -573,7 +570,7 @@ namespace DemoWebApi.Controllers.Client
 		/// </summary>
 		public Fonlow.WebApp.Accounts.Client.UserInfoViewModel GetUserInfo(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/UserInfoById?id=" + id;
+			var requestUri = "api/Account/UserInfoById?id="+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -591,31 +588,31 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/Logout/" + connectionId;
+			var requestUri = "api/Account/Logout/"+connectionId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage Logout(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/Logout/" + connectionId;
+			var requestUri = "api/Account/Logout/"+connectionId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = client.Send(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// Create user, but without role
 		/// POST api/Account/Register
@@ -645,7 +642,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Create user, but without role
 		/// POST api/Account/Register
@@ -675,7 +672,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Admin or scheduler clean up old user tokens
 		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
@@ -683,7 +680,7 @@ namespace DemoWebApi.Controllers.Client
 		/// </summary>
 		public async Task<int> RemoveOldUserTokensAsync(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveOldUserTokens/" + pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -699,7 +696,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Admin or scheduler clean up old user tokens
 		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
@@ -707,7 +704,7 @@ namespace DemoWebApi.Controllers.Client
 		/// </summary>
 		public int RemoveOldUserTokens(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveOldUserTokens/" + pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -723,7 +720,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// User to remove all refresh tokens of user
 		/// DELETE api/Account/RemoveRefreshTokensOfUser
@@ -746,7 +743,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// User to remove all refresh tokens of user
 		/// DELETE api/Account/RemoveRefreshTokensOfUser
@@ -769,61 +766,61 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> RemoveRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveRole?userId=" + userId + "&roleName=" + (roleName == null ? "" : Uri.EscapeDataString(roleName));
+			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage RemoveRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveRole?userId=" + userId + "&roleName=" + (roleName == null ? "" : Uri.EscapeDataString(roleName));
+			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// Remove user and also remove from the entities table.
 		/// DELETE api/Account/RemoveUser?userId={userId}
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> RemoveUserAsync(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveUser?userId=" + userId;
+			var requestUri = "api/Account/RemoveUser?userId="+userId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// Remove user and also remove from the entities table.
 		/// DELETE api/Account/RemoveUser?userId={userId}
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage RemoveUser(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/RemoveUser?userId=" + userId;
+			var requestUri = "api/Account/RemoveUser?userId="+userId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/Account/ResetPassword
 		/// </summary>
@@ -841,7 +838,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/Account/ResetPassword
 		/// </summary>
@@ -859,7 +856,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// PUT api/Account/SetPassword
 		/// </summary>
@@ -877,7 +874,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// PUT api/Account/SetPassword
 		/// </summary>
@@ -895,7 +892,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// : AdminOrManager
 		/// PUT api/Account/SetUserPassword
@@ -915,7 +912,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// : AdminOrManager
 		/// PUT api/Account/SetUserPassword
@@ -936,19 +933,19 @@ namespace DemoWebApi.Controllers.Client
 			return responseMessage;
 		}
 	}
-
+	
 	/// <summary>
 	/// For testing different commbinations of parameters and returns
 	/// Authorize: Bearer
 	/// </summary>
 	public partial class DateTypes
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public DateTypes(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public DateTypes(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -959,7 +956,7 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/GetDateOnly
 		/// </summary>
@@ -982,7 +979,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/GetDateOnly
 		/// </summary>
@@ -1005,13 +1002,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/NullableDatetime/{hasValue}
 		/// </summary>
 		public async Task<System.Nullable<System.DateTime>> GetDateTimeAsync(bool hasValue, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NullableDatetime/" + hasValue;
+			var requestUri = "api/DateTypes/NullableDatetime/"+hasValue;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -1029,13 +1026,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/NullableDatetime/{hasValue}
 		/// </summary>
 		public System.Nullable<System.DateTime> GetDateTime(bool hasValue, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NullableDatetime/" + hasValue;
+			var requestUri = "api/DateTypes/NullableDatetime/"+hasValue;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -1053,7 +1050,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// return DateTimeOffset.Now
 		/// GET api/DateTypes/GetDateTimeOffset
@@ -1077,7 +1074,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// return DateTimeOffset.Now
 		/// GET api/DateTypes/GetDateTimeOffset
@@ -1101,13 +1098,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/NextHour/{dt}
 		/// </summary>
 		public async Task<System.DateTimeOffset> GetNextHourAsync(System.DateTimeOffset dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextHour/" + dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/DateTypes/NextHour/"+dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -1124,13 +1121,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/NextHour/{dt}
 		/// </summary>
 		public System.DateTimeOffset GetNextHour(System.DateTimeOffset dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextHour/" + dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/DateTypes/NextHour/"+dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -1147,14 +1144,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// If Dt is not defined, add a hour from now
 		/// GET api/DateTypes/NextHourNullable?n={n}&dt={dt}
 		/// </summary>
 		public async Task<System.DateTimeOffset> GetNextHourNullableAsync(int n, System.Nullable<System.DateTimeOffset> dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextHourNullable?n=" + n + (dt.HasValue ? "&dt=" + dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty);
+			var requestUri = "api/DateTypes/NextHourNullable?n="+n+(dt.HasValue?"&dt="+dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -1171,14 +1168,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// If Dt is not defined, add a hour from now
 		/// GET api/DateTypes/NextHourNullable?n={n}&dt={dt}
 		/// </summary>
 		public System.DateTimeOffset GetNextHourNullable(int n, System.Nullable<System.DateTimeOffset> dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextHourNullable?n=" + n + (dt.HasValue ? "&dt=" + dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty);
+			var requestUri = "api/DateTypes/NextHourNullable?n="+n+(dt.HasValue?"&dt="+dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -1195,13 +1192,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/NextYear/{dt}
 		/// </summary>
 		public async Task<System.DateTime> GetNextYearAsync(System.DateTime dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextYear/" + dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/DateTypes/NextYear/"+dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -1218,13 +1215,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/NextYear/{dt}
 		/// </summary>
 		public System.DateTime GetNextYear(System.DateTime dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextYear/" + dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/DateTypes/NextYear/"+dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -1241,14 +1238,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// If Dt is not defined, add a year from now
 		/// GET api/DateTypes/NextYearNullable?n={n}&dt={dt}
 		/// </summary>
 		public async Task<System.DateTime> GetNextYearNullableAsync(int n, System.Nullable<System.DateTime> dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextYearNullable?n=" + n + (dt.HasValue ? "&dt=" + dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty);
+			var requestUri = "api/DateTypes/NextYearNullable?n="+n+(dt.HasValue?"&dt="+dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -1265,14 +1262,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// If Dt is not defined, add a year from now
 		/// GET api/DateTypes/NextYearNullable?n={n}&dt={dt}
 		/// </summary>
 		public System.DateTime GetNextYearNullable(int n, System.Nullable<System.DateTime> dt, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/NextYearNullable?n=" + n + (dt.HasValue ? "&dt=" + dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty);
+			var requestUri = "api/DateTypes/NextYearNullable?n="+n+(dt.HasValue?"&dt="+dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -1289,7 +1286,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Client should send DateTime.Date
 		/// POST api/DateTypes/IsDateTimeDate
@@ -1319,7 +1316,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Client should send DateTime.Date
 		/// POST api/DateTypes/IsDateTimeDate
@@ -1349,7 +1346,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/IsDateTimeOffsetDate
 		/// </summary>
@@ -1378,7 +1375,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/IsDateTimeOffsetDate
 		/// </summary>
@@ -1407,7 +1404,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateOnly
 		/// </summary>
@@ -1435,7 +1432,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateOnly
 		/// </summary>
@@ -1463,7 +1460,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/DateOnlyNullable
 		/// </summary>
@@ -1492,7 +1489,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/DateOnlyNullable
 		/// </summary>
@@ -1521,7 +1518,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateTime
 		/// </summary>
@@ -1549,7 +1546,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateTime
 		/// </summary>
@@ -1577,7 +1574,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// return d;
 		/// POST api/DateTypes/ForDateTimeOffset
@@ -1606,7 +1603,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// return d;
 		/// POST api/DateTypes/ForDateTimeOffset
@@ -1635,7 +1632,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// return d.ToString("O")
 		/// POST api/DateTypes/ForDateTimeOffsetForO
@@ -1657,14 +1654,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// return d.ToString("O")
 		/// POST api/DateTypes/ForDateTimeOffsetForO
@@ -1686,14 +1683,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateTimeOffsetForOffset
 		/// </summary>
@@ -1721,7 +1718,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateTimeOffsetForOffset
 		/// </summary>
@@ -1749,7 +1746,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Returned is DateTimeOffset?
 		/// POST api/DateTypes/DateTimeOffsetNullable
@@ -1779,7 +1776,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Returned is DateTimeOffset?
 		/// POST api/DateTypes/DateTimeOffsetNullable
@@ -1809,7 +1806,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateTimeOffsetStringForOffset
 		/// </summary>
@@ -1837,7 +1834,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/ForDateTimeOffsetStringForOffset
 		/// </summary>
@@ -1865,7 +1862,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/NextYear
 		/// </summary>
@@ -1893,7 +1890,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/DateTypes/NextYear
 		/// </summary>
@@ -1921,13 +1918,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/DateOnlyStringQuery?d={d}
 		/// </summary>
 		public async Task<System.DateOnly> QueryDateOnlyAsStringAsync(string d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/DateOnlyStringQuery?d=" + (d == null ? "" : Uri.EscapeDataString(d));
+			var requestUri = "api/DateTypes/DateOnlyStringQuery?d="+(d == null ? "" : Uri.EscapeDataString(d));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -1944,13 +1941,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/DateOnlyStringQuery?d={d}
 		/// </summary>
 		public System.DateOnly QueryDateOnlyAsString(string d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/DateOnlyStringQuery?d=" + (d == null ? "" : Uri.EscapeDataString(d));
+			var requestUri = "api/DateTypes/DateOnlyStringQuery?d="+(d == null ? "" : Uri.EscapeDataString(d));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -1967,13 +1964,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/RouteDateTimeOffset/{d}
 		/// </summary>
 		public async Task<System.DateTimeOffset> RouteDateTimeOffsetAsync(System.DateTimeOffset d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/RouteDateTimeOffset/" + d.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/DateTypes/RouteDateTimeOffset/"+d.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -1990,13 +1987,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/DateTypes/RouteDateTimeOffset/{d}
 		/// </summary>
 		public System.DateTimeOffset RouteDateTimeOffset(System.DateTimeOffset d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/RouteDateTimeOffset/" + d.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			var requestUri = "api/DateTypes/RouteDateTimeOffset/"+d.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -2013,7 +2010,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Return Tuple DateTime?, DateTime?
 		/// GET api/DateTypes/SearchDateRange?startDate={startDate}&endDate={endDate}
@@ -2022,7 +2019,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <param name="endDate">DateTime? endDate = null</param>
 		public async Task<System.Tuple<System.Nullable<System.DateTime>, System.Nullable<System.DateTime>>> SearchDateRangeAsync(System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/SearchDateRange?" + (startDate.HasValue ? "startDate=" + startDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty) + (endDate.HasValue ? "&endDate=" + endDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty);
+			var requestUri = "api/DateTypes/SearchDateRange?"+(startDate.HasValue?"startDate="+startDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty)+(endDate.HasValue?"&endDate="+endDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -2040,7 +2037,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Return Tuple DateTime?, DateTime?
 		/// GET api/DateTypes/SearchDateRange?startDate={startDate}&endDate={endDate}
@@ -2049,7 +2046,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <param name="endDate">DateTime? endDate = null</param>
 		public System.Tuple<System.Nullable<System.DateTime>, System.Nullable<System.DateTime>> SearchDateRange(System.Nullable<System.DateTime> startDate, System.Nullable<System.DateTime> endDate, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/DateTypes/SearchDateRange?" + (startDate.HasValue ? "startDate=" + startDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty) + (endDate.HasValue ? "&endDate=" + endDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ") : String.Empty);
+			var requestUri = "api/DateTypes/SearchDateRange?"+(startDate.HasValue?"startDate="+startDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty)+(endDate.HasValue?"&endDate="+endDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -2068,18 +2065,18 @@ namespace DemoWebApi.Controllers.Client
 			}
 		}
 	}
-
+	
 	/// <summary>
 	/// Authorize: Bearer
 	/// </summary>
 	public partial class Entities
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public Entities(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Entities(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -2090,7 +2087,7 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createCompany
 		/// </summary>
@@ -2119,7 +2116,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createCompany
 		/// </summary>
@@ -2148,7 +2145,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createPerson
 		/// </summary>
@@ -2175,7 +2172,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createPerson
 		/// </summary>
@@ -2202,7 +2199,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createPerson2
 		/// </summary>
@@ -2231,7 +2228,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createPerson2
 		/// </summary>
@@ -2260,7 +2257,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createPerson3
 		/// </summary>
@@ -2289,7 +2286,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/createPerson3
 		/// </summary>
@@ -2318,13 +2315,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Entities/{id}
 		/// </summary>
 		public async Task DeleteAsync(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/" + id;
+			var requestUri = "api/Entities/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -2337,13 +2334,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Entities/{id}
 		/// </summary>
 		public void Delete(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/" + id;
+			var requestUri = "api/Entities/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -2356,13 +2353,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Entities/Company/{id}
 		/// </summary>
 		public async Task<DemoWebApi.DemoData.Client.Company> GetCompanyAsync(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/Company/" + id;
+			var requestUri = "api/Entities/Company/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -2380,13 +2377,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Entities/Company/{id}
 		/// </summary>
 		public DemoWebApi.DemoData.Client.Company GetCompany(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/Company/" + id;
+			var requestUri = "api/Entities/Company/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -2404,7 +2401,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/Mims
 		/// </summary>
@@ -2433,7 +2430,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/Mims
 		/// </summary>
@@ -2462,7 +2459,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/MyGeneric
 		/// </summary>
@@ -2491,7 +2488,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/MyGeneric
 		/// </summary>
@@ -2520,7 +2517,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/MyGenericPerson
 		/// </summary>
@@ -2549,7 +2546,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/MyGenericPerson
 		/// </summary>
@@ -2578,7 +2575,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get a person
 		/// so to know the person
@@ -2588,7 +2585,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <returns>person in db</returns>
 		public async Task<DemoWebApi.DemoData.Client.Person> GetPersonAsync(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/getPerson/" + id;
+			var requestUri = "api/Entities/getPerson/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -2606,7 +2603,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get a person
 		/// so to know the person
@@ -2616,7 +2613,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <returns>person in db</returns>
 		public DemoWebApi.DemoData.Client.Person GetPerson(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/getPerson/" + id;
+			var requestUri = "api/Entities/getPerson/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -2634,13 +2631,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Entities/getPerson2/{id}
 		/// </summary>
 		public async Task<DemoWebApi.DemoData.Client.Person> GetPerson2Async(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/getPerson2/" + id;
+			var requestUri = "api/Entities/getPerson2/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -2658,13 +2655,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Entities/getPerson2/{id}
 		/// </summary>
 		public DemoWebApi.DemoData.Client.Person GetPerson2(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/getPerson2/" + id;
+			var requestUri = "api/Entities/getPerson2/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -2682,13 +2679,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// PUT api/Entities/link?id={id}&relationship={relationship}
 		/// </summary>
 		public async Task<bool> LinkPersonAsync(long id, string relationship, DemoWebApi.DemoData.Client.Person person, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/link?id=" + id + "&relationship=" + (relationship == null ? "" : Uri.EscapeDataString(relationship));
+			var requestUri = "api/Entities/link?id="+id+"&relationship="+(relationship == null ? "" : Uri.EscapeDataString(relationship));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -2709,13 +2706,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// PUT api/Entities/link?id={id}&relationship={relationship}
 		/// </summary>
 		public bool LinkPerson(long id, string relationship, DemoWebApi.DemoData.Client.Person person, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Entities/link?id=" + id + "&relationship=" + (relationship == null ? "" : Uri.EscapeDataString(relationship));
+			var requestUri = "api/Entities/link?id="+id+"&relationship="+(relationship == null ? "" : Uri.EscapeDataString(relationship));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -2736,7 +2733,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// PATCH api/Entities/patchPerson
 		/// </summary>
@@ -2757,14 +2754,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// PATCH api/Entities/patchPerson
 		/// </summary>
@@ -2785,14 +2782,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/IdMap
 		/// </summary>
@@ -2821,7 +2818,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Entities/IdMap
 		/// </summary>
@@ -2850,7 +2847,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// PUT api/Entities/updatePerson
 		/// </summary>
@@ -2871,14 +2868,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// PUT api/Entities/updatePerson
 		/// </summary>
@@ -2899,7 +2896,7 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
@@ -2907,19 +2904,19 @@ namespace DemoWebApi.Controllers.Client
 			}
 		}
 	}
-
+	
 	/// <summary>
 	/// Heroes operations
 	/// Authorize: Bearer
 	/// </summary>
 	public partial class Heroes
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public Heroes(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Heroes(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -2930,13 +2927,13 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Heroes/{id}
 		/// </summary>
 		public async Task DeleteAsync(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/" + id;
+			var requestUri = "api/Heroes/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -2949,13 +2946,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Heroes/{id}
 		/// </summary>
 		public void Delete(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/" + id;
+			var requestUri = "api/Heroes/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -2968,7 +2965,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Heroes/asyncHeroes
 		/// </summary>
@@ -2991,7 +2988,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Heroes/asyncHeroes
 		/// </summary>
@@ -3014,14 +3011,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get a hero.
 		/// GET api/Heroes/{id}
 		/// </summary>
 		public async Task<DemoWebApi.Controllers.Client.Hero> GetHeroAsync(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/" + id;
+			var requestUri = "api/Heroes/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -3039,14 +3036,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get a hero.
 		/// GET api/Heroes/{id}
 		/// </summary>
 		public DemoWebApi.Controllers.Client.Hero GetHero(long id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/" + id;
+			var requestUri = "api/Heroes/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -3064,7 +3061,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get all heroes.
 		/// GET api/Heroes
@@ -3089,7 +3086,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get all heroes.
 		/// GET api/Heroes
@@ -3114,7 +3111,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Heroes
 		/// </summary>
@@ -3143,7 +3140,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Heroes
 		/// </summary>
@@ -3172,14 +3169,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Add a hero
 		/// POST api/Heroes/q?name={name}
 		/// </summary>
 		public async Task<DemoWebApi.Controllers.Client.Hero> PostWithQueryAsync(string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/q?name=" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Heroes/q?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
 			try
@@ -3196,14 +3193,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Add a hero
 		/// POST api/Heroes/q?name={name}
 		/// </summary>
 		public DemoWebApi.Controllers.Client.Hero PostWithQuery(string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/q?name=" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Heroes/q?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var responseMessage = client.Send(httpRequestMessage);
 			try
@@ -3220,7 +3217,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Update hero.
 		/// PUT api/Heroes
@@ -3250,7 +3247,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Update hero.
 		/// PUT api/Heroes
@@ -3280,7 +3277,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Search heroes
 		/// GET api/Heroes/search/{name}
@@ -3289,7 +3286,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <returns>Hero array matching the keyword.</returns>
 		public async Task<DemoWebApi.Controllers.Client.Hero[]> SearchAsync(string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/search/" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Heroes/search/"+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -3307,7 +3304,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Search heroes
 		/// GET api/Heroes/search/{name}
@@ -3316,7 +3313,7 @@ namespace DemoWebApi.Controllers.Client
 		/// <returns>Hero array matching the keyword.</returns>
 		public DemoWebApi.Controllers.Client.Hero[] Search(string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Heroes/search/" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Heroes/search/"+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -3335,15 +3332,15 @@ namespace DemoWebApi.Controllers.Client
 			}
 		}
 	}
-
+	
 	public partial class Home
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public Home(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Home(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -3354,7 +3351,7 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// GET api/Home
 		/// </summary>
@@ -3367,7 +3364,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/Home
 		/// </summary>
@@ -3381,19 +3378,15 @@ namespace DemoWebApi.Controllers.Client
 			return responseMessage;
 		}
 	}
-
-	/// <summary>
-	/// For testing different commbinations of parameters and returns
-	/// Authorize: Bearer
-	/// </summary>
-	public partial class SuperDemo
+	
+	public partial class Polymorphism
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public SuperDemo(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Polymorphism(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -3404,13 +3397,95 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
+		
+		/// <summary>
+		/// POST api/Polymorphism
+		/// </summary>
+		public async Task<Fonlow.AspNetCore.OAuth2.Client.RequestBase> AuthenticateAsync(Fonlow.AspNetCore.OAuth2.Client.RequestBase model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Polymorphism";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			using var requestWriter = new System.IO.StringWriter();
+			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
+			requestSerializer.Serialize(requestWriter, model);
+			var content = new StringContent(requestWriter.ToString(), System.Text.Encoding.UTF8, "application/json");
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				var serializer = JsonSerializer.Create(jsonSerializerSettings);
+				return serializer.Deserialize<Fonlow.AspNetCore.OAuth2.Client.RequestBase>(jsonReader);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// POST api/Polymorphism
+		/// </summary>
+		public Fonlow.AspNetCore.OAuth2.Client.RequestBase Authenticate(Fonlow.AspNetCore.OAuth2.Client.RequestBase model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Polymorphism";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			using var requestWriter = new System.IO.StringWriter();
+			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
+			requestSerializer.Serialize(requestWriter, model);
+			var content = new StringContent(requestWriter.ToString(), System.Text.Encoding.UTF8, "application/json");
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.Send(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
+				var serializer = JsonSerializer.Create(jsonSerializerSettings);
+				return serializer.Deserialize<Fonlow.AspNetCore.OAuth2.Client.RequestBase>(jsonReader);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+	}
+	
+	/// <summary>
+	/// For testing different commbinations of parameters and returns
+	/// Authorize: Bearer
+	/// </summary>
+	public partial class SuperDemo
+	{
+		
+		private System.Net.Http.HttpClient client;
+		
+		private JsonSerializerSettings jsonSerializerSettings;
+		
+		public SuperDemo(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
+		{
+			if (client == null)
+				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
 
+			if (client.BaseAddress == null)
+				throw new ArgumentNullException(nameof(client), "HttpClient has no BaseAddress");
+
+			this.client = client;
+			this.jsonSerializerSettings = jsonSerializerSettings;
+		}
+		
 		/// <summary>
 		/// GET api/SuperDemo/AthletheSearch?take={take}&skip={skip}&order={order}&sort={sort}&search={search}
 		/// </summary>
 		public async Task<string> AthletheSearchAsync(System.Nullable<int> take, int skip, string order, string sort, string search, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/AthletheSearch?" + (take.HasValue ? "take=" + take.Value.ToString() : String.Empty) + "&skip=" + skip + "&order=" + (order == null ? "" : Uri.EscapeDataString(order)) + "&sort=" + (sort == null ? "" : Uri.EscapeDataString(sort)) + "&search=" + (search == null ? "" : Uri.EscapeDataString(search));
+			var requestUri = "api/SuperDemo/AthletheSearch?"+(take.HasValue?"take="+take.Value.ToString():String.Empty)+"&skip="+skip+"&order="+(order == null ? "" : Uri.EscapeDataString(order))+"&sort="+(sort == null ? "" : Uri.EscapeDataString(sort))+"&search="+(search == null ? "" : Uri.EscapeDataString(search));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -3420,20 +3495,20 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/AthletheSearch?take={take}&skip={skip}&order={order}&sort={sort}&search={search}
 		/// </summary>
 		public string AthletheSearch(System.Nullable<int> take, int skip, string order, string sort, string search, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/AthletheSearch?" + (take.HasValue ? "take=" + take.Value.ToString() : String.Empty) + "&skip=" + skip + "&order=" + (order == null ? "" : Uri.EscapeDataString(order)) + "&sort=" + (sort == null ? "" : Uri.EscapeDataString(sort)) + "&search=" + (search == null ? "" : Uri.EscapeDataString(search));
+			var requestUri = "api/SuperDemo/AthletheSearch?"+(take.HasValue?"take="+take.Value.ToString():String.Empty)+"&skip="+skip+"&order="+(order == null ? "" : Uri.EscapeDataString(order))+"&sort="+(sort == null ? "" : Uri.EscapeDataString(sort))+"&search="+(search == null ? "" : Uri.EscapeDataString(search));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -3443,14 +3518,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ActionResult
 		/// </summary>
@@ -3463,7 +3538,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ActionResult
 		/// </summary>
@@ -3476,7 +3551,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ActionResult2
 		/// </summary>
@@ -3489,7 +3564,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ActionResult2
 		/// </summary>
@@ -3502,7 +3577,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ActionStringResult
 		/// Status Codes: 200:OK : System.String
@@ -3519,14 +3594,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ActionStringResult
 		/// Status Codes: 200:OK : System.String
@@ -3543,14 +3618,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/bool
 		/// </summary>
@@ -3572,7 +3647,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/bool
 		/// </summary>
@@ -3594,7 +3669,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/byte
 		/// </summary>
@@ -3616,7 +3691,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/byte
 		/// </summary>
@@ -3638,7 +3713,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ByteArray
 		/// </summary>
@@ -3662,7 +3737,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ByteArray
 		/// </summary>
@@ -3686,7 +3761,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/char
 		/// </summary>
@@ -3709,7 +3784,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/char
 		/// </summary>
@@ -3732,7 +3807,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/Collection
 		/// </summary>
@@ -3756,7 +3831,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/Collection
 		/// </summary>
@@ -3780,13 +3855,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/enumGet?d={d}
 		/// </summary>
 		public async Task<DemoWebApi.DemoData.Client.Days> GetDayAsync(DemoWebApi.DemoData.Client.Days d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumGet?d=" + d;
+			var requestUri = "api/SuperDemo/enumGet?d="+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -3803,13 +3878,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/enumGet?d={d}
 		/// </summary>
 		public DemoWebApi.DemoData.Client.Days GetDay(DemoWebApi.DemoData.Client.Days d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumGet?d=" + d;
+			var requestUri = "api/SuperDemo/enumGet?d="+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -3826,7 +3901,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/decimal
 		/// </summary>
@@ -3849,7 +3924,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/decimal
 		/// </summary>
@@ -3872,13 +3947,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/decimalArrayQ?a={a}
 		/// </summary>
 		public async Task<decimal[]> GetDecimalArrayQAsync(decimal[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/decimalArrayQ?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/decimalArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -3896,13 +3971,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/decimalArrayQ?a={a}
 		/// </summary>
 		public decimal[] GetDecimalArrayQ(decimal[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/decimalArrayQ?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/decimalArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -3920,13 +3995,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/decimal/{d}
 		/// </summary>
 		public async Task<decimal> GetDecimalSquareAsync(decimal d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/decimal/" + d;
+			var requestUri = "api/SuperDemo/decimal/"+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -3943,13 +4018,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/decimal/{d}
 		/// </summary>
 		public decimal GetDecimalSquare(decimal d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/decimal/" + d;
+			var requestUri = "api/SuperDemo/decimal/"+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -3966,7 +4041,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/DecimalZero
 		/// </summary>
@@ -3989,7 +4064,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/DecimalZero
 		/// </summary>
@@ -4012,7 +4087,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/StringStringDic
 		/// </summary>
@@ -4035,7 +4110,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/StringStringDic
 		/// </summary>
@@ -4058,7 +4133,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/StringPersonDic
 		/// </summary>
@@ -4081,7 +4156,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/StringPersonDic
 		/// </summary>
@@ -4104,7 +4179,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/doulbe
 		/// </summary>
@@ -4126,7 +4201,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/doulbe
 		/// </summary>
@@ -4148,7 +4223,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Result of 0.1d + 0.2d - 0.3d
 		/// GET api/SuperDemo/DoubleZero
@@ -4171,7 +4246,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Result of 0.1d + 0.2d - 0.3d
 		/// GET api/SuperDemo/DoubleZero
@@ -4194,7 +4269,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/EmptyString
 		/// </summary>
@@ -4210,14 +4285,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/EmptyString
 		/// </summary>
@@ -4233,20 +4308,20 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/enumArrayDays?a={a}
 		/// </summary>
 		public async Task<DemoWebApi.DemoData.Client.Days[]> GetEnumArrayDaysAsync(DemoWebApi.DemoData.Client.Days[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumArrayDays?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/enumArrayDays?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -4264,13 +4339,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/enumArrayDays?a={a}
 		/// </summary>
 		public DemoWebApi.DemoData.Client.Days[] GetEnumArrayDays(DemoWebApi.DemoData.Client.Days[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumArrayDays?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/enumArrayDays?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -4288,13 +4363,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/enumArrayQ2?a={a}
 		/// </summary>
 		public async Task<System.DayOfWeek[]> GetEnumArrayQ2Async(System.DayOfWeek[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumArrayQ2?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/enumArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -4312,13 +4387,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/enumArrayQ2?a={a}
 		/// </summary>
 		public System.DayOfWeek[] GetEnumArrayQ2(System.DayOfWeek[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumArrayQ2?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/enumArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -4336,7 +4411,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/FloatZero
 		/// </summary>
@@ -4358,7 +4433,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/FloatZero
 		/// </summary>
@@ -4380,7 +4455,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ICollection
 		/// </summary>
@@ -4403,7 +4478,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ICollection
 		/// </summary>
@@ -4426,7 +4501,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/IList
 		/// </summary>
@@ -4449,7 +4524,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/IList
 		/// </summary>
@@ -4472,7 +4547,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/int2d
 		/// </summary>
@@ -4496,7 +4571,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/int2d
 		/// </summary>
@@ -4520,7 +4595,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/int2dJagged
 		/// </summary>
@@ -4544,7 +4619,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/int2dJagged
 		/// </summary>
@@ -4568,7 +4643,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/intArray
 		/// </summary>
@@ -4592,7 +4667,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/intArray
 		/// </summary>
@@ -4616,13 +4691,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/intArrayQ?a={a}
 		/// </summary>
 		public async Task<int[]> GetIntArrayQAsync(int[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/intArrayQ?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/intArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -4640,13 +4715,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/intArrayQ?a={a}
 		/// </summary>
 		public int[] GetIntArrayQ(int[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/intArrayQ?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/intArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -4664,13 +4739,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/intArrayQ2?a={a}
 		/// </summary>
 		public async Task<long[]> GetIntArrayQ2Async(long[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/intArrayQ2?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/intArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -4688,13 +4763,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/intArrayQ2?a={a}
 		/// </summary>
 		public long[] GetIntArrayQ2(long[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/intArrayQ2?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/intArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -4712,13 +4787,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/int/{d}
 		/// </summary>
 		public async Task<int> GetIntSquareAsync(int d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/int/" + d;
+			var requestUri = "api/SuperDemo/int/"+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -4734,13 +4809,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/int/{d}
 		/// </summary>
 		public int GetIntSquare(int d, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/int/" + d;
+			var requestUri = "api/SuperDemo/int/"+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -4756,7 +4831,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/IReadOnlyCollection
 		/// </summary>
@@ -4779,7 +4854,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/IReadOnlyCollection
 		/// </summary>
@@ -4802,7 +4877,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/IReadOnlyList
 		/// </summary>
@@ -4825,7 +4900,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/IReadOnlyList
 		/// </summary>
@@ -4848,7 +4923,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/KeyValuePair
 		/// </summary>
@@ -4871,7 +4946,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/KeyValuePair
 		/// </summary>
@@ -4894,7 +4969,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/List
 		/// </summary>
@@ -4918,7 +4993,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/List
 		/// </summary>
@@ -4942,13 +5017,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/NullableDecimal/{hasValue}
 		/// </summary>
 		public async Task<System.Nullable<decimal>> GetNullableDecimalAsync(bool hasValue, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/NullableDecimal/" + hasValue;
+			var requestUri = "api/SuperDemo/NullableDecimal/"+hasValue;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -4966,13 +5041,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/NullableDecimal/{hasValue}
 		/// </summary>
 		public System.Nullable<decimal> GetNullableDecimal(bool hasValue, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/NullableDecimal/" + hasValue;
+			var requestUri = "api/SuperDemo/NullableDecimal/"+hasValue;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -4990,7 +5065,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/NullObject
 		/// </summary>
@@ -5014,7 +5089,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/NullObject
 		/// </summary>
@@ -5038,7 +5113,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/NullString
 		/// </summary>
@@ -5054,14 +5129,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/NullString
 		/// </summary>
@@ -5077,20 +5152,20 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/DoubleNullable?location={location}&dd={dd}&de={de}
 		/// </summary>
 		public async Task<System.Tuple<string, System.Nullable<double>, System.Nullable<decimal>>> GetPrimitiveNullableAsync(string location, System.Nullable<double> dd, System.Nullable<decimal> de, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/DoubleNullable?location=" + (location == null ? "" : Uri.EscapeDataString(location)) + (dd.HasValue ? "&dd=" + dd.Value.ToString() : String.Empty) + (de.HasValue ? "&de=" + de.Value.ToString() : String.Empty);
+			var requestUri = "api/SuperDemo/DoubleNullable?location="+(location == null ? "" : Uri.EscapeDataString(location))+(dd.HasValue?"&dd="+dd.Value.ToString():String.Empty)+(de.HasValue?"&de="+de.Value.ToString():String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -5108,13 +5183,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/DoubleNullable?location={location}&dd={dd}&de={de}
 		/// </summary>
 		public System.Tuple<string, System.Nullable<double>, System.Nullable<decimal>> GetPrimitiveNullable(string location, System.Nullable<double> dd, System.Nullable<decimal> de, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/DoubleNullable?location=" + (location == null ? "" : Uri.EscapeDataString(location)) + (dd.HasValue ? "&dd=" + dd.Value.ToString() : String.Empty) + (de.HasValue ? "&de=" + de.Value.ToString() : String.Empty);
+			var requestUri = "api/SuperDemo/DoubleNullable?location="+(location == null ? "" : Uri.EscapeDataString(location))+(dd.HasValue?"&dd="+dd.Value.ToString():String.Empty)+(de.HasValue?"&de="+de.Value.ToString():String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -5132,13 +5207,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/DoubleNullable2?dd={dd}&de={de}
 		/// </summary>
 		public async Task<System.Tuple<System.Nullable<double>, System.Nullable<decimal>>> GetPrimitiveNullable2Async(System.Nullable<double> dd, System.Nullable<decimal> de, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/DoubleNullable2?" + (dd.HasValue ? "dd=" + dd.Value.ToString() : String.Empty) + (de.HasValue ? "&de=" + de.Value.ToString() : String.Empty);
+			var requestUri = "api/SuperDemo/DoubleNullable2?"+(dd.HasValue?"dd="+dd.Value.ToString():String.Empty)+(de.HasValue?"&de="+de.Value.ToString():String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -5156,13 +5231,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/DoubleNullable2?dd={dd}&de={de}
 		/// </summary>
 		public System.Tuple<System.Nullable<double>, System.Nullable<decimal>> GetPrimitiveNullable2(System.Nullable<double> dd, System.Nullable<decimal> de, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/DoubleNullable2?" + (dd.HasValue ? "dd=" + dd.Value.ToString() : String.Empty) + (de.HasValue ? "&de=" + de.Value.ToString() : String.Empty);
+			var requestUri = "api/SuperDemo/DoubleNullable2?"+(dd.HasValue?"dd="+dd.Value.ToString():String.Empty)+(de.HasValue?"&de="+de.Value.ToString():String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -5180,7 +5255,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/sbyte
 		/// </summary>
@@ -5202,7 +5277,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/sbyte
 		/// </summary>
@@ -5224,7 +5299,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/short
 		/// </summary>
@@ -5246,7 +5321,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/short
 		/// </summary>
@@ -5268,13 +5343,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/stringArrayQ?a={a}
 		/// </summary>
 		public async Task<string[]> GetStringArrayQAsync(string[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/stringArrayQ?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/stringArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -5292,13 +5367,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/stringArrayQ?a={a}
 		/// </summary>
 		public string[] GetStringArrayQ(string[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/stringArrayQ?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/stringArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -5316,13 +5391,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/stringArrayQ2?a={a}
 		/// </summary>
 		public async Task<string[]> GetStringArrayQ2Async(string[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/stringArrayQ2?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/stringArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -5340,13 +5415,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/stringArrayQ2?a={a}
 		/// </summary>
 		public string[] GetStringArrayQ2(string[] a, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/stringArrayQ2?" + String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
+			var requestUri = "api/SuperDemo/stringArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -5364,7 +5439,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/TextStream
 		/// </summary>
@@ -5377,7 +5452,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/TextStream
 		/// </summary>
@@ -5390,7 +5465,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/uint
 		/// </summary>
@@ -5412,7 +5487,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/uint
 		/// </summary>
@@ -5434,7 +5509,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ulong
 		/// </summary>
@@ -5456,7 +5531,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ulong
 		/// </summary>
@@ -5478,7 +5553,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ushort
 		/// </summary>
@@ -5500,7 +5575,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SuperDemo/ushort
 		/// </summary>
@@ -5522,7 +5597,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/ActionResult
 		/// </summary>
@@ -5534,7 +5609,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/ActionResult
 		/// </summary>
@@ -5546,7 +5621,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/PostActionResult2
 		/// </summary>
@@ -5564,7 +5639,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/PostActionResult2
 		/// </summary>
@@ -5582,7 +5657,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/PostActionResult3
 		/// </summary>
@@ -5600,7 +5675,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/PostActionResult3
 		/// </summary>
@@ -5618,7 +5693,7 @@ namespace DemoWebApi.Controllers.Client
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/Collection
 		/// </summary>
@@ -5645,7 +5720,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/Collection
 		/// </summary>
@@ -5672,13 +5747,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/enumPost?d={d}
 		/// </summary>
 		public async Task<DemoWebApi.DemoData.Client.Days[]> PostDayAsync(DemoWebApi.DemoData.Client.Days d, DemoWebApi.DemoData.Client.Days d2, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumPost?d=" + d;
+			var requestUri = "api/SuperDemo/enumPost?d="+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -5701,13 +5776,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/enumPost?d={d}
 		/// </summary>
 		public DemoWebApi.DemoData.Client.Days[] PostDay(DemoWebApi.DemoData.Client.Days d, DemoWebApi.DemoData.Client.Days d2, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/enumPost?d=" + d;
+			var requestUri = "api/SuperDemo/enumPost?d="+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -5730,7 +5805,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/StringPersonDic
 		/// </summary>
@@ -5757,7 +5832,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/StringPersonDic
 		/// </summary>
@@ -5784,7 +5859,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/Guids
 		/// </summary>
@@ -5813,7 +5888,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/Guids
 		/// </summary>
@@ -5842,7 +5917,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/ICollection
 		/// </summary>
@@ -5869,7 +5944,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/ICollection
 		/// </summary>
@@ -5896,7 +5971,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/IList
 		/// </summary>
@@ -5923,7 +5998,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/IList
 		/// </summary>
@@ -5950,7 +6025,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/int2d
 		/// </summary>
@@ -5977,7 +6052,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/int2d
 		/// </summary>
@@ -6004,7 +6079,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/int2djagged
 		/// </summary>
@@ -6031,7 +6106,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/int2djagged
 		/// </summary>
@@ -6058,7 +6133,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/intArray
 		/// </summary>
@@ -6085,7 +6160,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/intArray
 		/// </summary>
@@ -6112,7 +6187,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/IReadOnlyCollection
 		/// </summary>
@@ -6139,7 +6214,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/IReadOnlyCollection
 		/// </summary>
@@ -6166,7 +6241,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/IReadOnlyList
 		/// </summary>
@@ -6193,7 +6268,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/IReadOnlyList
 		/// </summary>
@@ -6220,7 +6295,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/List
 		/// </summary>
@@ -6247,7 +6322,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/List
 		/// </summary>
@@ -6274,13 +6349,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/PostEmpty/{i}
 		/// </summary>
 		public async Task<System.Tuple<string, int>> PostWithQueryButEmptyBodyAsync(string s, int i, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/PostEmpty/" + i;
+			var requestUri = "api/SuperDemo/PostEmpty/"+i;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -6303,13 +6378,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SuperDemo/PostEmpty/{i}
 		/// </summary>
 		public System.Tuple<string, int> PostWithQueryButEmptyBody(string s, int i, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/SuperDemo/PostEmpty/" + i;
+			var requestUri = "api/SuperDemo/PostEmpty/"+i;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -6333,19 +6408,19 @@ namespace DemoWebApi.Controllers.Client
 			}
 		}
 	}
-
+	
 	/// <summary>
 	/// https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#3.3.3
 	/// Authorize: Bearer
 	/// </summary>
 	public partial class Tuple
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public Tuple(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Tuple(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -6356,7 +6431,7 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/ChangeName
 		/// </summary>
@@ -6385,7 +6460,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/ChangeName
 		/// </summary>
@@ -6414,7 +6489,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/PeopleCompany4
 		/// </summary>
@@ -6438,7 +6513,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/PeopleCompany4
 		/// </summary>
@@ -6462,7 +6537,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/PeopleCompany5
 		/// </summary>
@@ -6486,7 +6561,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/PeopleCompany5
 		/// </summary>
@@ -6510,7 +6585,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple1
 		/// </summary>
@@ -6534,7 +6609,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple1
 		/// </summary>
@@ -6558,7 +6633,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple2
 		/// </summary>
@@ -6582,7 +6657,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple2
 		/// </summary>
@@ -6606,7 +6681,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple3
 		/// </summary>
@@ -6630,7 +6705,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple3
 		/// </summary>
@@ -6654,7 +6729,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple4
 		/// </summary>
@@ -6678,7 +6753,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple4
 		/// </summary>
@@ -6702,7 +6777,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple5
 		/// </summary>
@@ -6726,7 +6801,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple5
 		/// </summary>
@@ -6750,7 +6825,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple6
 		/// </summary>
@@ -6774,7 +6849,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple6
 		/// </summary>
@@ -6798,7 +6873,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple7
 		/// </summary>
@@ -6822,7 +6897,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple7
 		/// </summary>
@@ -6846,7 +6921,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple8
 		/// </summary>
@@ -6870,7 +6945,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Tuple/Tuple8
 		/// </summary>
@@ -6894,7 +6969,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany2
 		/// </summary>
@@ -6923,7 +6998,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany2
 		/// </summary>
@@ -6952,7 +7027,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany3
 		/// </summary>
@@ -6981,7 +7056,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany3
 		/// </summary>
@@ -7010,7 +7085,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany4
 		/// </summary>
@@ -7039,7 +7114,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany4
 		/// </summary>
@@ -7068,7 +7143,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany5
 		/// </summary>
@@ -7097,7 +7172,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany5
 		/// </summary>
@@ -7126,7 +7201,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany6
 		/// </summary>
@@ -7155,7 +7230,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany6
 		/// </summary>
@@ -7184,7 +7259,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany7
 		/// </summary>
@@ -7213,7 +7288,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany7
 		/// </summary>
@@ -7242,7 +7317,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany8
 		/// </summary>
@@ -7271,7 +7346,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PeopleCompany8
 		/// </summary>
@@ -7300,7 +7375,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PersonCompany1
 		/// </summary>
@@ -7329,7 +7404,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/PersonCompany1
 		/// </summary>
@@ -7358,7 +7433,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple1
 		/// </summary>
@@ -7385,7 +7460,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple1
 		/// </summary>
@@ -7412,7 +7487,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple2
 		/// </summary>
@@ -7433,14 +7508,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple2
 		/// </summary>
@@ -7461,14 +7536,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple3
 		/// </summary>
@@ -7489,14 +7564,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple3
 		/// </summary>
@@ -7517,14 +7592,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple4
 		/// </summary>
@@ -7545,14 +7620,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple4
 		/// </summary>
@@ -7573,14 +7648,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple5
 		/// </summary>
@@ -7601,14 +7676,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple5
 		/// </summary>
@@ -7629,14 +7704,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple6
 		/// </summary>
@@ -7657,14 +7732,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple6
 		/// </summary>
@@ -7685,14 +7760,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple7
 		/// </summary>
@@ -7713,14 +7788,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple7
 		/// </summary>
@@ -7741,14 +7816,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple8
 		/// </summary>
@@ -7769,14 +7844,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Tuple/Tuple8
 		/// </summary>
@@ -7797,7 +7872,7 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
@@ -7805,15 +7880,15 @@ namespace DemoWebApi.Controllers.Client
 			}
 		}
 	}
-
+	
 	public partial class Values
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public Values(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Values(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -7824,13 +7899,13 @@ namespace DemoWebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Values/{id}
 		/// </summary>
 		public async Task DeleteAsync(int id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id;
+			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -7843,13 +7918,13 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// DELETE api/Values/{id}
 		/// </summary>
 		public void Delete(int id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id;
+			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -7862,7 +7937,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get a list of value
 		/// GET api/Values
@@ -7886,7 +7961,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get a list of value
 		/// GET api/Values
@@ -7910,14 +7985,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get by both Id and name
 		/// GET api/Values/{id}?name={name}
 		/// </summary>
 		public async Task<string> GetAsync(int id, string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id + "?name=" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Values/"+id+"?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -7927,21 +8002,21 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Get by both Id and name
 		/// GET api/Values/{id}?name={name}
 		/// </summary>
 		public string Get(int id, string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id + "?name=" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Values/"+id+"?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -7951,20 +8026,20 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Values?name={name}
 		/// </summary>
 		public async Task<string> GetAsync(string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values?name=" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Values?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -7974,20 +8049,20 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Values?name={name}
 		/// </summary>
 		public string Get(string name, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values?name=" + (name == null ? "" : Uri.EscapeDataString(name));
+			var requestUri = "api/Values?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -7997,20 +8072,20 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Values/{id}
 		/// </summary>
 		public async Task<string> GetAsync(int id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id;
+			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -8020,20 +8095,20 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Values/{id}
 		/// </summary>
 		public string Get(int id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id;
+			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.Send(httpRequestMessage);
@@ -8043,14 +8118,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Values/Get2
 		/// </summary>
@@ -8073,7 +8148,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Values/Get2
 		/// </summary>
@@ -8096,7 +8171,7 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Values
 		/// </summary>
@@ -8117,14 +8192,14 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/Values
 		/// </summary>
@@ -8145,21 +8220,21 @@ namespace DemoWebApi.Controllers.Client
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
 				using System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
-				return streamReader.ReadToEnd(); ;
+				return streamReader.ReadToEnd();;
 			}
 			finally
 			{
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Update with valjue
 		/// PUT api/Values/{id}
 		/// </summary>
 		public async Task PutAsync(int id, string value, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id;
+			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -8177,14 +8252,14 @@ namespace DemoWebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Update with valjue
 		/// PUT api/Values/{id}
 		/// </summary>
 		public void Put(int id, string value, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Values/" + id;
+			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
 			using var requestWriter = new System.IO.StringWriter();
 			var requestSerializer = JsonSerializer.Create(jsonSerializerSettings);
@@ -8206,601 +8281,209 @@ namespace DemoWebApi.Controllers.Client
 }
 namespace DemoWebApi.DemoData.Another.Client
 {
-
-
-	/// <summary>
-	/// 2D position
-	/// with X and Y
-	/// for Demo
-	/// </summary>
+	
+	
 	public struct MyPoint
 	{
-
-		/// <summary>
-		/// X
-		/// </summary>
+		
 		public double X;
-
-		/// <summary>
-		/// Y
-		/// </summary>
+		
 		public double Y;
 	}
 }
 namespace DemoWebApi.DemoData.Client
 {
-
-
-	public class Address : object
-	{
-
-		public string City { get; set; }
-
-		[System.ComponentModel.DefaultValueAttribute("Australia")]
-		public string Country { get; set; } = "Australia";
-
-		public System.Guid Id { get; set; }
-
-		public string PostalCode { get; set; }
-
-		public string State { get; set; }
-
-		public string Street1 { get; set; }
-
-		public string Street2 { get; set; }
-
-		[System.ComponentModel.DefaultValueAttribute(AddressType.Residential)]
-		public DemoWebApi.DemoData.Client.AddressType Type { get; set; } = AddressType.Residential;
-
-		/// <summary>
-		/// It is a field
-		/// </summary>
-		public DemoWebApi.DemoData.Another.Client.MyPoint Location { get; set; }
-	}
-
-	public enum AddressType
-	{
-
-		Postal,
-
-		Residential,
-	}
-
-	public class Company : DemoWebApi.DemoData.Client.Entity
-	{
-
-		/// <summary>
-		/// BusinessNumber to be serialized as BusinessNum
-		/// </summary>
-		public string BusinessNumber { get; set; }
-
-		public string BusinessNumberType { get; set; }
-
-		/// <summary>
-		/// Data type: Date
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
-		public System.DateTimeOffset FoundDate { get; set; }
-
-		public System.DateOnly RegisterDate { get; set; }
-
-		public string[][] TextMatrix { get; set; }
-
-		public int[,] Int2D { get; set; }
-
-		public int[][] Int2DJagged { get; set; }
-
-		public string[] Lines { get; set; }
-	}
-
-	public enum Days
-	{
-
-		Sat = 1,
-
-		Sun = 2,
-
-		Mon = 3,
-
-		Tue = 4,
-
-		Wed = 5,
-
-		/// <summary>
-		/// Thursday
-		/// </summary>
-		Thu = 6,
-
-		Fri = 7,
-	}
-
-	/// <summary>
-	/// Base class of company and person
-	/// </summary>
+	
+	
 	public class Entity : object
 	{
-
-		/// <summary>
-		/// Multiple addresses
-		/// </summary>
+		
 		public DemoWebApi.DemoData.Client.Address[] Addresses { get; set; }
-
+		
 		public System.Nullable<System.Guid> Id { get; set; }
-
-		/// <summary>
-		/// Name of the entity.
-		/// Required
-		/// </summary>
+		
 		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
 		public string Name { get; set; }
-
+		
 		public DemoWebApi.DemoData.Client.PhoneNumber[] PhoneNumbers { get; set; }
-
+		
 		public System.Uri Web { get; set; }
 	}
-
-	/// <summary>
-	/// To test different serializations against Guid
-	/// </summary>
-	public class IdMap : object
+	
+	public class Address : object
 	{
-
+		
+		public string City { get; set; }
+		
+		[System.ComponentModel.DefaultValueAttribute("Australia")]
+		public string Country { get; set; } = "Australia";
+		
+		public DemoWebApi.DemoData.Client.Entity Entity { get; set; }
+		
+		public System.Guid EntityId { get; set; }
+		
 		public System.Guid Id { get; set; }
-
-		public System.Guid IdNotEmitDefaultValue { get; set; }
-
-		public System.Nullable<System.Guid> NullableId { get; set; }
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		public string RequiredName { get; set; }
-
-		public string Text { get; set; }
+		
+		public string PostalCode { get; set; }
+		
+		public string State { get; set; }
+		
+		public string Street1 { get; set; }
+		
+		public string Street2 { get; set; }
+		
+		[System.ComponentModel.DefaultValueAttribute(AddressType.Residential)]
+		public DemoWebApi.DemoData.Client.AddressType Type { get; set; } = AddressType.Residential;
+		
+		public DemoWebApi.DemoData.Another.Client.MyPoint Location { get; set; }
 	}
-
-	[Newtonsoft.Json.JsonConverterAttribute(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-	public enum MedicalContraindiationResponseTypeReason
+	
+	public enum AddressType
 	{
-
-		M,
-
-		S,
-
-		P,
-
-		I,
-
-		A,
+		
+		Postal,
+		
+		Residential,
 	}
-
-	[System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-	public enum MedicalContraindiationResponseTypeTypeCode
-	{
-
-		P,
-
-		T,
-	}
-
-	public class MimsPackage : object
-	{
-
-		/// <summary>
-		/// Range: inclusive between 10 and 100
-		/// </summary>
-		[System.ComponentModel.DefaultValueAttribute(20)]
-		[System.ComponentModel.DataAnnotations.Range(typeof(System.Int32), "10", "100", ErrorMessage = "KK has to be between 10 and 100.")]
-		public int KK { get; set; } = 20;
-
-		/// <summary>
-		/// Having an initialized value in the property is not like defining a DefaultValueAttribute. Such intialization happens at run time,
-		/// and there's no reliable way for a codegen to know if the value is declared by the programmer, or is actually the natural default value like 0.
-		/// </summary>
-		public int KK2 { get; set; }
-
-		public System.Nullable<DemoWebApi.DemoData.Client.MyEnumType> OptionalEnum { get; set; }
-
-		public System.Nullable<int> OptionalInt { get; set; }
-
-		public DemoWebApi.DemoData.Client.MimsResult<decimal> Result { get; set; }
-
-		public string Tag { get; set; }
-	}
-
-	public class MimsResult<T> : object
-	{
-
-		public System.DateTime GeneratedAt { get; set; }
-
-		public string Message { get; set; }
-
-		public T Result { get; set; }
-
-		public bool Success { get; set; }
-	}
-
-	public enum MyEnumType
-	{
-
-		First = 1,
-
-		Two = 2,
-	}
-
-	public class MyGeneric<T, K, U> : object
-	{
-
-		public K MyK { get; set; }
-
-		public T MyT { get; set; }
-
-		public U MyU { get; set; }
-
-		public string Status { get; set; }
-	}
-
-	public class MyPeopleDic : object
-	{
-
-		public System.Collections.Generic.IDictionary<string, string> AnotherDic { get; set; }
-
-		public System.Collections.Generic.IDictionary<string, DemoWebApi.DemoData.Client.Person> Dic { get; set; }
-
-		public System.Collections.Generic.IDictionary<int, string> IntDic { get; set; }
-	}
-
-	public class Person : DemoWebApi.DemoData.Client.Entity
-	{
-
-		/// <summary>
-		/// Data type: Date
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
-		public System.Nullable<System.DateTimeOffset> Baptised { get; set; }
-
-		/// <summary>
-		/// Date of Birth.
-		/// This is optional.
-		/// </summary>
-		public System.Nullable<System.DateOnly> DOB { get; set; }
-
-		public string GivenName { get; set; }
-
-		public string Surname { get; set; }
-	}
-
+	
 	public class PhoneNumber : object
 	{
-
+		
+		public System.Guid EntityId { get; set; }
+		
 		public string FullNumber { get; set; }
-
+		
+		public System.Guid Id { get; set; }
+		
 		public DemoWebApi.DemoData.Client.PhoneType PhoneType { get; set; }
 	}
-
-	/// <summary>
-	/// Phone type
-	/// Tel, Mobile, Skyp and Fax
-	/// 
-	/// </summary>
+	
 	public enum PhoneType
 	{
-
-		/// <summary>
-		/// Land line
-		/// </summary>
+		
 		Tel,
-
-		/// <summary>
-		/// Mobile phone
-		/// </summary>
+		
 		Mobile,
-
+		
 		Skype,
-
+		
 		Fax,
 	}
-}
-namespace DemoWebApi.Models.Client
-{
-
-
-	public class AddExternalLoginBindingModel : object
+	
+	public class Person : DemoWebApi.DemoData.Client.Entity
 	{
-
-		/// <summary>
-		/// Required
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string ExternalAccessToken { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+		public System.Nullable<System.DateTimeOffset> Baptised { get; set; }
+		
+		public System.Nullable<System.DateOnly> DOB { get; set; }
+		
+		public string GivenName { get; set; }
+		
+		public string Surname { get; set; }
 	}
-
-	public class ChangePasswordBindingModel : object
+	
+	public class Company : DemoWebApi.DemoData.Client.Entity
 	{
-
-		/// <summary>
-		/// Data type: Password
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string ConfirmPassword { get; set; }
-
-		/// <summary>
-		/// Required
-		/// String length: inclusive between 6 and 100
-		/// Data type: Password
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} must be at least {2} characters long.")]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string NewPassword { get; set; }
-
-		/// <summary>
-		/// Required
-		/// Data type: Password
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string OldPassword { get; set; }
+		
+		public string BusinessNumber { get; set; }
+		
+		public string BusinessNumberType { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+		public System.DateTimeOffset FoundDate { get; set; }
+		
+		public System.DateOnly RegisterDate { get; set; }
+		
+		public string[][] TextMatrix { get; set; }
+		
+		public int[,] Int2D { get; set; }
+		
+		public int[][] Int2DJagged { get; set; }
+		
+		public string[] Lines { get; set; }
 	}
-
-	public class RegisterBindingModel : object
+	
+	public enum Days
 	{
-
-		/// <summary>
-		/// Data type: Password
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string ConfirmPassword { get; set; }
-
-		/// <summary>
-		/// Required
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string Email { get; set; }
-
-		/// <summary>
-		/// Required
-		/// String length: inclusive between 6 and 100
-		/// Data type: Password
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} must be at least {2} characters long.")]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string Password { get; set; }
+		
+		Sat = 1,
+		
+		Sun = 2,
+		
+		Mon = 3,
+		
+		Tue = 4,
+		
+		Wed = 5,
+		
+		Thu = 6,
+		
+		Fri = 7,
 	}
-
-	public class RegisterExternalBindingModel : object
+	
+	public class MimsResult<T> : object
 	{
-
-		/// <summary>
-		/// Required
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string Email { get; set; }
+		
+		public System.DateTime GeneratedAt { get; set; }
+		
+		public string Message { get; set; }
+		
+		public T Result { get; set; }
+		
+		public bool Success { get; set; }
 	}
-
-	public class RemoveLoginBindingModel : object
+	
+	public class MyGeneric<T, K, U> : object
 	{
-
-		/// <summary>
-		/// Required
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string LoginProvider { get; set; }
-
-		/// <summary>
-		/// Required
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string ProviderKey { get; set; }
+		
+		public K MyK { get; set; }
+		
+		public T MyT { get; set; }
+		
+		public U MyU { get; set; }
+		
+		public string Status { get; set; }
 	}
-
-	public class SetPasswordBindingModel : object
+	
+	public class IdMap : object
 	{
-
-		/// <summary>
-		/// Data type: Password
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string ConfirmPassword { get; set; }
-
-		/// <summary>
-		/// Required
-		/// String length: inclusive between 6 and 100
-		/// Data type: Password
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} must be at least {2} characters long.")]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string NewPassword { get; set; }
-	}
-}
-namespace Fonlow.WebApp.Accounts.Client
-{
-
-
-	public class AddExternalLoginBindingModel : object
-	{
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string ExternalAccessToken { get; set; }
-	}
-
-	public class ApiKey : object
-	{
-
-		public System.DateTimeOffset ExpiryTime { get; set; }
-
-		public string Key { get; set; }
-	}
-
-	public class ChangePasswordBindingModel : object
-	{
-
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string ConfirmPassword { get; set; }
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} must be at least {2} characters long.")]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string NewPassword { get; set; }
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string OldPassword { get; set; }
-	}
-
-	public class CustomToken : object
-	{
-
-		public System.Guid ConnectionId { get; set; }
-
-		public System.DateTimeOffset Stamp { get; set; }
-
-		public string TokenValue { get; set; }
-	}
-
-	public class ExternalLoginViewModel : object
-	{
-
-		public string Name { get; set; }
-
-		public string State { get; set; }
-
-		public string Url { get; set; }
-	}
-
-	public class ManageInfoViewModel : object
-	{
-
-		public string Email { get; set; }
-
-		public Fonlow.WebApp.Accounts.Client.ExternalLoginViewModel[] ExternalLoginProviders { get; set; }
-
-		public string LocalLoginProvider { get; set; }
-
-		public Fonlow.WebApp.Accounts.Client.UserLoginInfoViewModel[] Logins { get; set; }
-	}
-
-	public class RegisterBindingModel : object
-	{
-
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string ConfirmPassword { get; set; }
-
-		public string Email { get; set; }
-
-		public string FullName { get; set; }
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} must be at least {2} characters long.")]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string Password { get; set; }
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string UserName { get; set; }
-	}
-
-	public class RegisterExternalBindingModel : object
-	{
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string Email { get; set; }
-	}
-
-	public class RemoveLoginBindingModel : object
-	{
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string LoginProvider { get; set; }
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		public string ProviderKey { get; set; }
-	}
-
-	public class ResetPasswordViewModel : object
-	{
-
-		public string Code { get; set; }
-
-		public string ConfirmPassword { get; set; }
-
-		public string Email { get; set; }
-
-		public string Password { get; set; }
-	}
-
-	public class SetPasswordBindingModel : object
-	{
-
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string ConfirmPassword { get; set; }
-
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength = 6, ErrorMessage = "The {0} must be at least {2} characters long.")]
-		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
-		public string NewPassword { get; set; }
-	}
-
-	public class SetUserPasswordBindingModel : Fonlow.WebApp.Accounts.Client.SetPasswordBindingModel
-	{
-
-		public string UserId { get; set; }
-	}
-
-	public class TokenResponseModel : object
-	{
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		public string AccessToken { get; set; }
-
-		public System.Guid ConnectionId { get; set; }
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		public string Expires { get; set; }
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		public int ExpiresIn { get; set; }
-
-		public string RefreshToken { get; set; }
-
-		public string Scope { get; set; }
-
-		public string State { get; set; }
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		public string TokenType { get; set; }
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		public string Username { get; set; }
-	}
-
-	public class UserInfoViewModel : object
-	{
-
-		public System.DateTime CreatedUtc { get; set; }
-
-		public string Email { get; set; }
-
-		public string FullName { get; set; }
-
-		public bool HasRegistered { get; set; }
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		
 		public System.Guid Id { get; set; }
-
-		public string LoginProvider { get; set; }
-
-		public string[] Roles { get; set; }
-
-		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
-		public string UserName { get; set; }
+		
+		public System.Guid IdNotEmitDefaultValue { get; set; }
+		
+		public System.Nullable<System.Guid> NullableId { get; set; }
+		
+		public string RequiredName { get; set; }
+		
+		public string Text { get; set; }
 	}
-
-	public class UserLoginInfoViewModel : object
+	
+	public class MimsPackage : object
 	{
-
-		public string LoginProvider { get; set; }
-
-		public string ProviderKey { get; set; }
+		
+		[System.ComponentModel.DefaultValueAttribute(20)]
+		[System.ComponentModel.DataAnnotations.Range(typeof(System.Int32), "10", "100", ErrorMessage="KK has to be between 10 and 100.")]
+		public int KK { get; set; } = 20;
+		
+		public int KK2 { get; set; }
+		
+		public System.Nullable<DemoWebApi.DemoData.Client.MyEnumType> OptionalEnum { get; set; }
+		
+		public System.Nullable<int> OptionalInt { get; set; }
+		
+		public DemoWebApi.DemoData.Client.MimsResult<decimal> Result { get; set; }
+		
+		public string Tag { get; set; }
+	}
+	
+	public enum MyEnumType
+	{
+		
+		First = 1,
+		
+		Two = 2,
 	}
 }
 namespace Core3WebApi.Controllers.Client
@@ -8812,16 +8495,16 @@ namespace Core3WebApi.Controllers.Client
 	using System.Net.Http;
 	using Newtonsoft.Json;
 	using Fonlow.Net.Http;
-
-
+	
+	
 	public partial class Statistics
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public Statistics(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public Statistics(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -8832,7 +8515,7 @@ namespace Core3WebApi.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// GET api/Statistics/distribution
 		/// </summary>
@@ -8856,7 +8539,7 @@ namespace Core3WebApi.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/Statistics/distribution
 		/// </summary>
@@ -8891,19 +8574,19 @@ namespace DemoCoreWeb.Controllers.Client
 	using System.Net.Http;
 	using Newtonsoft.Json;
 	using Fonlow.Net.Http;
-
-
+	
+	
 	/// <summary>
 	/// Authorize: Bearer
 	/// </summary>
 	public partial class SpecialTypes
 	{
-
+		
 		private System.Net.Http.HttpClient client;
-
+		
 		private JsonSerializerSettings jsonSerializerSettings;
-
-		public SpecialTypes(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings = null)
+		
+		public SpecialTypes(System.Net.Http.HttpClient client, JsonSerializerSettings jsonSerializerSettings=null)
 		{
 			if (client == null)
 				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
@@ -8914,7 +8597,7 @@ namespace DemoCoreWeb.Controllers.Client
 			this.client = client;
 			this.jsonSerializerSettings = jsonSerializerSettings;
 		}
-
+		
 		/// <summary>
 		/// Anonymous Dynamic of C#
 		/// GET api/SpecialTypes/AnonymousDynamic
@@ -8940,7 +8623,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// Anonymous Dynamic of C#
 		/// GET api/SpecialTypes/AnonymousDynamic
@@ -8966,7 +8649,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SpecialTypes/AnonymousDynamic2
 		/// </summary>
@@ -8990,7 +8673,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SpecialTypes/AnonymousDynamic2
 		/// </summary>
@@ -9014,7 +8697,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SpecialTypes/AnonymousObject
 		/// </summary>
@@ -9038,7 +8721,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SpecialTypes/AnonymousObject
 		/// </summary>
@@ -9062,7 +8745,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SpecialTypes/AnonymousObject2
 		/// </summary>
@@ -9086,7 +8769,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// GET api/SpecialTypes/AnonymousObject2
 		/// </summary>
@@ -9110,7 +8793,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SpecialTypes/AnonymousObject
 		/// </summary>
@@ -9139,7 +8822,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SpecialTypes/AnonymousObject
 		/// </summary>
@@ -9168,7 +8851,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SpecialTypes/AnonymousObject2
 		/// </summary>
@@ -9197,7 +8880,7 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
-
+		
 		/// <summary>
 		/// POST api/SpecialTypes/AnonymousObject2
 		/// </summary>
@@ -9226,6 +8909,106 @@ namespace DemoCoreWeb.Controllers.Client
 				responseMessage.Dispose();
 			}
 		}
+	}
+}
+namespace Fonlow.AspNetCore.OAuth2.Client
+{
+	
+	
+	public class RequestBase : object
+	{
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		public string GrantType { get; set; }
+	}
+}
+namespace Fonlow.WebApp.Accounts.Client
+{
+	
+	
+	public class UserInfoViewModel : object
+	{
+		
+		public System.DateTime CreatedUtc { get; set; }
+		
+		public string Email { get; set; }
+		
+		public string FullName { get; set; }
+		
+		public bool HasRegistered { get; set; }
+		
+		public System.Guid Id { get; set; }
+		
+		public string LoginProvider { get; set; }
+		
+		public string[] Roles { get; set; }
+		
+		public string UserName { get; set; }
+	}
+	
+	public class ChangePasswordBindingModel : object
+	{
+		
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
+		public string ConfirmPassword { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength=6, ErrorMessage="The {0} must be at least {2} characters long.")]
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
+		public string NewPassword { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
+		public string OldPassword { get; set; }
+	}
+	
+	public class RegisterBindingModel : object
+	{
+		
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
+		public string ConfirmPassword { get; set; }
+		
+		public string Email { get; set; }
+		
+		public string FullName { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength=6, ErrorMessage="The {0} must be at least {2} characters long.")]
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
+		public string Password { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		public string UserName { get; set; }
+	}
+	
+	public class ResetPasswordViewModel : object
+	{
+		
+		public string Code { get; set; }
+		
+		public string ConfirmPassword { get; set; }
+		
+		public string Email { get; set; }
+		
+		public string Password { get; set; }
+	}
+	
+	public class SetPasswordBindingModel : object
+	{
+		
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
+		public string ConfirmPassword { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength=6, ErrorMessage="The {0} must be at least {2} characters long.")]
+		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
+		public string NewPassword { get; set; }
+	}
+	
+	public class SetUserPasswordBindingModel : Fonlow.WebApp.Accounts.Client.SetPasswordBindingModel
+	{
+		
+		public string UserId { get; set; }
 	}
 }
 

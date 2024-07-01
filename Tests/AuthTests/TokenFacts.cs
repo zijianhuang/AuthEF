@@ -49,6 +49,16 @@ namespace AuthTests
 
 
 		[Fact]
+		public void TestAccessTokenOnce()
+		{
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
+			Assert.NotEmpty(tokenText);
+
+			var toeknModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
+			Assert.NotNull(toeknModel.AccessToken);
+		}
+
+		[Fact]
 		public void Test100SiginWithNewHttpClient()
 		{
 			for (int i = 0; i < 100; i++)

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
 
 namespace DemoWebApi.Models
 {
     // Models used as parameters to AccountController actions.
 
-    [JsonObject]
+
     public class AddExternalLoginBindingModel
     {
         [Required]
@@ -14,16 +13,14 @@ namespace DemoWebApi.Models
         public string ExternalAccessToken { get; set; }
     }
 
-    [JsonObject]
+
     public class ChangePasswordBindingModel
     {
-        [JsonProperty(PropertyName ="OldPwd")]
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Current password")]
         public string OldPassword { get; set; }
 
-        [JsonProperty(Required = Required.Always)]
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
@@ -36,7 +33,7 @@ namespace DemoWebApi.Models
         public string ConfirmPassword { get; set; }
     }
 
-    [JsonObject]
+
     public class RegisterBindingModel
     {
         [Required]
@@ -55,7 +52,7 @@ namespace DemoWebApi.Models
         public string ConfirmPassword { get; set; }
     }
 
-    [JsonObject]
+
     public class RegisterExternalBindingModel
     {
         [Required]
@@ -63,7 +60,7 @@ namespace DemoWebApi.Models
         public string Email { get; set; }
     }
 
-    [JsonObject]
+
     public class RemoveLoginBindingModel
     {
         [Required]
@@ -75,7 +72,7 @@ namespace DemoWebApi.Models
         public string ProviderKey { get; set; }
     }
 
-    [JsonObject]
+
     public class SetPasswordBindingModel
     {
         [Required]

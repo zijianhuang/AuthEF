@@ -2,13 +2,8 @@
 	"ApiSelections": {
 		"ExcludedControllerNames": [
 		],
-
-		"DataModelAssemblyNames": [
-			"DemoWebApi.DemoDataCore",
-			"Fonlow.WebApp.Accounts",
-			"Core3WebApi"
-		],
-		"CherryPickingMethods": 3
+		"DataModelAssemblyNames": [ "DemoWebApi.DemoDataCore", "Fonlow.WebApp.Accounts", "Core3WebApi", "Fonlow.AspNetCore.Identity" ],
+		"CherryPickingMethods": 32
 	},
 
 	"ClientApiOutputs": {

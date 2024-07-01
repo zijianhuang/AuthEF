@@ -2,17 +2,149 @@ import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 export namespace DemoWebApi_Controllers_Client {
-
-	/**
-	 * Complex hero type
-	 */
 	export interface Hero {
-
-		/** Type: long, -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807 */
 		id?: string | null;
 		name?: string | null;
 	}
 
+}
+
+export namespace DemoWebApi_DemoData_Client {
+	export interface Entity {
+		addresses?: Array<any>;
+		id?: string | null;
+		name: string;
+		phoneNumbers?: Array<any>;
+		web?: string | null;
+	}
+
+	export interface Person extends DemoWebApi_DemoData_Client.Entity {
+		baptised?: Date | null;
+		dob?: Date | null;
+		givenName?: string | null;
+		surname?: string | null;
+	}
+
+	export interface Company extends DemoWebApi_DemoData_Client.Entity {
+		businessNumber?: string | null;
+		businessNumberType?: string | null;
+		foundDate?: Date | null;
+		registerDate?: Date | null;
+		textMatrix?: Array<Array<string>>;
+		int2D?: number[][];
+		int2DJagged?: Array<Array<number>>;
+		lines?: Array<string>;
+	}
+
+	export enum Days { Sat = 1, Sun = 2, Mon = 3, Tue = 4, Wed = 5, Thu = 6, Fri = 7 }
+
+	export interface MimsResult<T> {
+		generatedAt?: Date | null;
+		message?: string | null;
+		result?: T;
+		success?: boolean | null;
+	}
+
+	export interface MyGeneric<T, K, U> {
+		myK?: K;
+		myT?: T;
+		myU?: U;
+		status?: string | null;
+	}
+
+	export interface IdMap {
+		id?: string | null;
+		idNotEmitDefaultValue?: string | null;
+		nullableId?: string | null;
+		requiredName?: string | null;
+		text?: string | null;
+	}
+
+	export interface MimsPackage {
+		kk?: number | null;
+		kK2?: number | null;
+		optionalEnum?: number | null;
+		optionalInt?: number | null;
+		result?: DemoWebApi_DemoData_Client.MimsResult<number>;
+		tag?: string | null;
+	}
+
+}
+
+export namespace Core3WebApi_Controllers_Client {
+	@Injectable()
+	export class Statistics {
+		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
+		}
+
+		/**
+		 * GET api/Statistics/distribution
+		 */
+		getDistribution(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.get(this.baseUri + 'api/Statistics/distribution', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+	}
+
+}
+
+export namespace DemoCoreWeb_Controllers_Client {
+
+	/**
+	 * Authorize: Bearer
+	 */
+	@Injectable()
+	export class SpecialTypes {
+		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
+		}
+
+		/**
+		 * Anonymous Dynamic of C#
+		 * GET api/SpecialTypes/AnonymousDynamic
+		 * @return {any} dyanmic things
+		 */
+		getAnonymousDynamic(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousDynamic', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * GET api/SpecialTypes/AnonymousDynamic2
+		 */
+		getAnonymousDynamic2(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousDynamic2', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * GET api/SpecialTypes/AnonymousObject
+		 */
+		getAnonymousObject(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousObject', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * GET api/SpecialTypes/AnonymousObject2
+		 */
+		getAnonymousObject2(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousObject2', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * POST api/SpecialTypes/AnonymousObject
+		 */
+		postAnonymousObject(obj: any, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.post(this.baseUri + 'api/SpecialTypes/AnonymousObject', JSON.stringify(obj), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * POST api/SpecialTypes/AnonymousObject2
+		 */
+		postAnonymousObject2(obj: any, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.post(this.baseUri + 'api/SpecialTypes/AnonymousObject2', JSON.stringify(obj), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+	}
+
+}
+
+export namespace DemoWebApi_Controllers_Client {
 
 	/**
 	 * Manage user accounts stored in ASP.NET Core Identity database.
@@ -586,6 +718,19 @@ export namespace DemoWebApi_Controllers_Client {
 		 */
 		index(headersHandler?: () => HttpHeaders): Observable<HttpResponse<Blob>> {
 			return this.http.get(this.baseUri + 'api/Home', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'blob' });
+		}
+	}
+
+	@Injectable()
+	export class Polymorphism {
+		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
+		}
+
+		/**
+		 * POST api/Polymorphism
+		 */
+		authenticate(model: Fonlow_AspNetCore_OAuth2_Client.RequestBase | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_OAuth2_Client.RequestBase> {
+			return this.http.post<Fonlow_AspNetCore_OAuth2_Client.RequestBase>(this.baseUri + 'api/Polymorphism', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
 		}
 	}
 
@@ -1340,332 +1485,37 @@ export namespace DemoWebApi_Controllers_Client {
 
 }
 
-export namespace DemoWebApi_DemoData_Another_Client {
-
-	/**
-	 * 2D position
-	 * with X and Y
-	 * for Demo
-	 */
-	export interface MyPoint {
-
-		/**
-		 * X
-		 * Type: double
-		 */
-		x: number;
-
-		/**
-		 * Y
-		 * Type: double
-		 */
-		y: number;
-	}
-
-}
-
-export namespace DemoWebApi_DemoData_Client {
-	export interface Address {
-		city?: string | null;
-		country?: string | null;
-
-		/** Type: GUID */
-		id?: string | null;
-		postalCode?: string | null;
-		state?: string | null;
-		street1?: string | null;
-		street2?: string | null;
-		type?: DemoWebApi_DemoData_Client.AddressType | null;
-
-		/**
-		 * It is a field
-		 */
-		location?: DemoWebApi_DemoData_Another_Client.MyPoint;
-	}
-
-	export enum AddressType { Postal, Residential }
-
-	export interface Company extends DemoWebApi_DemoData_Client.Entity {
-
-		/**
-		 * BusinessNumber to be serialized as BusinessNum
-		 */
-		BusinessNum?: string | null;
-		businessNumberType?: string | null;
-
-		/** Data type: Date */
-		foundDate?: Date | null;
-
-		/** Type: DateOnly */
-		registerDate?: Date | null;
-		textMatrix?: Array<Array<string>>;
-		int2D?: number[][];
-		int2DJagged?: Array<Array<number>>;
-		lines?: Array<string>;
-	}
-
-	export enum Days {
-		Sat = 1,
-		Sun = 2,
-		Mon = 3,
-		Tue = 4,
-		Wed = 5,
-
-		/**
-		 * Thursday
-		 */
-		Thu = 6,
-		Fri = 7
-	}
-
-
-	/**
-	 * Base class of company and person
-	 */
-	export interface Entity {
-
-		/**
-		 * Multiple addresses
-		 */
-		addresses?: Array<DemoWebApi_DemoData_Client.Address>;
-		id?: string | null;
-
-		/**
-		 * Name of the entity.
-		 * Required
-		 */
-		name: string;
-		phoneNumbers?: Array<DemoWebApi_DemoData_Client.PhoneNumber>;
-
-		/** Type: Uri */
-		web?: string | null;
-	}
-
-
-	/**
-	 * To test different serializations against Guid
-	 */
-	export interface IdMap {
-
-		/** Type: GUID */
-		id?: string | null;
-
-		/** Type: GUID */
-		idNotEmitDefaultValue?: string | null;
-		nullableId?: string | null;
-		requiredName: string;
-		text?: string | null;
-	}
-
-	export enum MedicalContraindiationResponseTypeReason { M = "Mm", S = "Ss", P = "Pp", I = "I", A = "A" }
-
-	export enum MedicalContraindiationResponseTypeTypeCode { P = "P", T = "Tt" }
-
-	export interface MimsPackage {
-
-		/**
-		 * Type: int
-		 * Range: inclusive between 10 and 100
-		 */
-		kk?: number | null;
-
-		/**
-		 * Having an initialized value in the property is not like defining a DefaultValueAttribute. Such intialization happens at run time,
-		 * and there's no reliable way for a codegen to know if the value is declared by the programmer, or is actually the natural default value like 0.
-		 * Type: int, -2,147,483,648 to 2,147,483,647
-		 */
-		kK2?: number | null;
-		optionalEnum?: DemoWebApi_DemoData_Client.MyEnumType | null;
-		optionalInt?: number | null;
-		result?: DemoWebApi_DemoData_Client.MimsResult<number>;
-		tag?: string | null;
-	}
-
-	export interface MimsResult<T> {
-		generatedAt?: Date | null;
-		message?: string | null;
-		result?: T;
-		success?: boolean | null;
-	}
-
-	export enum MyEnumType { First = 1, Two = 2 }
-
-	export interface MyGeneric<T, K, U> {
-		myK?: K;
-		myT?: T;
-		myU?: U;
-		status?: string | null;
-	}
-
-	export interface MyPeopleDic {
-		anotherDic?: {[id: string]: string };
-		dic?: {[id: string]: DemoWebApi_DemoData_Client.Person };
-		intDic?: {[id: number]: string };
-	}
-
-	export interface Person extends DemoWebApi_DemoData_Client.Entity {
-
-		/** Data type: Date */
-		baptised?: Date | null;
-
-		/**
-		 * Date of Birth.
-		 * This is optional.
-		 */
-		dob?: Date | null;
-		givenName?: string | null;
-		surname?: string | null;
-	}
-
-	export interface PhoneNumber {
-		fullNumber?: string | null;
-		phoneType?: DemoWebApi_DemoData_Client.PhoneType | null;
-	}
-
-
-	/**
-	 * Phone type
-	 * Tel, Mobile, Skyp and Fax
-	 */
-	export enum PhoneType {
-
-		/**
-		 * Land line
-		 */
-		Tel,
-
-		/**
-		 * Mobile phone
-		 */
-		Mobile,
-		Skype,
-		Fax
-	}
-
-}
-
-export namespace DemoWebApi_Models_Client {
-	export interface AddExternalLoginBindingModel {
-
-		/** Required */
-		externalAccessToken?: string | null;
-	}
-
-	export interface ChangePasswordBindingModel {
-
-		/** Data type: Password */
-		confirmPassword?: string | null;
-
-		/**
-		 * Required
-		 * String length: inclusive between 6 and 100
-		 * Data type: Password
-		 */
-		newPassword: string;
-
-		/**
-		 * Required
-		 * Data type: Password
-		 */
-		OldPwd: string;
-	}
-
-	export interface RegisterBindingModel {
-
-		/** Data type: Password */
-		confirmPassword?: string | null;
-
-		/** Required */
-		email?: string | null;
-
-		/**
-		 * Required
-		 * String length: inclusive between 6 and 100
-		 * Data type: Password
-		 */
-		password?: string | null;
-	}
-
-	export interface RegisterExternalBindingModel {
-
-		/** Required */
-		email?: string | null;
-	}
-
-	export interface RemoveLoginBindingModel {
-
-		/** Required */
-		loginProvider?: string | null;
-
-		/** Required */
-		providerKey?: string | null;
-	}
-
-	export interface SetPasswordBindingModel {
-
-		/** Data type: Password */
-		confirmPassword?: string | null;
-
-		/**
-		 * Required
-		 * String length: inclusive between 6 and 100
-		 * Data type: Password
-		 */
-		newPassword?: string | null;
+export namespace Fonlow_AspNetCore_OAuth2_Client {
+	export interface RequestBase {
+		grantType: string;
 	}
 
 }
 
 export namespace Fonlow_WebApp_Accounts_Client {
-	export interface AddExternalLoginBindingModel {
-		externalAccessToken?: string | null;
-	}
-
-	export interface ApiKey {
-		expiryTime?: Date | null;
-		key?: string | null;
+	export interface UserInfoViewModel {
+		createdUtc?: Date | null;
+		email?: string | null;
+		fullName?: string | null;
+		hasRegistered?: boolean | null;
+		id?: string | null;
+		loginProvider?: string | null;
+		roles?: Array<string>;
+		userName?: string | null;
 	}
 
 	export interface ChangePasswordBindingModel {
 		confirmPassword?: string | null;
-		newPassword?: string | null;
-		oldPassword?: string | null;
-	}
-
-	export interface CustomToken {
-		connectionId?: string | null;
-		stamp?: Date | null;
-		tokenValue?: string | null;
-	}
-
-	export interface ExternalLoginViewModel {
-		name?: string | null;
-		state?: string | null;
-		url?: string | null;
-	}
-
-	export interface ManageInfoViewModel {
-		email?: string | null;
-		externalLoginProviders?: Array<Fonlow_WebApp_Accounts_Client.ExternalLoginViewModel>;
-		localLoginProvider?: string | null;
-		logins?: Array<Fonlow_WebApp_Accounts_Client.UserLoginInfoViewModel>;
+		newPassword: string;
+		oldPassword: string;
 	}
 
 	export interface RegisterBindingModel {
 		confirmPassword?: string | null;
 		email?: string | null;
 		fullName?: string | null;
-		password?: string | null;
-		userName?: string | null;
-	}
-
-	export interface RegisterExternalBindingModel {
-		email?: string | null;
-	}
-
-	export interface RemoveLoginBindingModel {
-		loginProvider?: string | null;
-		providerKey?: string | null;
+		password: string;
+		userName: string;
 	}
 
 	export interface ResetPasswordViewModel {
@@ -1677,112 +1527,11 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	export interface SetPasswordBindingModel {
 		confirmPassword?: string | null;
-		newPassword?: string | null;
+		newPassword: string;
 	}
 
 	export interface SetUserPasswordBindingModel extends Fonlow_WebApp_Accounts_Client.SetPasswordBindingModel {
 		userId?: string | null;
-	}
-
-	export interface TokenResponseModel {
-		access_token: string;
-		connection_id?: string | null;
-		expires: string;
-		expires_in: number;
-		refresh_token?: string | null;
-		scope?: string | null;
-		state?: string | null;
-		token_type: string;
-		username: string;
-	}
-
-	export interface UserInfoViewModel {
-		createdUtc?: Date | null;
-		email?: string | null;
-		fullName?: string | null;
-		hasRegistered?: boolean | null;
-		id: string;
-		loginProvider?: string | null;
-		roles?: Array<string>;
-		userName: string;
-	}
-
-	export interface UserLoginInfoViewModel {
-		loginProvider?: string | null;
-		providerKey?: string | null;
-	}
-
-}
-
-export namespace Core3WebApi_Controllers_Client {
-	@Injectable()
-	export class Statistics {
-		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
-		}
-
-		/**
-		 * GET api/Statistics/distribution
-		 */
-		getDistribution(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.get(this.baseUri + 'api/Statistics/distribution', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-	}
-
-}
-
-export namespace DemoCoreWeb_Controllers_Client {
-
-	/**
-	 * Authorize: Bearer
-	 */
-	@Injectable()
-	export class SpecialTypes {
-		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
-		}
-
-		/**
-		 * Anonymous Dynamic of C#
-		 * GET api/SpecialTypes/AnonymousDynamic
-		 * @return {any} dyanmic things
-		 */
-		getAnonymousDynamic(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousDynamic', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * GET api/SpecialTypes/AnonymousDynamic2
-		 */
-		getAnonymousDynamic2(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousDynamic2', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * GET api/SpecialTypes/AnonymousObject
-		 */
-		getAnonymousObject(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousObject', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * GET api/SpecialTypes/AnonymousObject2
-		 */
-		getAnonymousObject2(headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.get(this.baseUri + 'api/SpecialTypes/AnonymousObject2', { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * POST api/SpecialTypes/AnonymousObject
-		 */
-		postAnonymousObject(obj: any, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/SpecialTypes/AnonymousObject', JSON.stringify(obj), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * POST api/SpecialTypes/AnonymousObject2
-		 */
-		postAnonymousObject2(obj: any, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/SpecialTypes/AnonymousObject2', JSON.stringify(obj), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
 	}
 
 }

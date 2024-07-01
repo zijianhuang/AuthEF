@@ -1,4 +1,5 @@
 ﻿using Fonlow.AspNetCore.Identity;
+using Fonlow.AspNetCore.OAuth2;
 using Fonlow.WebApp.Accounts;
 using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,7 @@ namespace WebApp.Controllers
 	/// </summary>
 	[ApiExplorerSettings(IgnoreApi = true)]
 	[Route("token")]
+	//[ApiController]
 	public class AuthController : ControllerBase
 	{
 		public ApplicationUserManager UserManager
@@ -52,24 +54,43 @@ namespace WebApp.Controllers
 		[AllowAnonymous]
 		[Consumes("application/x-www-form-urlencoded")]
 		[HttpPost]
-		public async Task<ActionResult<TokenResponseModel>> Authenticate([FromForm] UsernameModel model)
+		public async Task<ActionResult<TokenResponseModel>> Authenticate([FromForm] RequestBase model)
 		{
-			ApplicationUser user = await UserManager.FindByNameAsync(model.Username);
-			if (user == null)
+			if (model is ROPCRequst)
 			{
-				return Unauthorized(new { message = "Username or password is invalid" });
+				ROPCRequst ropcRequest = model as ROPCRequst;
+				ApplicationUser user = await UserManager.FindByNameAsync(ropcRequest.Username);
+				if (user == null)
+				{
+					return Unauthorized(new { message = "Username or password is invalid" });
+				}
+
+				bool passwordIsCorrect = await UserManager.CheckPasswordAsync(user, ropcRequest.Password);
+				if (!passwordIsCorrect)
+				{
+					return Unauthorized(new { message = "Username or password is incorrect" });
+				}
+
+				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
+				var newLoginConnectionId = Guid.NewGuid();
+				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, newLoginConnectionId);
+			}
+			else if (model is RefreshAccessTokenRequest)
+			{
+				//RefreshAccessTokenRequest refreshAccessTokenRequest = model as RefreshAccessTokenRequest;
+				//var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
+				//var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.RefreshTokent, connectionId);
+				//if (!tokenTextExisting)
+				//{
+				//	return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
+				//}
+
+				//return await tokenHelper.GenerateJwtToken(user, username, connectionId); //the old refresh token is removed
 			}
 
-			bool passwordIsCorrect = await UserManager.CheckPasswordAsync(user, model.Password);
-			if (!passwordIsCorrect)
-			{
-				return Unauthorized(new { message = "Username or password is incorrect" });
-			}
-
-			var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-			var newLoginConnectionId = Guid.NewGuid();
-			return await tokenHelper.GenerateJwtToken(user, model.Username, newLoginConnectionId);
+			throw new NotSupportedException();
 		}
+
 
 		/// <summary>
 		/// Generate new JWT token according to refresh token and connectionId.
