@@ -1,5 +1,4 @@
 ﻿using Fonlow.AspNetCore.Identity;
-using Fonlow.AspNetCore.OAuth2;
 using Fonlow.WebApp.Accounts;
 using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Utilities;
-
+using Fonlow.Auth.Models;
 namespace WebApp.Controllers
 {
 

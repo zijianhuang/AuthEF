@@ -374,16 +374,19 @@ namespace DemoWebApi.DemoData.Another
 	///         with X and Y
 	/// for Demo
 	/// </summary>
+	[DataContract(Namespace = Constants.DataNamespace)]
 	public struct MyPoint
 	{
 		/// <summary>
 		/// X
 		/// </summary>
+		[DataMember]
 		public double X;
 
 		/// <summary>
 		/// Y
 		/// </summary>
+		[DataMember]
 		public double Y;
 	}
 }

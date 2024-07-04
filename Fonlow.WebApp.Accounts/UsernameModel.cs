@@ -1,4 +1,4 @@
-﻿using Fonlow.AspNetCore.OAuth2;
+﻿
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -9,7 +9,7 @@ namespace Fonlow.WebApp.Accounts
 	/// https://datatracker.ietf.org/doc/html/rfc7519 JWT
 	/// https://www.ietf.org/rfc/rfc6749.txt, The OAuth 2.0 Authorization Framework
 	/// </summary>
-	public class TokenResponseModel : AccessTokenResponse
+	public class TokenResponseModel : Fonlow.Auth.Models.AccessTokenResponse
 	{
 		[JsonPropertyName("username")]
 		[Required]
