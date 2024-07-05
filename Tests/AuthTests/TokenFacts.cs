@@ -3,10 +3,9 @@ using Fonlow.Net.Http;
 using Fonlow.Testing;
 using Fonlow.WebApp.Accounts;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using Xunit.Abstractions;
+using System.Text.Json;
 
 namespace AuthTests
 {
@@ -432,10 +431,11 @@ namespace AuthTests
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
-				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
-				var serializer = JsonSerializer.Create();
-				return serializer.Deserialize<TokenResponseModel>(jsonReader);
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<TokenResponseModel>(stream);
+
+				//var text = responseMessage.Content.ReadAsStringAsync().Result;
+				//return System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(text);
 			}
 			finally
 			{
