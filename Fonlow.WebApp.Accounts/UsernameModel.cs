@@ -9,9 +9,11 @@ namespace Fonlow.WebApp.Accounts
 	/// https://datatracker.ietf.org/doc/html/rfc7519 JWT
 	/// https://www.ietf.org/rfc/rfc6749.txt, The OAuth 2.0 Authorization Framework
 	/// </summary>
+	[DataContract]
 	public class TokenResponseModel : Fonlow.Auth.Models.AccessTokenResponse
 	{
 		[JsonPropertyName("username")]
+		[DataMember]
 		[Required]
 		public string Username { get; set; }
 
@@ -22,6 +24,7 @@ namespace Fonlow.WebApp.Accounts
 		/// For human readable. The app codes generaly use expires_in
 		/// </summary>
 		[JsonPropertyName("expires")]
+		[DataMember]
 		[Required]
 		public string Expires { get; set; }
 

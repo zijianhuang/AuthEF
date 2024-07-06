@@ -589,19 +589,6 @@ export namespace DemoWebApi_Controllers_Client {
 		}
 	}
 
-	@Injectable()
-	export class Polymorphism {
-		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
-		}
-
-		/**
-		 * POST api/Polymorphism
-		 */
-		authenticate(model: Fonlow_AspNetCore_OAuth2_Client.RequestBase | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_OAuth2_Client.RequestBase> {
-			return this.http.post<Fonlow_AspNetCore_OAuth2_Client.RequestBase>(this.baseUri + 'api/Polymorphism', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
-		}
-	}
-
 
 	/**
 	 * For testing different commbinations of parameters and returns
@@ -1576,16 +1563,15 @@ export namespace Fonlow_AspNetCore_Identity_Client {
 
 }
 
-export namespace Fonlow_AspNetCore_OAuth2_Client {
-	export interface AccessTokenResponse {
+export namespace Fonlow_Auth_Models_Client {
+	export interface AccessTokenResponse extends Fonlow_Auth_Models_Client.TokenResponseBase {
 		access_token?: string | null;
 		expires_in?: number | null;
 		refresh_token?: string | null;
 		scope?: string | null;
-		token_type?: string | null;
 	}
 
-	export interface RefreshAccessTokenRequest extends Fonlow_AspNetCore_OAuth2_Client.RequestBase {
+	export interface RefreshAccessTokenRequest extends Fonlow_Auth_Models_Client.RequestBase {
 		refresh_token?: string | null;
 		scope?: string | null;
 	}
@@ -1594,7 +1580,7 @@ export namespace Fonlow_AspNetCore_OAuth2_Client {
 		grant_type?: string | null;
 	}
 
-	export interface ROPCRequst extends Fonlow_AspNetCore_OAuth2_Client.RequestBase {
+	export interface ROPCRequst extends Fonlow_Auth_Models_Client.RequestBase {
 		password?: string | null;
 		scope?: string | null;
 		username?: string | null;
@@ -1672,6 +1658,12 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	export interface SetUserPasswordBindingModel extends Fonlow_WebApp_Accounts_Client.SetPasswordBindingModel {
 		userId?: string | null;
+	}
+
+	export interface TokenResponseModel extends Fonlow_Auth_Models_Client.AccessTokenResponse {
+		connection_id?: string | null;
+		expires?: string | null;
+		username?: string | null;
 	}
 
 	export interface UserInfoViewModel {

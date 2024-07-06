@@ -3012,74 +3012,6 @@ namespace DemoWebApi.Controllers.Client
 		}
 	}
 	
-	public partial class Polymorphism
-	{
-		
-		private System.Net.Http.HttpClient client;
-		
-		private JsonSerializerOptions jsonSerializerSettings;
-		
-		public Polymorphism(System.Net.Http.HttpClient client, JsonSerializerOptions jsonSerializerSettings=null)
-		{
-			if (client == null)
-				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
-
-			if (client.BaseAddress == null)
-				throw new ArgumentNullException(nameof(client), "HttpClient has no BaseAddress");
-
-			this.client = client;
-			this.jsonSerializerSettings = jsonSerializerSettings;
-		}
-		
-		/// <summary>
-		/// POST api/Polymorphism
-		/// </summary>
-		public async Task<Fonlow.AspNetCore.OAuth2.Client.RequestBase> AuthenticateAsync(Fonlow.AspNetCore.OAuth2.Client.RequestBase model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Polymorphism";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<Fonlow.AspNetCore.OAuth2.Client.RequestBase>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// POST api/Polymorphism
-		/// </summary>
-		public Fonlow.AspNetCore.OAuth2.Client.RequestBase Authenticate(Fonlow.AspNetCore.OAuth2.Client.RequestBase model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Polymorphism";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<Fonlow.AspNetCore.OAuth2.Client.RequestBase>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-	}
-	
 	/// <summary>
 	/// For testing different commbinations of parameters and returns
 	/// Authorize: Bearer
@@ -7867,12 +7799,12 @@ namespace Fonlow.AspNetCore.Identity.Client
 		public string Username { get; set; }
 	}
 }
-namespace Fonlow.AspNetCore.OAuth2.Client
+namespace Fonlow.Auth.Models.Client
 {
 	
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class AccessTokenResponse : object
+	public class AccessTokenResponse : Fonlow.Auth.Models.Client.TokenResponseBase
 	{
 		
 		[System.ComponentModel.DataAnnotations.Required()]
@@ -7891,21 +7823,16 @@ namespace Fonlow.AspNetCore.OAuth2.Client
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string Scope { get; set; }
-		
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.Runtime.Serialization.DataMember(Name="token_type")]
-		[System.Text.Json.Serialization.JsonPropertyName("token_type")]
-		public string TokenType { get; set; }
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class RefreshAccessTokenRequest : Fonlow.AspNetCore.OAuth2.Client.RequestBase
+	public class RefreshAccessTokenRequest : Fonlow.Auth.Models.Client.RequestBase
 	{
 		
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="refresh_token")]
 		[System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
-		public string RefreshTokent { get; set; }
+		public string RefreshToken { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string Scope { get; set; }
@@ -7922,7 +7849,7 @@ namespace Fonlow.AspNetCore.OAuth2.Client
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class ROPCRequst : Fonlow.AspNetCore.OAuth2.Client.RequestBase
+	public class ROPCRequst : Fonlow.Auth.Models.Client.RequestBase
 	{
 		
 		[System.ComponentModel.DataAnnotations.Required()]
@@ -8121,6 +8048,25 @@ namespace Fonlow.WebApp.Accounts.Client
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string UserId { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class TokenResponseModel : Fonlow.Auth.Models.Client.AccessTokenResponse
+	{
+		
+		[System.Runtime.Serialization.DataMember(Name="connection_id")]
+		[System.Text.Json.Serialization.JsonPropertyName("connection_id")]
+		public System.Guid ConnectionId { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.Required()]
+		[System.Runtime.Serialization.DataMember()]
+		[System.Text.Json.Serialization.JsonPropertyName("expires")]
+		public string Expires { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.Required()]
+		[System.Runtime.Serialization.DataMember()]
+		[System.Text.Json.Serialization.JsonPropertyName("username")]
+		public string Username { get; set; }
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]

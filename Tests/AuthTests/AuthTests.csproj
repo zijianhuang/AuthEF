@@ -37,7 +37,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\CoreWebApi.ClientApi\CoreWebApi.ClientApi.csproj" />
-		<ProjectReference Include="..\..\Fonlow.WebApp.Accounts\Fonlow.WebApp.Accounts.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

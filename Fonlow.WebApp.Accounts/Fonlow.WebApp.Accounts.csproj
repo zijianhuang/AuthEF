@@ -29,7 +29,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Fonlow.AspNetCore.Identity\Fonlow.AspNetCore.Identity.csproj" />
-	  <ProjectReference Include="..\Fonlow.Auth.PayloadConverters\Fonlow.Auth.PayloadConverters.csproj" />
 	</ItemGroup>
 
 </Project>

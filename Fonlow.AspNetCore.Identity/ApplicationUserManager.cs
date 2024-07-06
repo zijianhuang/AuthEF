@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace Fonlow.AspNetCore.Identity
 {
@@ -23,5 +24,12 @@ namespace Fonlow.AspNetCore.Identity
 		{
 			return base.FindByIdAsync(userId.ToString());
 		}
+
+		//public override Task<ApplicationUser> GetUserAsync(ClaimsPrincipal principal)
+		//{
+		//	ArgumentNullException.ThrowIfNull(principal);
+		//	var id = GetUserId(principal);
+		//	return id == null ? Task.FromResult<ApplicationUser>(null) : FindByIdAsync(id);
+		//}
 	}
 }

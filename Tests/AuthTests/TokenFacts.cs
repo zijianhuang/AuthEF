@@ -1,11 +1,12 @@
 using DemoWebApi.Controllers.Client;
 using Fonlow.Net.Http;
 using Fonlow.Testing;
-using Fonlow.WebApp.Accounts;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using Xunit.Abstractions;
 using System.Text.Json;
+using Fonlow.Auth.Models.Client;
+using Fonlow.WebApp.Accounts.Client;
 
 namespace AuthTests
 {

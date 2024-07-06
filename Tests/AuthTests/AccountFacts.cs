@@ -1,12 +1,13 @@
 using DemoWebApi.Controllers.Client;
 using Fonlow.Net.Http;
 using Fonlow.Testing;
-using Fonlow.WebApp.Accounts;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using Xunit.Abstractions;
+using Fonlow.WebApp.Accounts.Client;
 
 namespace AuthTests
 {

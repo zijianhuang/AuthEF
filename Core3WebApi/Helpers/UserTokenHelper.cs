@@ -68,6 +68,17 @@ namespace WebApp.Utilities
 			return tokenValue == storedToken;
 		}
 
+		public async Task<bool> MatchToken(ClaimsPrincipal userClaimsPrincipal, string purpose, string tokenValue, Guid connectionId)
+		{
+			var user = await userManager.GetUserAsync(userClaimsPrincipal);
+			if (user==null){
+				return false;
+			}
+			//var isValid = await userManager.VerifyUserTokenAsync(user, authSettings.TokenProviderName, "RefreshToken", tokenValue); probably no need to call this to avoid mix token purpose usages?
+			//and can not handle the expiry of refresh token, or any token needs to be expired. Also, cross machines issues as documented on https://stackoverflow.com/questions/51966010/identity-framework-generateusertoken-validation-issue
+			return await MatchToken(user, purpose, tokenValue, connectionId);
+		}
+
 		/// <summary>
 		/// Generate token and refreshToken.
 		/// The claim is based on the roles of the user.

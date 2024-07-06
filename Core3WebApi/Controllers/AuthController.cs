@@ -14,6 +14,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Utilities;
 using Fonlow.Auth.Models;
+using System.Net.Http.Headers;
 namespace WebApp.Controllers
 {
 
@@ -71,18 +72,19 @@ namespace WebApp.Controllers
 				}
 
 				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-				var newLoginConnectionId = Guid.NewGuid();
-				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, newLoginConnectionId);
+				//var newLoginConnectionId = Guid.NewGuid();
+				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, Guid.Empty); //todo: some apps may need to deal with scope
 			}
-			else if (model is RefreshAccessTokenRequest)
+			else if (model is RefreshAccessTokenRequest refreshAccessTokenRequest)
 			{
-				//RefreshAccessTokenRequest refreshAccessTokenRequest = model as RefreshAccessTokenRequest;
-				//var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-				//var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.RefreshTokent, connectionId);
-				//if (!tokenTextExisting)
-				//{
-				//	return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
-				//}
+				ClaimsPrincipal userClaimsPrincipal = Request.HttpContext.User;
+				var username = userClaimsPrincipal.Identity.Name;
+				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
+				var tokenTextExisting = await tokenHelper.MatchToken(userClaimsPrincipal, "RefreshToken", refreshAccessTokenRequest.RefreshToken, Guid.Empty);
+				if (!tokenTextExisting)
+				{
+					return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
+				}
 
 				//return await tokenHelper.GenerateJwtToken(user, username, connectionId); //the old refresh token is removed
 			}
