@@ -1,13 +1,9 @@
 {
 	"ApiSelections": {
 		"ExcludedControllerNames": [
+			"DemoWebApi.Controllers.Polymorphism"
 		],
-
-		"DataModelAssemblyNames": [
-			"DemoWebApi.DemoDataCore",
-			"Fonlow.WebApp.Accounts",
-			"Core3WebApi"
-		],
+		"DataModelAssemblyNames": [ "DemoWebApi.DemoDataCore", "Fonlow.WebApp.Accounts", "Fonlow.AspNetCore.Identity", "Core3WebApi" ],
 		"CherryPickingMethods": 3
 	},
 
@@ -20,6 +16,9 @@
 		"DataAnnotationsEnabled": true,
 		"DataAnnotationsToComments": true,
 		"HandleHttpRequestHeaders": true,
+		"UseSystemTextJson": true,
+		"DecorateDataModelWithDataContract": true,
+		"DataContractNamespace": "http://demoapp.client/2024",
 
 		"Plugins": [
 			{

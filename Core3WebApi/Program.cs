@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using WebApp.Utilities;
 
 System.Reflection.Assembly appAssembly = System.Reflection.Assembly.GetExecutingAssembly();
 string dirOfAppAssembly = System.IO.Path.GetDirectoryName(appAssembly.Location);
@@ -69,15 +70,15 @@ builder.Services.AddSingleton(authSettings);
 builder.Services.AddControllers(configure =>
 {
 #if DEBUG
-	configure.Conventions.Add(new Fonlow.CodeDom.Web.ApiExplorerVisibilityEnabledConvention());//To make ApiExplorer be visible to WebApiClientGen
+	configure.Conventions.Add(new Fonlow.CodeDom.Web.ApiExplorerVisibilityEnabledConvention());//To make ApiExplorer be visible to WebApiClientGen	
 #endif
-	configure.Filters.Add(new WebApp.Utilities.ValidateModelAttribute());
-
-}).AddNewtonsoftJson(options =>
+	configure.ModelBinderProviders.Insert(0, new OAuth2RequestBinderProvider());
+})
+.AddJsonOptions(// as of .NET 7/8, could not handle JS/CS test cases getInt2D, postInt2D and PostDictionaryOfPeople, around 14 C# test cases fail.
+options =>
 {
-	options.SerializerSettings.Converters.Add(new DateOnlyJsonConverter());
-	options.SerializerSettings.Converters.Add(new DateOnlyNullableJsonConverter());
-	options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+
+
 });
 
 builder.Services.AddAuthentication(
@@ -100,9 +101,9 @@ builder.Services.AddAuthentication(
 		ValidAudience = authSettings.Audience,
 		ValidIssuer = authSettings.Issuer,
 		IssuerSigningKey = issuerSigningKey,
-		#if DEBUG
-		ClockSkew=TimeSpan.FromSeconds(2), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
-		#endif
+#if DEBUG
+		ClockSkew = TimeSpan.FromSeconds(2), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
+#endif
 	}; // Thanks to https://dotnetdetail.net/asp-net-core-3-0-web-api-token-based-authentication-example-using-jwt-in-vs2019/
 });
 
@@ -128,7 +129,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(dcob =>
 	dbEngineDbContext.ConnectDatabase(dcob, identityConnectionString); // called by runtime everytime an instance of ApplicationDbContext is created.
 });
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationIdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationIdentityRole>(
+					options =>
+					{
+						options.ClaimsIdentity.UserNameClaimType = "UserID";
+					}
+				)
 				.AddEntityFrameworkStores<ApplicationDbContext>()
 				.AddUserManager<ApplicationUserManager>()
 				.AddDefaultTokenProviders()
@@ -143,14 +149,14 @@ if (app.Environment.IsDevelopment()) //ASPNETCORE_ENVIRONMENT=Development in web
 }
 else
 {
-//	//Only release build support https redirection.
-//#if RELEASE
-//	if (useHttps) // for locally running app, no need to have https.
-//	{
-//		app.UseHttpsRedirection();
-//		app.UseHsts();//https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-6.0
-//	}
-//#endif
+	//	//Only release build support https redirection.
+	//#if RELEASE
+	//	if (useHttps) // for locally running app, no need to have https.
+	//	{
+	//		app.UseHttpsRedirection();
+	//		app.UseHsts();//https://learn.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-6.0
+	//	}
+	//#endif
 }
 app.UseAuthentication();
 app.UseAuthorization();

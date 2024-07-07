@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace DemoWebApi.DemoData
@@ -313,7 +312,6 @@ namespace DemoWebApi.DemoData
 	}
 
 	[DataContract(Namespace = Constants.DataNamespace)]
-	[JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
 	public enum MedicalContraindiationResponseTypeReason
 	{
 
@@ -376,17 +374,19 @@ namespace DemoWebApi.DemoData.Another
 	///         with X and Y
 	/// for Demo
 	/// </summary>
-	[JsonObject]
+	[DataContract(Namespace = Constants.DataNamespace)]
 	public struct MyPoint
 	{
 		/// <summary>
 		/// X
 		/// </summary>
+		[DataMember]
 		public double X;
 
 		/// <summary>
 		/// Y
 		/// </summary>
+		[DataMember]
 		public double Y;
 	}
 }

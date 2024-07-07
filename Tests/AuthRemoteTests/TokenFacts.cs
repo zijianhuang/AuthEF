@@ -53,7 +53,7 @@ namespace AuthRemoteTests
                 Assert.NotEmpty(tokenText);
 
                 var toeknModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-                Assert.NotNull(toeknModel.AccessToken);
+                Assert.NotNull(toeknModel.access_token);
             }
         }
 
@@ -64,26 +64,26 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
-            var currentRefreshToken = tokenModel.RefreshToken;
-            var currentAccesstoken = tokenModel.AccessToken;
-            TestAuthorizedNewConnection(tokenModel.TokenType, currentAccesstoken);
+            var currentRefreshToken = tokenModel.refresh_token;
+            var currentAccesstoken = tokenModel.access_token;
+            TestAuthorizedNewConnection(tokenModel.token_type, currentAccesstoken);
 
             for (int i = 0; i < 100; i++)
             {
                 var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, currentRefreshToken, tokenModel.Username, tokenModel.ConnectionId);
                 Assert.Equal(tokenModel.Username, newTokenModel.Username);
-                Assert.NotEqual(currentRefreshToken, newTokenModel.RefreshToken);
+                Assert.NotEqual(currentRefreshToken, newTokenModel.refresh_token);
                 //Assert.NotEqual(currentAccesstoken, newTokenModel.AccessToken); sometimes equal, probably due to that I request frequently.
-                currentRefreshToken = newTokenModel.RefreshToken;
-                currentAccesstoken = newTokenModel.AccessToken; // for bearer token in new request
+                currentRefreshToken = newTokenModel.refresh_token;
+                currentAccesstoken = newTokenModel.access_token; // for bearer token in new request
             }
 
             //Assert.NotEqual(tokenModel.AccessToken, currentAccesstoken); sometime equal
-            TestAuthorizedNewConnection(tokenModel.TokenType, currentAccesstoken);
+            TestAuthorizedNewConnection(tokenModel.token_type, currentAccesstoken);
 
-            TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken); // old token is till working. To revoke, refer to https://stackoverflow.com/questions/62874537/jwt-token-forcefully-expire-in-asp-net-core-3-1, as JWT is by design not revokeable, and ASP.NET (Core) security hornor this. Another way simplier, just to set the expiry with 5 minutes span, if 5 minutes is accetable by your enterprise security policy.
+            TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token); // old token is till working. To revoke, refer to https://stackoverflow.com/questions/62874537/jwt-token-forcefully-expire-in-asp-net-core-3-1, as JWT is by design not revokeable, and ASP.NET (Core) security hornor this. Another way simplier, just to set the expiry with 5 minutes span, if 5 minutes is accetable by your enterprise security policy.
         }
 
         [Fact]
@@ -93,11 +93,11 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
-            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
+            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.refresh_token, tokenModel.Username, tokenModel.ConnectionId);
             Assert.Equal(tokenModel.Username, newTokenModel.Username);
-            TestAuthorizedNewConnection(newTokenModel.TokenType, newTokenModel.AccessToken);
+            TestAuthorizedNewConnection(newTokenModel.token_type, newTokenModel.access_token);
         }
 
         /// <summary>
@@ -111,14 +111,14 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
-            output.WriteLine($"token ExpiresIn {tokenModel.ExpiresIn}; Expires: {tokenModel.Expires}");
+            Assert.NotNull(tokenModel.refresh_token);
+            output.WriteLine($"token ExpiresIn {tokenModel.expires_in}; Expires: {tokenModel.Expires}");
 
-            TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken);
+            TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token);
             Thread.Sleep(5050); // expiry is 5 seconds in appsetings.json of the Web service.
-            TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken); // should work because of the 2-seconds clock skew.
+            TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token); // should work because of the 2-seconds clock skew.
             Thread.Sleep(clockSkewSeconds);
-            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken));
+            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token));
             Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
         }
 
@@ -148,21 +148,21 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
-            output.WriteLine($"token ExpiresIn {tokenModel.ExpiresIn}; Expires: {tokenModel.Expires}");
+            Assert.NotNull(tokenModel.refresh_token);
+            output.WriteLine($"token ExpiresIn {tokenModel.expires_in}; Expires: {tokenModel.Expires}");
 
-            TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken);
+            TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token);
             Thread.Sleep(5000);
             Thread.Sleep(clockSkewSeconds);
-            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken));
+            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token));
             Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
-            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
+            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.refresh_token, tokenModel.Username, tokenModel.ConnectionId);
             Assert.Equal(tokenModel.Username, newTokenModel.Username);
-            Assert.NotEqual(tokenModel.RefreshToken, newTokenModel.RefreshToken);
-            TestAuthorizedNewConnection(tokenModel.TokenType, newTokenModel.AccessToken);
+            Assert.NotEqual(tokenModel.refresh_token, newTokenModel.refresh_token);
+            TestAuthorizedNewConnection(tokenModel.token_type, newTokenModel.access_token);
 
-            Assert.NotEqual(tokenModel.AccessToken, newTokenModel.AccessToken);
+            Assert.NotEqual(tokenModel.access_token, newTokenModel.access_token);
         }
 
         /// <summary>
@@ -175,9 +175,9 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
-            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken + "A", tokenModel.Username, tokenModel.ConnectionId));
+            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.refresh_token + "A", tokenModel.Username, tokenModel.ConnectionId));
             Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
             Assert.Contains("Invalid to retrieve token through refreshToken", ex.Response);
             output.WriteLine("throws");
@@ -193,9 +193,9 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
-            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, Guid.NewGuid()));
+            var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.refresh_token, tokenModel.Username, Guid.NewGuid()));
             Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
             Assert.Contains("Invalid to retrieve token through refreshToken", ex.Response);
         }
@@ -209,7 +209,7 @@ namespace AuthRemoteTests
                 Assert.NotEmpty(tokenText);
 
                 var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-                Assert.NotNull(tokenModel.AccessToken);
+                Assert.NotNull(tokenModel.access_token);
             }
         }
 
@@ -220,26 +220,26 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
-            var currentRefreshToken = tokenModel.RefreshToken;
-            var currentAccesstoken = tokenModel.AccessToken;
-            TestAuthorizedNewConnection(tokenModel.TokenType, currentAccesstoken);
+            var currentRefreshToken = tokenModel.refresh_token;
+            var currentAccesstoken = tokenModel.access_token;
+            TestAuthorizedNewConnection(tokenModel.token_type, currentAccesstoken);
 
             for (int i = 0; i < 100; i++)
             {
                 var newTokenModel = GetTokenResponseModelByRefreshTokenWithSameClient(baseUri, currentRefreshToken, tokenModel.Username, tokenModel.ConnectionId);
                 Assert.Equal(tokenModel.Username, newTokenModel.Username);
-                Assert.NotEqual(currentRefreshToken, newTokenModel.RefreshToken);
+                Assert.NotEqual(currentRefreshToken, newTokenModel.refresh_token);
                 //Assert.NotEqual(currentAccesstoken, newTokenModel.AccessToken); sometimes equal, probably due to that I request frequently.
-                currentRefreshToken = newTokenModel.RefreshToken;
-                currentAccesstoken = newTokenModel.AccessToken; // for bearer token in new request
+                currentRefreshToken = newTokenModel.refresh_token;
+                currentAccesstoken = newTokenModel.access_token; // for bearer token in new request
             }
 
             //Assert.NotEqual(tokenModel.AccessToken, currentAccesstoken); //sometimes still equal
-            TestAuthorizedNewConnection(tokenModel.TokenType, currentAccesstoken);
+            TestAuthorizedNewConnection(tokenModel.token_type, currentAccesstoken);
 
-            TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken); // old token is till working. To revoke, refer to https://stackoverflow.com/questions/62874537/jwt-token-forcefully-expire-in-asp-net-core-3-1, as JWT is by design not revokeable, and ASP.NET (Core) security hornor this. Another way simplier, just to set the expiry with 5 minutes span, if 5 minutes is accetable by your enterprise security policy.
+            TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token); // old token is till working. To revoke, refer to https://stackoverflow.com/questions/62874537/jwt-token-forcefully-expire-in-asp-net-core-3-1, as JWT is by design not revokeable, and ASP.NET (Core) security hornor this. Another way simplier, just to set the expiry with 5 minutes span, if 5 minutes is accetable by your enterprise security policy.
         }
 
         /// <summary>
@@ -252,17 +252,17 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
             using var httpClient = new HttpClient();
             httpClient.BaseAddress = baseUri;
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, tokenModel.AccessToken);
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
             var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
             accountApi.Logout(tokenModel.ConnectionId); // this will remove the refresh token of the user on connnectionId
-            var ex = Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId));
+            var ex = Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.refresh_token, tokenModel.Username, tokenModel.ConnectionId));
             Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
-            TestAuthorizedNewConnection(tokenModel.TokenType, tokenModel.AccessToken); // still working, because JWT is stateless. This is a normal behavior.
+            TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token); // still working, because JWT is stateless. This is a normal behavior.
         }
 
         /// <summary>
@@ -275,20 +275,20 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
-            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
+            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.refresh_token, tokenModel.Username, tokenModel.ConnectionId);
             Assert.Equal(tokenModel.Username, newTokenModel.Username);
-            Assert.NotEqual(tokenModel.RefreshToken, newTokenModel.RefreshToken);
-            TestAuthorizedNewConnection(tokenModel.TokenType, newTokenModel.AccessToken);
+            Assert.NotEqual(tokenModel.refresh_token, newTokenModel.refresh_token);
+            TestAuthorizedNewConnection(tokenModel.token_type, newTokenModel.access_token);
 
-            GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId);
+            GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.refresh_token, newTokenModel.Username, newTokenModel.ConnectionId);
             using var httpClient = new HttpClient();
             httpClient.BaseAddress = baseUri;
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, newTokenModel.access_token);
             var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
             accountApi.RemoveOldUserTokens(DateTime.UtcNow); // Remove all user tokens, typically refresh tokens
-            var ex = Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+            var ex = Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.refresh_token, newTokenModel.Username, newTokenModel.ConnectionId));
             Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
         }
 
@@ -299,20 +299,20 @@ namespace AuthRemoteTests
             Assert.NotEmpty(tokenText);
 
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-            Assert.NotNull(tokenModel.RefreshToken);
+            Assert.NotNull(tokenModel.refresh_token);
 
-            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.RefreshToken, tokenModel.Username, tokenModel.ConnectionId);
+            var newTokenModel = GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, tokenModel.refresh_token, tokenModel.Username, tokenModel.ConnectionId);
             Assert.Equal(tokenModel.Username, newTokenModel.Username);
-            Assert.NotEqual(tokenModel.RefreshToken, newTokenModel.RefreshToken);
-            TestAuthorizedNewConnection(tokenModel.TokenType, newTokenModel.AccessToken);
+            Assert.NotEqual(tokenModel.refresh_token, newTokenModel.refresh_token);
+            TestAuthorizedNewConnection(tokenModel.token_type, newTokenModel.access_token);
 
-            GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId);
+            GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.refresh_token, newTokenModel.Username, newTokenModel.ConnectionId);
             using var httpClient = new HttpClient();
             httpClient.BaseAddress = baseUri;
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, newTokenModel.AccessToken);
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, newTokenModel.access_token);
             var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
             accountApi.AdminRemoverRefreshTokensOfUsers(newTokenModel.Username);
-            Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.RefreshToken, newTokenModel.Username, newTokenModel.ConnectionId));
+            Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.refresh_token, newTokenModel.Username, newTokenModel.ConnectionId));
         }
 
         HttpClient CreateAdminHttpClient()
@@ -321,7 +321,7 @@ namespace AuthRemoteTests
             var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
             var httpClient = new HttpClient();
             httpClient.BaseAddress = baseUri;
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, tokenModel.AccessToken);
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
 
             return httpClient;
         }

@@ -1,12 +1,13 @@
 using DemoWebApi.Controllers.Client;
 using Fonlow.Net.Http;
 using Fonlow.Testing;
-using Fonlow.WebApp.Accounts;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using Xunit.Abstractions;
+using Fonlow.WebApp.Accounts.Client;
 
 namespace AuthTests
 {
@@ -54,7 +55,7 @@ namespace AuthTests
 			Assert.Equal(newUsername, newUserTokenModel.Username);
 			using var userHttpClient = new HttpClient();
 			userHttpClient.BaseAddress = baseUri;
-			userHttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(newUserTokenModel.TokenType, newUserTokenModel.AccessToken);
+			userHttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(newUserTokenModel.token_type, newUserTokenModel.access_token);
 			var heroesApi = new Heroes(userHttpClient);
 			heroesApi.GetHeros();
 
@@ -63,10 +64,10 @@ namespace AuthTests
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
 			Assert.NotEmpty(tokenText);
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-			Assert.NotNull(tokenModel.RefreshToken);
+			Assert.NotNull(tokenModel.refresh_token);
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
-			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, tokenModel.AccessToken);
+			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			var userId = accountApi.GetUserIdByUser(newUsername);
 			accountApi.RemoveUser(userId);
@@ -75,11 +76,11 @@ namespace AuthTests
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
 			// User refresh token to gain access without login should fail
-			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newUserTokenModel.RefreshToken, newUserTokenModel.Username, newUserTokenModel.ConnectionId));
+			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.Username, newUserTokenModel.ConnectionId));
 
 			heroesApi.GetHeros(); // the access token is still working, for a while.
 			System.Threading.Thread.Sleep(7100);
-			Assert.Throws<WebApiRequestException>(() => TestAuthorizedConnection(newUserTokenModel.TokenType, newUserTokenModel.AccessToken)); // new connection should fail
+			Assert.Throws<WebApiRequestException>(() => TestAuthorizedConnection(newUserTokenModel.token_type, newUserTokenModel.access_token)); // new connection should fail
 			for (int i = 0; i < 10; i++)
 			{
 				heroesApi.GetHeros(); // existing connection is still working, as long as the HTTP connection remains.
@@ -109,7 +110,7 @@ namespace AuthTests
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
 			var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
-			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, tokenModel.AccessToken);
+			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
 
 			return httpClient;
 		}
@@ -138,11 +139,11 @@ namespace AuthTests
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
-			Assert.NotNull(tokenModel.RefreshToken);
+			Assert.NotNull(tokenModel.refresh_token);
 
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
-			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.TokenType, tokenModel.AccessToken);
+			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			var stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
 			var newUsername = "John " + stamp; // a space make the username invalid

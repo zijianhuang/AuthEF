@@ -7,6 +7,9 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Fonlow.DemoApp;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Fonlow.AspNetCore.Identity;
 
 namespace DemoWebApi.Controllers
 {
@@ -19,6 +22,12 @@ namespace DemoWebApi.Controllers
 	[Authorize(AuthenticationSchemes = ApiConstants.DefaultAuthenticationScheme)]
 	public class HeroesController : ControllerBase
 	{
+		public HeroesController(ApplicationUserManager userManager)
+		{
+			this.userManager= userManager;
+		}
+
+		readonly ApplicationUserManager userManager;
 		/// <summary>
 		/// Get all heroes.
 		/// </summary>
@@ -66,7 +75,7 @@ namespace DemoWebApi.Controllers
 		}
 
 		[HttpPost]
-		public Hero Post([FromBody] string name)//.net core difference: requires explicit decorattion
+		public async Task<Hero> Post([FromBody] string name)//.net core difference: requires explicit decorattion
 		{
 			var max = HeroesData.Instance.Dic.Keys.Max();
 			var hero = new Hero { Id = max + 1, Name = name };

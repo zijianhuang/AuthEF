@@ -19,13 +19,13 @@ namespace IntegrationTests
 	{
 		public EntitiesFixture()
 		{
-			var jsonSerializerSettings = new Newtonsoft.Json.JsonSerializerSettings() 
+			System.Text.Json.JsonSerializerOptions jsonSerializerSettings = new System.Text.Json.JsonSerializerOptions()
 			{
-				NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
+				DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+				PropertyNameCaseInsensitive = true,
+				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString, // newtonsoft.json along with converters may return long and int128 as string
 			};
 
-			jsonSerializerSettings.Converters.Add(new DateOnlyJsonConverter());
-			jsonSerializerSettings.Converters.Add(new DateOnlyNullableJsonConverter());
 
 			Api = new DemoWebApi.Controllers.Client.Entities(AuthorizedClient, jsonSerializerSettings);
 		}

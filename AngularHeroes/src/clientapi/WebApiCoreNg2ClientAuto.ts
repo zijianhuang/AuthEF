@@ -1544,74 +1544,50 @@ export namespace DemoWebApi_DemoData_Client {
 
 }
 
-export namespace DemoWebApi_Models_Client {
-	export interface AddExternalLoginBindingModel {
-
-		/** Required */
-		externalAccessToken?: string | null;
+export namespace Fonlow_AspNetCore_Identity_Client {
+	export interface IdentitySeeding {
+		roles?: Array<string>;
+		users?: Array<Fonlow_AspNetCore_Identity_Client.UserInitModel>;
 	}
 
-	export interface ChangePasswordBindingModel {
-
-		/** Data type: Password */
-		confirmPassword?: string | null;
-
-		/**
-		 * Required
-		 * String length: inclusive between 6 and 100
-		 * Data type: Password
-		 */
-		newPassword: string;
-
-		/**
-		 * Required
-		 * Data type: Password
-		 */
-		OldPwd: string;
-	}
-
-	export interface RegisterBindingModel {
-
-		/** Data type: Password */
-		confirmPassword?: string | null;
-
-		/** Required */
+	export interface UserInitModel extends Fonlow_AspNetCore_Identity_Client.UsernameModel {
 		email?: string | null;
+		fullName?: string | null;
+		role?: string | null;
+	}
 
-		/**
-		 * Required
-		 * String length: inclusive between 6 and 100
-		 * Data type: Password
-		 */
+	export interface UsernameModel {
 		password?: string | null;
+		username?: string | null;
 	}
 
-	export interface RegisterExternalBindingModel {
+}
 
-		/** Required */
-		email?: string | null;
+export namespace Fonlow_Auth_Models_Client {
+	export interface AccessTokenResponse extends Fonlow_Auth_Models_Client.TokenResponseBase {
+		access_token?: string | null;
+		expires_in?: number | null;
+		refresh_token?: string | null;
+		scope?: string | null;
 	}
 
-	export interface RemoveLoginBindingModel {
-
-		/** Required */
-		loginProvider?: string | null;
-
-		/** Required */
-		providerKey?: string | null;
+	export interface RefreshAccessTokenRequest extends Fonlow_Auth_Models_Client.RequestBase {
+		refresh_token?: string | null;
+		scope?: string | null;
 	}
 
-	export interface SetPasswordBindingModel {
+	export interface RequestBase {
+		grant_type?: string | null;
+	}
 
-		/** Data type: Password */
-		confirmPassword?: string | null;
+	export interface ROPCRequst extends Fonlow_Auth_Models_Client.RequestBase {
+		password?: string | null;
+		scope?: string | null;
+		username?: string | null;
+	}
 
-		/**
-		 * Required
-		 * String length: inclusive between 6 and 100
-		 * Data type: Password
-		 */
-		newPassword?: string | null;
+	export interface TokenResponseBase {
+		token_type?: string | null;
 	}
 
 }
@@ -1684,16 +1660,10 @@ export namespace Fonlow_WebApp_Accounts_Client {
 		userId?: string | null;
 	}
 
-	export interface TokenResponseModel {
-		access_token: string;
+	export interface TokenResponseModel extends Fonlow_Auth_Models_Client.AccessTokenResponse {
 		connection_id?: string | null;
-		expires: string;
-		expires_in: number;
-		refresh_token?: string | null;
-		scope?: string | null;
-		state?: string | null;
-		token_type: string;
-		username: string;
+		expires?: string | null;
+		username?: string | null;
 	}
 
 	export interface UserInfoViewModel {
