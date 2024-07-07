@@ -15,7 +15,7 @@ namespace Fonlow.Auth.Models
 		[JsonPropertyName("grant_type")]
 		[JsonPropertyOrder(-10)]
 		[DataMember(Name = "grant_type")]
-		public string GrantType { get; set; }
+		public string grant_type { get; set; }
 	}
 
 	/// <summary>
@@ -48,7 +48,7 @@ namespace Fonlow.Auth.Models
 		[Required]
 		[JsonPropertyName("refresh_token")]
 		[DataMember(Name = "refresh_token")]
-		public string RefreshToken { get; set; }
+		public string refresh_token { get; set; }
 
 		[DataMember]
 		public string Scope { get; set; }
@@ -64,7 +64,7 @@ namespace Fonlow.Auth.Models
 		[JsonPropertyOrder(-10)]
 		[JsonPropertyName("token_type")]
 		[DataMember(Name = "token_type")]
-		public string TokenType { get; set; }
+		public string token_type { get; set; }
 	}
 
 	/// <summary>
@@ -76,7 +76,7 @@ namespace Fonlow.Auth.Models
 		[JsonPropertyName("access_token")]
 		[DataMember(Name = "access_token")]
 		[Required]
-		public string AccessToken { get; set; }
+		public string access_token { get; set; }
 
 		/// <summary>
 		/// In the spec, it is recommended, however, it is bad in practice if not required.
@@ -84,11 +84,11 @@ namespace Fonlow.Auth.Models
 		[JsonPropertyName("expires_in")]
 		[DataMember(Name = "expires_in")]
 		[Required]
-		public int ExpiresIn { get; set; }
+		public int expires_in { get; set; }
 
 		[JsonPropertyName("refresh_token")]
 		[DataMember(Name = "refresh_token")]
-		public string RefreshToken { get; set; }
+		public string refresh_token { get; set; }
 
 		[DataMember]
 		public string Scope { get; set; }

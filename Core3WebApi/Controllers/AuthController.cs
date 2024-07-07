@@ -77,16 +77,29 @@ namespace WebApp.Controllers
 			}
 			else if (model is RefreshAccessTokenRequest refreshAccessTokenRequest)
 			{
-				ClaimsPrincipal userClaimsPrincipal = Request.HttpContext.User;
-				var username = userClaimsPrincipal.Identity.Name;
-				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-				var tokenTextExisting = await tokenHelper.MatchToken(userClaimsPrincipal, "RefreshToken", refreshAccessTokenRequest.RefreshToken, Guid.Empty);
-				if (!tokenTextExisting)
-				{
-					return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
-				}
+				if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue)){
+					var scehma = headerValue.Scheme;
+					Debug.Assert("bearer".Equals(scehma, StringComparison.OrdinalIgnoreCase));
+					var accessToken = headerValue.Parameter;
+					var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+					var uniqueNameClaim = jwtSecurityToken.Claims.Single(d => d.Type == "unique_name");
+					var username = uniqueNameClaim.Value;
+					var user = await UserManager.FindByNameAsync(username);
 
-				//return await tokenHelper.GenerateJwtToken(user, username, connectionId); //the old refresh token is removed
+					if (user == null)
+					{
+						return BadRequest(new { message = "Username or password is invalid" });
+					}
+
+					var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
+					var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, Guid.Empty);
+					if (!tokenTextExisting)
+					{
+						return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
+					}
+
+					return await tokenHelper.GenerateJwtToken(user, username, Guid.Empty);
+				}
 			}
 
 			throw new NotSupportedException();

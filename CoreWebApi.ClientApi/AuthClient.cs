@@ -40,7 +40,7 @@ namespace Fonlow.Auth.Client
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var pairs = new KeyValuePair<string, string>[]
 						{
-							new KeyValuePair<string, string>( "grant_type", model.GrantType ),
+							new KeyValuePair<string, string>( "grant_type", model.grant_type ),
 							new KeyValuePair<string, string>( "username", model.Username ),
 							new KeyValuePair<string, string> ( "password", model.Password )
 						};
@@ -65,8 +65,8 @@ namespace Fonlow.Auth.Client
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var pairs = new KeyValuePair<string, string>[]
 						{
-							new KeyValuePair<string, string>( "grant_type", model.GrantType ),
-							new KeyValuePair<string, string>( "refresh_token", model.RefreshToken ),
+							new KeyValuePair<string, string>( "grant_type", model.grant_type ),
+							new KeyValuePair<string, string>( "refresh_token", model.refresh_token ),
 							new KeyValuePair<string, string> ( "scope", model.Scope )
 						};
 			var content = new FormUrlEncodedContent(pairs);

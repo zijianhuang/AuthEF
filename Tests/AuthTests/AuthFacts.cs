@@ -55,16 +55,16 @@ namespace AuthTests
 		{
 			var r = await api.PostRopcTokenRequestAsFormDataToAuthAsync(new ROPCRequst
 			{
-				GrantType = "password",
+				grant_type = "password",
 				Username = "admin",
 				Password = "Pppppp*8"
 			});
 
-			Assert.Equal("bearer", r.TokenType, true);
-			Assert.NotNull(r.AccessToken);
-			Assert.NotNull(r.RefreshToken);
+			Assert.Equal("bearer", r.token_type, true);
+			Assert.NotNull(r.access_token);
+			Assert.NotNull(r.refresh_token);
 			//Assert.Equal("some scope", r.Scope);
-			Assert.True(r.ExpiresIn > 0);
+			Assert.True(r.expires_in > 0);
 		}
 
 		[Fact]
@@ -72,26 +72,26 @@ namespace AuthTests
 		{
 			var ra = await api.PostRopcTokenRequestAsFormDataToAuthAsync(new ROPCRequst
 			{
-				GrantType = "password",
+				grant_type = "password",
 				Username = "admin",
 				Password = "Pppppp*8"
 			});
 
 			HttpClient client = new HttpClient();
 			client.BaseAddress = new Uri(baseUrl);
-			client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ra.AccessToken);
+			client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", ra.access_token);
 			AuthClient authClient = new AuthClient(client);
 			var r = await authClient.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
 			{
-				GrantType = "refresh_token",
-				RefreshToken = "RefreshTokenString"
+				grant_type = "refresh_token",
+				refresh_token = ra.refresh_token
 			});
 
-			Assert.Equal("bearer", r.TokenType, true);
-			Assert.NotNull(r.AccessToken);
-			Assert.NotNull(r.RefreshToken);
+			Assert.Equal("bearer", r.token_type, true);
+			Assert.NotNull(r.access_token);
+			Assert.NotNull(r.refresh_token);
 			//Assert.Equal("some scope", r.Scope);
-			Assert.True(r.ExpiresIn > 0);
+			Assert.True(r.expires_in > 0);
 		}
 	}
 }

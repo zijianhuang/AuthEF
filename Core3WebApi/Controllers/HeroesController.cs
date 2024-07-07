@@ -77,8 +77,6 @@ namespace DemoWebApi.Controllers
 		[HttpPost]
 		public async Task<Hero> Post([FromBody] string name)//.net core difference: requires explicit decorattion
 		{
-			ClaimsPrincipal userClaimsPrincipal = Request.HttpContext.User;
-			var user = await userManager.GetUserAsync(userClaimsPrincipal); 
 			var max = HeroesData.Instance.Dic.Keys.Max();
 			var hero = new Hero { Id = max + 1, Name = name };
 			_ = HeroesData.Instance.Dic.TryAdd(max + 1, hero);

@@ -79,7 +79,7 @@ namespace WebApp.Utilities
 
 			if (newBindingContext.Result.IsModelSet)
 			{
-				(newBindingContext.Result.Model as RequestBase).GrantType = modelTypeValue;
+				(newBindingContext.Result.Model as RequestBase).grant_type = modelTypeValue;
 				// Setting the ValidationState ensures properties on derived types are correctly 
 				bindingContext.ValidationState[newBindingContext.Result.Model] = new ValidationStateEntry
 				{

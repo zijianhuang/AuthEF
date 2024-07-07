@@ -7810,16 +7810,16 @@ namespace Fonlow.Auth.Models.Client
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="access_token")]
 		[System.Text.Json.Serialization.JsonPropertyName("access_token")]
-		public string AccessToken { get; set; }
+		public string access_token { get; set; }
 		
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="expires_in")]
 		[System.Text.Json.Serialization.JsonPropertyName("expires_in")]
-		public int ExpiresIn { get; set; }
+		public int expires_in { get; set; }
 		
 		[System.Runtime.Serialization.DataMember(Name="refresh_token")]
 		[System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
-		public string RefreshToken { get; set; }
+		public string refresh_token { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string Scope { get; set; }
@@ -7832,7 +7832,7 @@ namespace Fonlow.Auth.Models.Client
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="refresh_token")]
 		[System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
-		public string RefreshToken { get; set; }
+		public string refresh_token { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string Scope { get; set; }
@@ -7845,7 +7845,7 @@ namespace Fonlow.Auth.Models.Client
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="grant_type")]
 		[System.Text.Json.Serialization.JsonPropertyName("grant_type")]
-		public string GrantType { get; set; }
+		public string grant_type { get; set; }
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
@@ -7871,7 +7871,7 @@ namespace Fonlow.Auth.Models.Client
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="token_type")]
 		[System.Text.Json.Serialization.JsonPropertyName("token_type")]
-		public string TokenType { get; set; }
+		public string token_type { get; set; }
 	}
 }
 namespace Fonlow.WebApp.Accounts.Client
