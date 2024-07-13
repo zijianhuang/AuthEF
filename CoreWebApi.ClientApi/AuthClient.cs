@@ -11,7 +11,6 @@ namespace Fonlow.Auth.Client
 {
 	public class AuthClient
 	{
-
 		private System.Net.Http.HttpClient client;
 
 		private JsonSerializerOptions jsonSerializerSettings;

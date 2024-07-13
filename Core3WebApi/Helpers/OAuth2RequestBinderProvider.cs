@@ -45,10 +45,8 @@ namespace WebApp.Utilities
 			{
 				return;
 			}
-			//using var sr = new StreamReader(bindingContext.HttpContext.Request.Body);
-			//var json = await sr.ReadToEndAsync(); //only work for Json payload
 
-			var modelKindName = ModelNames.CreatePropertyModelName(bindingContext.ModelName, "grant_type"); //todo: extract JsonPropertyName value or NewtonsoSoft JsonPropery value
+			var modelKindName = ModelNames.CreatePropertyModelName(bindingContext.ModelName, "grant_type");
 			var modelTypeValue = bindingContext.ValueProvider.GetValue(modelKindName).FirstValue;
 
 			IModelBinder modelBinder;
@@ -79,8 +77,6 @@ namespace WebApp.Utilities
 
 			if (newBindingContext.Result.IsModelSet)
 			{
-				(newBindingContext.Result.Model as RequestBase).grant_type = modelTypeValue;
-				// Setting the ValidationState ensures properties on derived types are correctly 
 				bindingContext.ValidationState[newBindingContext.Result.Model] = new ValidationStateEntry
 				{
 					Metadata = modelMetadata,

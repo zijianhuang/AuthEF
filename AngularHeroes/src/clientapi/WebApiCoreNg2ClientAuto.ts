@@ -1564,29 +1564,64 @@ export namespace Fonlow_AspNetCore_Identity_Client {
 }
 
 export namespace Fonlow_Auth_Models_Client {
+
+	/**
+	 * Section 5.1
+	 */
 	export interface AccessTokenResponse extends Fonlow_Auth_Models_Client.TokenResponseBase {
+
+		/** Required */
 		access_token?: string | null;
+
+		/**
+		 * In the spec, it is recommended, however, it is bad in practice if not required.
+		 * Type: int, -2,147,483,648 to 2,147,483,647
+		 * Required
+		 */
 		expires_in?: number | null;
 		refresh_token?: string | null;
 		scope?: string | null;
 	}
 
+
+	/**
+	 * Section 6
+	 * Grant type MUST be set to "refresh_token".
+	 */
 	export interface RefreshAccessTokenRequest extends Fonlow_Auth_Models_Client.RequestBase {
+
+		/** Required */
 		refresh_token?: string | null;
 		scope?: string | null;
 	}
 
 	export interface RequestBase {
+
+		/** Required */
 		grant_type?: string | null;
 	}
 
+
+	/**
+	 * Section 4.3 and 4.3.2.
+	 * GrantType must be Value MUST be set to "password".
+	 */
 	export interface ROPCRequst extends Fonlow_Auth_Models_Client.RequestBase {
+
+		/** Required */
 		password?: string | null;
 		scope?: string | null;
+
+		/** Required */
 		username?: string | null;
 	}
 
 	export interface TokenResponseBase {
+
+		/**
+		 * Such as bearer or Bearer
+		 * Required
+		 */
 		token_type?: string | null;
 	}
 
@@ -1594,21 +1629,42 @@ export namespace Fonlow_Auth_Models_Client {
 
 export namespace Fonlow_WebApp_Accounts_Client {
 	export interface AddExternalLoginBindingModel {
+
+		/** Required */
 		externalAccessToken?: string | null;
 	}
 
 	export interface ApiKey {
+
+		/**
+		 * Tell the client about expiration
+		 */
 		expiryTime?: Date | null;
 		key?: string | null;
 	}
 
 	export interface ChangePasswordBindingModel {
+
+		/** Data type: Password */
 		confirmPassword?: string | null;
+
+		/**
+		 * Required
+		 * String length: inclusive between 6 and 100
+		 * Data type: Password
+		 */
 		newPassword?: string | null;
+
+		/**
+		 * Required
+		 * Data type: Password
+		 */
 		oldPassword?: string | null;
 	}
 
 	export interface CustomToken {
+
+		/** Type: GUID */
 		connectionId?: string | null;
 		stamp?: Date | null;
 		tokenValue?: string | null;
@@ -1628,19 +1684,35 @@ export namespace Fonlow_WebApp_Accounts_Client {
 	}
 
 	export interface RegisterBindingModel {
+
+		/** Data type: Password */
 		confirmPassword?: string | null;
 		email?: string | null;
 		fullName?: string | null;
+
+		/**
+		 * Required
+		 * String length: inclusive between 6 and 100
+		 * Data type: Password
+		 */
 		password?: string | null;
+
+		/** Required */
 		userName?: string | null;
 	}
 
 	export interface RegisterExternalBindingModel {
+
+		/** Required */
 		email?: string | null;
 	}
 
 	export interface RemoveLoginBindingModel {
+
+		/** Required */
 		loginProvider?: string | null;
+
+		/** Required */
 		providerKey?: string | null;
 	}
 
@@ -1652,7 +1724,15 @@ export namespace Fonlow_WebApp_Accounts_Client {
 	}
 
 	export interface SetPasswordBindingModel {
+
+		/** Data type: Password */
 		confirmPassword?: string | null;
+
+		/**
+		 * Required
+		 * String length: inclusive between 6 and 100
+		 * Data type: Password
+		 */
 		newPassword?: string | null;
 	}
 
@@ -1660,9 +1740,26 @@ export namespace Fonlow_WebApp_Accounts_Client {
 		userId?: string | null;
 	}
 
+
+	/**
+	 * https://datatracker.ietf.org/doc/html/rfc7519 JWT
+	 * https://www.ietf.org/rfc/rfc6749.txt, The OAuth 2.0 Authorization Framework
+	 */
 	export interface TokenResponseModel extends Fonlow_Auth_Models_Client.AccessTokenResponse {
+
+		/**
+		 * Custom
+		 * Type: GUID
+		 */
 		connection_id?: string | null;
+
+		/**
+		 * For human readable. The app codes generaly use expires_in
+		 * Required
+		 */
 		expires?: string | null;
+
+		/** Required */
 		username?: string | null;
 	}
 
@@ -1671,6 +1768,8 @@ export namespace Fonlow_WebApp_Accounts_Client {
 		email?: string | null;
 		fullName?: string | null;
 		hasRegistered?: boolean | null;
+
+		/** Type: GUID */
 		id: string;
 		loginProvider?: string | null;
 		roles?: Array<string>;

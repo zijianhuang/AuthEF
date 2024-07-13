@@ -75,7 +75,7 @@ namespace DemoWebApi.Controllers.Client
 		{
 			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -111,7 +111,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -149,7 +149,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -185,7 +185,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(email, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -220,7 +220,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/AllRoleNames";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -263,7 +263,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/idByEmail?email="+(email == null ? "" : Uri.EscapeDataString(email));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -305,7 +305,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/idByFullName?cn="+(cn == null ? "" : Uri.EscapeDataString(cn));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -347,7 +347,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/UserIdByUser?username="+(username == null ? "" : Uri.EscapeDataString(username));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -394,7 +394,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/UserIdMapByEmail";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -442,7 +442,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/UserIdMapByFullName";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -488,7 +488,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/UserInfo";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -536,7 +536,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/UserInfoById?id="+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -569,7 +569,7 @@ namespace DemoWebApi.Controllers.Client
 		{
 			var requestUri = "api/Account/Logout/"+connectionId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -611,7 +611,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -657,7 +657,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -701,7 +701,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/RemoveRefreshTokensOfUser";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -735,7 +735,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -763,7 +763,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Account/RemoveUser?userId="+userId;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -793,7 +793,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -823,7 +823,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -857,7 +857,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -915,7 +915,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/GetDateOnly";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -958,7 +958,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/NullableDatetime/"+hasValue;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1003,7 +1003,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/GetDateTimeOffset";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1045,7 +1045,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/NextHour/"+dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1089,7 +1089,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/NextHourNullable?n="+n+(dt.HasValue?"&dt="+dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1131,7 +1131,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/NextYear/"+dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1175,7 +1175,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/NextYearNullable?n="+n+(dt.HasValue?"&dt="+dt.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1224,7 +1224,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(dt, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1272,7 +1272,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(dt, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1319,7 +1319,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1366,7 +1366,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1413,7 +1413,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1461,7 +1461,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1511,7 +1511,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1559,7 +1559,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1608,7 +1608,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1655,7 +1655,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(s, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1701,7 +1701,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(dt, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1743,7 +1743,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/DateOnlyStringQuery?d="+(d == null ? "" : Uri.EscapeDataString(d));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1785,7 +1785,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/RouteDateTimeOffset/"+d.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1834,7 +1834,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/DateTypes/SearchDateRange?"+(startDate.HasValue?"startDate="+startDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty)+(endDate.HasValue?"&endDate="+endDate.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ"):String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1905,7 +1905,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(p, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1952,7 +1952,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(p, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -1999,7 +1999,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(p, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2047,7 +2047,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(p, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2088,7 +2088,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Entities/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2129,7 +2129,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Entities/Company/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2177,7 +2177,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(p, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2225,7 +2225,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(s, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2273,7 +2273,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(s, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2325,7 +2325,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Entities/getPerson/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2369,7 +2369,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Entities/getPerson2/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2416,7 +2416,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(person, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2464,7 +2464,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(person, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2513,7 +2513,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(idMap, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2562,7 +2562,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(person, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2628,7 +2628,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Heroes/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2668,7 +2668,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Heroes/asyncHeroes";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2713,7 +2713,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Heroes/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2759,7 +2759,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Heroes";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2807,7 +2807,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(name, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2851,7 +2851,7 @@ namespace DemoWebApi.Controllers.Client
 		{
 			var requestUri = "api/Heroes/q?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2901,7 +2901,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(hero, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -2951,7 +2951,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Heroes/search/"+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3006,7 +3006,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Home";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -3066,7 +3066,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/AthletheSearch?"+(take.HasValue?"take="+take.Value.ToString():String.Empty)+"&skip="+skip+"&order="+(order == null ? "" : Uri.EscapeDataString(order))+"&sort="+(sort == null ? "" : Uri.EscapeDataString(sort))+"&search="+(search == null ? "" : Uri.EscapeDataString(search));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3102,7 +3102,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/ActionResult";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -3128,7 +3128,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/ActionResult2";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -3166,7 +3166,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/ActionStringResult";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3210,7 +3210,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/bool";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3252,7 +3252,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/byte";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3295,7 +3295,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/ByteArray";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3338,7 +3338,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/char";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3381,7 +3381,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/Collection";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3424,7 +3424,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/enumGet?d="+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3466,7 +3466,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/decimal";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3509,7 +3509,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/decimalArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3552,7 +3552,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/decimal/"+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3594,7 +3594,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/DecimalZero";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3636,7 +3636,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/StringStringDic";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3678,7 +3678,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/StringPersonDic";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3720,7 +3720,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/doulbe";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3764,7 +3764,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/DoubleZero";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3808,7 +3808,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/EmptyString";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3853,7 +3853,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/enumArrayDays?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3897,7 +3897,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/enumArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3940,7 +3940,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/FloatZero";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -3982,7 +3982,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/ICollection";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4024,7 +4024,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/IList";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4067,7 +4067,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/int2d";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4111,7 +4111,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/int2dJagged";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4155,7 +4155,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/intArray";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4199,7 +4199,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/intArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4243,7 +4243,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/intArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4286,7 +4286,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/int/"+d;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4328,7 +4328,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/IReadOnlyCollection";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4370,7 +4370,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/IReadOnlyList";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4412,7 +4412,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/KeyValuePair";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4455,7 +4455,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/List";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4499,7 +4499,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/NullableDecimal/"+hasValue;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4543,7 +4543,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/NullObject";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4588,7 +4588,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/NullString";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4633,7 +4633,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/DoubleNullable?location="+(location == null ? "" : Uri.EscapeDataString(location))+(dd.HasValue?"&dd="+dd.Value.ToString():String.Empty)+(de.HasValue?"&de="+de.Value.ToString():String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4677,7 +4677,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/DoubleNullable2?"+(dd.HasValue?"dd="+dd.Value.ToString():String.Empty)+(de.HasValue?"&de="+de.Value.ToString():String.Empty);
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4720,7 +4720,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/sbyte";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4762,7 +4762,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/short";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4805,7 +4805,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/stringArrayQ?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4849,7 +4849,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/stringArrayQ2?"+String.Join("&", a.Select(k => $"a={Uri.EscapeDataString(k.ToString())}"));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4884,7 +4884,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/TextStream";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -4918,7 +4918,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/uint";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -4960,7 +4960,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/ulong";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5002,7 +5002,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/SuperDemo/ushort";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5034,7 +5034,7 @@ namespace DemoWebApi.Controllers.Client
 		{
 			var requestUri = "api/SuperDemo/ActionResult";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -5064,7 +5064,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(s, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -5094,7 +5094,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(person, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			responseMessage.EnsureSuccessStatusCodeEx();
 			return responseMessage;
 		}
@@ -5132,7 +5132,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(list, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5179,7 +5179,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d2, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5226,7 +5226,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(dic, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5273,7 +5273,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(guids, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5320,7 +5320,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(list, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5366,7 +5366,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(list, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5412,7 +5412,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(a, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5458,7 +5458,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(a, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5504,7 +5504,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(a, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5550,7 +5550,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(list, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5596,7 +5596,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(list, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5642,7 +5642,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(list, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5689,7 +5689,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(s, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5761,7 +5761,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(d, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5805,7 +5805,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/PeopleCompany4";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5849,7 +5849,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/PeopleCompany5";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5893,7 +5893,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple1";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5937,7 +5937,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple2";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -5981,7 +5981,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple3";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6025,7 +6025,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple4";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6069,7 +6069,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple5";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6113,7 +6113,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple6";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6157,7 +6157,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple7";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6201,7 +6201,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Tuple/Tuple8";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6249,7 +6249,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6297,7 +6297,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6345,7 +6345,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6393,7 +6393,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6441,7 +6441,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6489,7 +6489,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6537,7 +6537,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6585,7 +6585,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(peopleAndCompany, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6632,7 +6632,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6680,7 +6680,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6730,7 +6730,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6780,7 +6780,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6830,7 +6830,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6880,7 +6880,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6930,7 +6930,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -6980,7 +6980,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(tuple, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7042,7 +7042,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7084,7 +7084,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Values";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7130,7 +7130,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Values/"+id+"?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7176,7 +7176,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Values?name="+(name == null ? "" : Uri.EscapeDataString(name));
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7222,7 +7222,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Values/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7266,7 +7266,7 @@ namespace DemoWebApi.Controllers.Client
 			var requestUri = "api/Values/Get2";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7314,7 +7314,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(value, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7362,7 +7362,7 @@ namespace DemoWebApi.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(value, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -7803,15 +7803,25 @@ namespace Fonlow.Auth.Models.Client
 {
 	
 	
+	/// <summary>
+	/// Section 5.1
+	/// </summary>
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class AccessTokenResponse : Fonlow.Auth.Models.Client.TokenResponseBase
 	{
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="access_token")]
 		[System.Text.Json.Serialization.JsonPropertyName("access_token")]
 		public string access_token { get; set; }
 		
+		/// <summary>
+		/// In the spec, it is recommended, however, it is bad in practice if not required.
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="expires_in")]
 		[System.Text.Json.Serialization.JsonPropertyName("expires_in")]
@@ -7825,10 +7835,17 @@ namespace Fonlow.Auth.Models.Client
 		public string Scope { get; set; }
 	}
 	
+	/// <summary>
+	/// Section 6
+	/// Grant type MUST be set to "refresh_token".
+	/// </summary>
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class RefreshAccessTokenRequest : Fonlow.Auth.Models.Client.RequestBase
 	{
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="refresh_token")]
 		[System.Text.Json.Serialization.JsonPropertyName("refresh_token")]
@@ -7842,16 +7859,26 @@ namespace Fonlow.Auth.Models.Client
 	public class RequestBase : object
 	{
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="grant_type")]
 		[System.Text.Json.Serialization.JsonPropertyName("grant_type")]
 		public string grant_type { get; set; }
 	}
 	
+	/// <summary>
+	/// Section 4.3 and 4.3.2.
+	/// GrantType must be Value MUST be set to "password".
+	/// </summary>
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class ROPCRequst : Fonlow.Auth.Models.Client.RequestBase
 	{
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		public string Password { get; set; }
@@ -7859,6 +7886,9 @@ namespace Fonlow.Auth.Models.Client
 		[System.Runtime.Serialization.DataMember()]
 		public string Scope { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		public string Username { get; set; }
@@ -7868,6 +7898,10 @@ namespace Fonlow.Auth.Models.Client
 	public class TokenResponseBase : object
 	{
 		
+		/// <summary>
+		/// Such as bearer or Bearer
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember(Name="token_type")]
 		[System.Text.Json.Serialization.JsonPropertyName("token_type")]
@@ -7882,6 +7916,9 @@ namespace Fonlow.WebApp.Accounts.Client
 	public class AddExternalLoginBindingModel : object
 	{
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		public string ExternalAccessToken { get; set; }
@@ -7891,6 +7928,9 @@ namespace Fonlow.WebApp.Accounts.Client
 	public class ApiKey : object
 	{
 		
+		/// <summary>
+		/// Tell the client about expiration
+		/// </summary>
 		[System.Runtime.Serialization.DataMember()]
 		public System.DateTimeOffset ExpiryTime { get; set; }
 		
@@ -7902,16 +7942,28 @@ namespace Fonlow.WebApp.Accounts.Client
 	public class ChangePasswordBindingModel : object
 	{
 		
+		/// <summary>
+		/// Data type: Password
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
 		[System.Runtime.Serialization.DataMember()]
 		public string ConfirmPassword { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// String length: inclusive between 6 and 100
+		/// Data type: Password
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength=6, ErrorMessage="The {0} must be at least {2} characters long.")]
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
 		[System.Runtime.Serialization.DataMember()]
 		public string NewPassword { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// Data type: Password
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
 		[System.Runtime.Serialization.DataMember()]
@@ -7967,6 +8019,9 @@ namespace Fonlow.WebApp.Accounts.Client
 	public class RegisterBindingModel : object
 	{
 		
+		/// <summary>
+		/// Data type: Password
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
 		[System.Runtime.Serialization.DataMember()]
 		public string ConfirmPassword { get; set; }
@@ -7977,12 +8032,20 @@ namespace Fonlow.WebApp.Accounts.Client
 		[System.Runtime.Serialization.DataMember()]
 		public string FullName { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// String length: inclusive between 6 and 100
+		/// Data type: Password
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength=6, ErrorMessage="The {0} must be at least {2} characters long.")]
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
 		[System.Runtime.Serialization.DataMember()]
 		public string Password { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		public string UserName { get; set; }
@@ -7992,6 +8055,9 @@ namespace Fonlow.WebApp.Accounts.Client
 	public class RegisterExternalBindingModel : object
 	{
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		public string Email { get; set; }
@@ -8001,10 +8067,16 @@ namespace Fonlow.WebApp.Accounts.Client
 	public class RemoveLoginBindingModel : object
 	{
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		public string LoginProvider { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		public string ProviderKey { get; set; }
@@ -8031,10 +8103,18 @@ namespace Fonlow.WebApp.Accounts.Client
 	public class SetPasswordBindingModel : object
 	{
 		
+		/// <summary>
+		/// Data type: Password
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
 		[System.Runtime.Serialization.DataMember()]
 		public string ConfirmPassword { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// String length: inclusive between 6 and 100
+		/// Data type: Password
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.ComponentModel.DataAnnotations.StringLength(100, MinimumLength=6, ErrorMessage="The {0} must be at least {2} characters long.")]
 		[System.ComponentModel.DataAnnotations.DataType(System.ComponentModel.DataAnnotations.DataType.Password)]
@@ -8050,19 +8130,33 @@ namespace Fonlow.WebApp.Accounts.Client
 		public string UserId { get; set; }
 	}
 	
+	/// <summary>
+	/// https://datatracker.ietf.org/doc/html/rfc7519 JWT
+	/// https://www.ietf.org/rfc/rfc6749.txt, The OAuth 2.0 Authorization Framework
+	/// </summary>
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class TokenResponseModel : Fonlow.Auth.Models.Client.AccessTokenResponse
 	{
 		
+		/// <summary>
+		/// Custom
+		/// </summary>
 		[System.Runtime.Serialization.DataMember(Name="connection_id")]
 		[System.Text.Json.Serialization.JsonPropertyName("connection_id")]
 		public System.Guid ConnectionId { get; set; }
 		
+		/// <summary>
+		/// For human readable. The app codes generaly use expires_in
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		[System.Text.Json.Serialization.JsonPropertyName("expires")]
 		public string Expires { get; set; }
 		
+		/// <summary>
+		/// Required
+		/// </summary>
 		[System.ComponentModel.DataAnnotations.Required()]
 		[System.Runtime.Serialization.DataMember()]
 		[System.Text.Json.Serialization.JsonPropertyName("username")]
@@ -8172,7 +8266,7 @@ namespace Core3WebApi.Controllers.Client
 			var requestUri = "api/Statistics/distribution";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -8255,7 +8349,7 @@ namespace DemoCoreWeb.Controllers.Client
 			var requestUri = "api/SpecialTypes/AnonymousDynamic";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -8299,7 +8393,7 @@ namespace DemoCoreWeb.Controllers.Client
 			var requestUri = "api/SpecialTypes/AnonymousDynamic2";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -8343,7 +8437,7 @@ namespace DemoCoreWeb.Controllers.Client
 			var requestUri = "api/SpecialTypes/AnonymousObject";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -8387,7 +8481,7 @@ namespace DemoCoreWeb.Controllers.Client
 			var requestUri = "api/SpecialTypes/AnonymousObject2";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -8435,7 +8529,7 @@ namespace DemoCoreWeb.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(obj, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();
@@ -8483,7 +8577,7 @@ namespace DemoCoreWeb.Controllers.Client
 			var content = System.Net.Http.Json.JsonContent.Create(obj, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.Send(httpRequestMessage);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
 			try
 			{
 				responseMessage.EnsureSuccessStatusCodeEx();

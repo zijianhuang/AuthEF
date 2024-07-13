@@ -52,7 +52,7 @@ namespace WebApp.Controllers
 		/// <param name="model"></param>
 		/// <returns>Access token and refresh token, along with other meta data.</returns>
 		[AllowAnonymous]
-		[Consumes("application/x-www-form-urlencoded")]
+		[Consumes("application/x-www-form-urlencoded")] // redundant generally because of FromForm below
 		[HttpPost]
 		public async Task<ActionResult<TokenResponseModel>> Authenticate([FromForm] RequestBase model)
 		{
@@ -72,7 +72,6 @@ namespace WebApp.Controllers
 				}
 
 				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-				//var newLoginConnectionId = Guid.NewGuid();
 				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, Guid.Empty); //todo: some apps may need to deal with scope
 			}
 			else if (model is RefreshAccessTokenRequest refreshAccessTokenRequest)
@@ -100,6 +99,8 @@ namespace WebApp.Controllers
 
 					return await tokenHelper.GenerateJwtToken(user, username, Guid.Empty);
 				}
+
+				return Unauthorized();
 			}
 
 			throw new NotSupportedException();

@@ -63,7 +63,6 @@ namespace AuthTests
 			Assert.Equal("bearer", r.token_type, true);
 			Assert.NotNull(r.access_token);
 			Assert.NotNull(r.refresh_token);
-			//Assert.Equal("some scope", r.Scope);
 			Assert.True(r.expires_in > 0);
 		}
 
@@ -90,8 +89,28 @@ namespace AuthTests
 			Assert.Equal("bearer", r.token_type, true);
 			Assert.NotNull(r.access_token);
 			Assert.NotNull(r.refresh_token);
-			//Assert.Equal("some scope", r.Scope);
 			Assert.True(r.expires_in > 0);
 		}
+
+		[Fact]
+		public async Task TestRefreshTokenButNotAuthenticatedThrows()
+		{
+			var ra = await api.PostRopcTokenRequestAsFormDataToAuthAsync(new ROPCRequst
+			{
+				grant_type = "password",
+				Username = "admin",
+				Password = "Pppppp*8"
+			});
+
+			var ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(()=> api.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
+			{
+				grant_type = "refresh_token",
+				refresh_token = ra.refresh_token
+			}));
+
+			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+		}
+
+
 	}
 }

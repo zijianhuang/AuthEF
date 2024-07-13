@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Fonlow.Auth.Models
 {
-// Data contract attbibutes are basically for NewtonSoft.Json which respects these attributes
+	// Data contract attbibutes are basically for NewtonSoft.Json which respects these attributes
 	//[JsonPolymorphic(TypeDiscriminatorPropertyName = "grant_type")]
 	//[JsonDerivedType(typeof(ROPCRequst), "password")]
 	//[JsonDerivedType(typeof(RefreshAccessTokenRequest), "refresh_token")]
@@ -15,7 +15,7 @@ namespace Fonlow.Auth.Models
 		[JsonPropertyName("grant_type")]
 		[JsonPropertyOrder(-10)]
 		[DataMember(Name = "grant_type")]
-		public string grant_type { get; set; }
+		public string grant_type { get; protected set; }
 	}
 
 	/// <summary>
@@ -25,6 +25,11 @@ namespace Fonlow.Auth.Models
 	[DataContract]
 	public class ROPCRequst : RequestBase
 	{
+		public ROPCRequst()
+		{
+			grant_type = "password";
+		}
+
 		[Required]
 		[DataMember]
 		public string Username { get; set; }
@@ -45,6 +50,11 @@ namespace Fonlow.Auth.Models
 	[DataContract]
 	public class RefreshAccessTokenRequest : RequestBase
 	{
+		public RefreshAccessTokenRequest()
+		{
+			grant_type = "refresh_token";
+		}
+
 		[Required]
 		[JsonPropertyName("refresh_token")]
 		[DataMember(Name = "refresh_token")]

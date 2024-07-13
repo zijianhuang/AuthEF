@@ -1,9 +1,10 @@
 This repository serves multiple purposes:
 1. Demonstrate "[Decouple ASP.NET Core Identity, Authentication and Database Engines](https://www.codeproject.com/Articles/5378824/Decouple-ASP-NET-Core-Identity-Authentication-and)"
 2. Demonstrate "[Share Identity Bear Tokens among ASP.NET Core Web APIs](https://www.codeproject.com/Articles/5382165/Share-Identity-Bear-Tokens-among-ASP-NET-Core-Web)" 
-3. Provide some plugin components that decouple business modules from concrete SQL database engines.
-4. Provide some components that decouple ASP.NET Core Identity with concrete database engines.
-5. Demonstrate how to craft integration tests and run on local dev PC as much as possible, and the artifacts could be easily reused in a team CI server like GitHub Actions/Workflow.
+3. Demonstrate "[Resource Owner Password Credentials Grant and Refreshing Token with ASP.NET Core Identity](https://www.codeproject.com/Articles/5385175/ROPC-and-Refresh-Token-with-ASP-NET-Core-Identity)"
+4. Provide some plugin components that decouple business modules from concrete SQL database engines.
+5. Provide some components that decouple ASP.NET Core Identity with concrete database engines.
+6. Demonstrate how to craft integration tests and run on local dev PC as much as possible, and the artifacts could be easily reused in a team CI server like GitHub Actions/Workflow.
 
 ## Decoupling Entity Framework and DB Engines
 
@@ -18,11 +19,11 @@ Therefore, through altering a connection string in the app settings, your app ca
 
 **Hints:**
 
-* It shoudl be quick and easy for you to write Fonlow.EntityFrameworkCore.MyFavoriteDbEngine for MS SQL or Oracle etc.
+* It should be quick and easy for you to write Fonlow.EntityFrameworkCore.MyFavoriteDbEngine for MS SQL or Oracle etc.
 
 ##  ASP.NET Core Identity
 
-Provides a few libraries to create a database of ASP.NET Core Identity with a concreate database engine:
+Provides a few libraries to create a database of ASP.NET Core Identity with a concrete database engine:
 1. Fonlow.AspNetCore.Identity
 1. Fonlow.AuthDbCreator
 1. Fonlow.WebApp.Accounts
@@ -31,8 +32,8 @@ Please read the readme.md file of each library.
 
 **Hints:**
 
-* Even if you don't use ASP.NET Core Identity for authentication, but something like Okta, Auth0 or Azure AD / MS Entra ID, doupling main business modules from the authentication implementation is benefitical to CI and business, and having a locally hosted ASP.NET Core Identity implementation makes integration tests fast as explained below.
-* Microsoft has provided similar classes out of the box from libraries or scarfolding codes of ASP.NET MVC, however, using string for ID, while these libraries use GUID.
+* Even if you don't use ASP.NET Core Identity for authentication, but something like Okta, Auth0 or Azure AD / MS Entra ID, doupling main business modules from the authentication implementation is beneficial to CI and business, and having a locally hosted ASP.NET Core Identity implementation makes integration tests fast as explained below.
+* Microsoft has provided similar classes out of the box from libraries or scaffolding codes of ASP.NET MVC, however, using string for ID, while these libraries use GUID.
 
 
 
