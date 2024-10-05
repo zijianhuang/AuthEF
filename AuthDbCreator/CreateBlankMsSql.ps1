@@ -1,3 +1,4 @@
+#requires -PSEdition Core
 Set-Location $PSScriptRoot
 $netVersion = "net8.0"
 $RuntimeId = ([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier.ToString())

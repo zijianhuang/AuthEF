@@ -1,3 +1,4 @@
+#requires -PSEdition Core
 # Use a published assemblies of Fonlow.EntityFrameworkCore.MyDbEngine.csproj as a plug-in, after running dotnet publish;
 # Or use MyDbEngine related assemblies published of Fonlow.EntityFrameworkCore.MyDbEngine.csproj as a plug-in;
 # There may be other ways, depending how you would test and deploy.
