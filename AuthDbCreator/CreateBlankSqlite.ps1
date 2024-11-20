@@ -7,10 +7,10 @@
 # 1. Copy all assemblies related to Sqlite, and copy the native e_sqlte3.* of specific OS from the runtimes folder.
 # 2. Use "dotnet publish -r WhatOS" to let dotnet choose the right one.
 Set-Location $PSScriptRoot
-$netVersion = "net8.0"
+$netVersion = "net9.0"
 $RuntimeId = ([System.Runtime.InteropServices.RuntimeInformation]::RuntimeIdentifier.ToString())
 $ExecutableExt = If ($IsWindows) {".exe"} Else {""}
 dotnet publish ../Fonlow.EntityFrameworkCore.MySql/Fonlow.EntityFrameworkCore.MySql.csproj -r $RuntimeId --configuration Release --output bin/Release/$netVersion
 $connectionString = "Data Source=../Core3WebApi/DemoApp_Data/auth.db"
 $CreatorExe = "AuthDbCreator" + $ExecutableExt;
-Invoke-Expression "&./bin/Release/net8.0/$CreatorExe Fonlow.EntityFrameworkCore.MySql '$connectionString'"
+Invoke-Expression "&./bin/Release/net9.0/$CreatorExe Fonlow.EntityFrameworkCore.MySql '$connectionString'"
