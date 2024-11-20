@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using WebApp.Utilities;
 
+#region Security config
 System.Reflection.Assembly appAssembly = System.Reflection.Assembly.GetExecutingAssembly();
 string dirOfAppAssembly = System.IO.Path.GetDirectoryName(appAssembly.Location);
 IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile(System.IO.Path.Combine(dirOfAppAssembly, "appsettings.json")).Build();
@@ -25,6 +26,7 @@ var dbEngineDbContextPlugins = appSettings.GetSection("dbEngineDbContextPlugins"
 var identityConnectionString = config.GetConnectionString("IdentityConnection");
 IAuthSetupSecrets authSetupSettings = null;
 IAuthSettings authSettings = null;
+
 if (environment == "test")
 {
 	var authSetupSettingsSection = config.GetSection("AuthSetupSettings");
@@ -43,6 +45,9 @@ if (authSetupSettings == null || string.IsNullOrEmpty(authSetupSettings.Symmetri
 	throw new ArgumentException("Need SymmetricSecurityKeyString"); // or throw whatever app specific exception
 }
 
+#endregion
+
+#region Common Web API setup
 string webRootPath = "./";
 string dataDirectory = "./DemoApp_Data";
 
@@ -57,15 +62,10 @@ var options = new WebApplicationOptions
 	Args = args,
 };
 
-
-var builder = WebApplication.CreateBuilder(options);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(options);
 builder.Configuration.AddConfiguration(config);
 Console.WriteLine($"Start at contentRootPath: {builder.Environment.ContentRootPath}; WebRootPath: {builder.Environment.WebRootPath}; Current: {Directory.GetCurrentDirectory()}");
 
-var issuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(authSetupSettings.SymmetricSecurityKeyString));
-builder.Services.AddSingleton(issuerSigningKey);
-
-builder.Services.AddSingleton(authSettings);
 
 builder.Services.AddControllers(configure =>
 {
@@ -80,6 +80,33 @@ options =>
 
 
 });
+
+builder.Services.AddCors(options => options.AddPolicy("All", builder =>
+{
+	builder.AllowAnyMethod()
+		   .AllowAnyOrigin()
+		   .AllowAnyHeader()
+		   ;
+}));
+
+#endregion
+
+#region EF DbContext setup without coupling with any SQL Db engin
+var identityDbEngineDbContext = DbEngineDbContextLoader.CreateDbEngineDbContextFromAssemblyFile(dbEngineDbContextPlugins[0] + ".dll");
+if (identityDbEngineDbContext == null)
+{
+	Console.Error.WriteLine("No dbEngineDbContext");
+	throw new ArgumentException("Need dbEngineDbContextPlugin");
+}
+
+Console.WriteLine($"DB Engine: {identityDbEngineDbContext.DbEngineName}");
+
+#endregion
+
+#region Auth setup
+var issuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(authSetupSettings.SymmetricSecurityKeyString));
+builder.Services.AddSingleton(issuerSigningKey);
+builder.Services.AddSingleton(authSettings);
 
 builder.Services.AddAuthentication(
 	options =>
@@ -107,26 +134,9 @@ builder.Services.AddAuthentication(
 	}; // Thanks to https://dotnetdetail.net/asp-net-core-3-0-web-api-token-based-authentication-example-using-jwt-in-vs2019/
 });
 
-builder.Services.AddCors(options => options.AddPolicy("All", builder =>
-{
-	builder.AllowAnyMethod()
-		   .AllowAnyOrigin()
-		   .AllowAnyHeader()
-		   ;
-}));
-
-var dbEngineDbContext = DbEngineDbContextLoader.CreateDbEngineDbContextFromAssemblyFile(dbEngineDbContextPlugins[0] + ".dll");
-if (dbEngineDbContext == null)
-{
-	Console.Error.WriteLine("No dbEngineDbContext");
-	throw new ArgumentException("Need dbEngineDbContextPlugin");
-}
-
-Console.WriteLine($"DB Engine: {dbEngineDbContext.DbEngineName}");
-
 builder.Services.AddDbContext<ApplicationDbContext>(dcob =>
 {
-	dbEngineDbContext.ConnectDatabase(dcob, identityConnectionString); // called by runtime everytime an instance of ApplicationDbContext is created.
+	identityDbEngineDbContext.ConnectDatabase(dcob, identityConnectionString); // called by runtime everytime an instance of ApplicationDbContext is created.
 });
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationIdentityRole>(
@@ -139,7 +149,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationIdentityRole>(
 				.AddUserManager<ApplicationUserManager>()
 				.AddDefaultTokenProviders()
 				.AddTokenProvider(authSettings.TokenProviderName, typeof(DataProtectorTokenProvider<ApplicationUser>)); //thanks to https://stackoverflow.com/questions/53659247/using-aspnetusertokens-table-to-store-refresh-token-in-asp-net-core-web-api;
-
+#endregion
 
 var app = builder.Build();
 

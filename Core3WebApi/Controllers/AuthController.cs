@@ -103,7 +103,7 @@ namespace WebApp.Controllers
 				return Unauthorized();
 			}
 
-			throw new NotSupportedException();
+			throw new NotSupportedException("token payload RequestBase not supported.");
 		}
 
 
