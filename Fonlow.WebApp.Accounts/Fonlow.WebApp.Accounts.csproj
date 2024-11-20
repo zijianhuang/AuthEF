@@ -4,10 +4,10 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<Version>1.2</Version>
+		<Version>1.3</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>Data models to be used in authentication and user account management.</Description>
-		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageReleaseNotes>.NET 9</PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
 		<PackageProjectUrl>https://github.com/zijianhuang/webapiclientgen</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

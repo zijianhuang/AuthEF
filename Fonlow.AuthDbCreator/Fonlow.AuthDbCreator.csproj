@@ -4,10 +4,10 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<Version>1.1</Version>
+		<Version>1.2</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>Helper functions to established a new Identity database, and optionally seed with predefined roles and users.</Description>
-		<PackageReleaseNotes></PackageReleaseNotes>
+		<PackageReleaseNotes>.NET 9</PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
 		<PackageProjectUrl>https://github.com/zijianhuang/webapiclientgen</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
