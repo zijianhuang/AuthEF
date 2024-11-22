@@ -12,21 +12,19 @@ namespace Fonlow.WebApp.Accounts
 	[DataContract]
 	public class TokenResponseModel : Fonlow.Auth.Models.AccessTokenResponse
 	{
-		[JsonPropertyName("username")]
-		[DataMember]
-		[Required]
-		public string Username { get; set; }
+		//[JsonPropertyName("username")]
+		//[DataMember]
+		//[Required]
+		//public string Username { get; set; }
 
-		//[DataMember(Name = "issued", IsRequired = true)]
-		//public string Issued { get; set; }
 
-		/// <summary>
-		/// For human readable. The app codes generaly use expires_in
-		/// </summary>
-		[JsonPropertyName("expires")]
-		[DataMember]
-		[Required]
-		public string Expires { get; set; }
+		///// <summary>
+		///// For human readable. The app codes generaly use expires_in
+		///// </summary>
+		//[JsonPropertyName("expires")]
+		//[DataMember]
+		//[Required]
+		//public string Expires { get; set; }
 
 		/// <summary>
 		/// Custom

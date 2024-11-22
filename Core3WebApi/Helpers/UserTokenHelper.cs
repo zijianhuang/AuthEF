@@ -113,9 +113,9 @@ namespace WebApp.Utilities
 			{
 				access_token = accessToken,
 				token_type = "Bearer",
-				Username = username,
+				//Username = username,
 				expires_in = Convert.ToInt32(span.TotalSeconds),
-				Expires = expires.UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+				//Expires = expires.UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ"),
 				refresh_token = refreshToken,
 				ConnectionId = connectionId,
 			};

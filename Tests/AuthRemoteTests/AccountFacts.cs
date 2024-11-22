@@ -32,7 +32,6 @@ namespace AuthRemoteTests
 			// new user login
 			var newUserTokenText = GetTokenWithNewClient(baseUri, newUsername, newUserPassword);
 			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(newUserTokenText);
-			Assert.Equal(newUsername, newUserTokenModel.Username);
 		}
 
 		[Fact]
@@ -43,7 +42,6 @@ namespace AuthRemoteTests
 			// new user login
 			var newUserTokenText = GetTokenWithNewClient(baseUri, newUsername, newUserPassword);
 			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(newUserTokenText);
-			Assert.Equal(newUsername, newUserTokenModel.Username);
 			using var userHttpClient = new HttpClient();
 			userHttpClient.BaseAddress = baseUri;
 			userHttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(newUserTokenModel.token_type, newUserTokenModel.access_token);
@@ -67,7 +65,7 @@ namespace AuthRemoteTests
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
 			// User refresh token to gain access without login should fail
-			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.Username, newUserTokenModel.ConnectionId));
+			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.ConnectionId));
 
 			heroesApi.GetHeros(); // the access token is still working, for a while.
 			System.Threading.Thread.Sleep(307100);
@@ -203,26 +201,25 @@ namespace AuthRemoteTests
 		}
 
 
-		TokenResponseModel GetTokenResponseModelByRefreshTokenWithSameClient(Uri baseUri, string refreshToken, string username, Guid connectionId)
+		TokenResponseModel GetTokenResponseModelByRefreshTokenWithSameClient(Uri baseUri, string refreshToken, Guid connectionId)
 		{
-			return GetTokenResponseModel(baseUri, refreshToken, username, connectionId, this.httpClient);
+			return GetTokenResponseModel(baseUri, refreshToken, connectionId, this.httpClient);
 		}
 
-		TokenResponseModel GetTokenResponseModelByRefreshTokenWithNewClient(Uri baseUri, string refreshToken, string username, Guid connectionId)
+		TokenResponseModel GetTokenResponseModelByRefreshTokenWithNewClient(Uri baseUri, string refreshToken, Guid connectionId)
 		{
 			using (var client = new HttpClient())
 			{
 				client.BaseAddress = baseUri;
-				return GetTokenResponseModel(baseUri, refreshToken, username, connectionId, client);
+				return GetTokenResponseModel(baseUri, refreshToken, connectionId, client);
 			}
 		}
 
-		TokenResponseModel GetTokenResponseModel(Uri baseUri, string refreshToken, string username, Guid connectionId, HttpClient client)
+		TokenResponseModel GetTokenResponseModel(Uri baseUri, string refreshToken, Guid connectionId, HttpClient client)
 		{
 			return GetTokenResponseModel(client, (headers) =>
 			{
 				headers.Add("refreshToken", refreshToken);
-				headers.Add("username", username);
 				headers.Add("connectionId", connectionId.ToString("N"));
 			});
 		}
