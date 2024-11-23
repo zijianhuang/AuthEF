@@ -11,6 +11,23 @@ using Fonlow.WebApp.Accounts.Client;
 namespace AuthTests
 {
 
+	public class TokenTestsFixture : BasicHttpClient
+	{
+		public TokenTestsFixture()
+		{
+			var c = TestingSettings.Instance.ServiceCommands["LaunchIdentityWebApi"];
+			this.HttpClient.BaseAddress = new System.Uri(c.BaseUrl);
+
+			IConfiguration config = new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json")
+				.Build();
+
+			ClockSkewMilliseconds = int.Parse(config["ClockSkewSeconds"]) * 1000;
+		}
+
+		public int ClockSkewMilliseconds { get; private set; }
+	}
+
 	[Collection(IntegrationTests.TestConstants.LaunchWebApiAndInit)]
 	public class TokenRefreshFacts : IClassFixture<TokenTestsFixture>
 	{
@@ -310,7 +327,7 @@ namespace AuthTests
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, newTokenModel.access_token);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			accountApi.AdminRemoverRefreshTokensOfUsers("admin");
-			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token,newTokenModel.ConnectionId));
+			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, newTokenModel.ConnectionId));
 		}
 
 		HttpClient CreateAdminHttpClient()
@@ -393,7 +410,7 @@ namespace AuthTests
 
 		TokenResponseModel GetTokenResponseModel(Uri baseUri, string accessToken, string refreshToken, Guid connectionId, HttpClient client)
 		{
-			var s =  GetTokenResponseModel(client, accessToken, refreshToken, $"connectionId:{connectionId.ToString()}");
+			var s = GetTokenResponseModel(client, accessToken, refreshToken, $"connectionId:{connectionId.ToString()}");
 			var model = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(s);
 			return model;
 		}
