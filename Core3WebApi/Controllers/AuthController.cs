@@ -90,14 +90,25 @@ namespace WebApp.Controllers
 						return BadRequest(new { message = "Username or password is invalid" });
 					}
 
+					Guid connectionId = Guid.Empty;
+					if (!string.IsNullOrEmpty(refreshAccessTokenRequest.Scope)){
+						var splits = refreshAccessTokenRequest.Scope.Split(" ");
+						var found = splits.FirstOrDefault(d => d.StartsWith("connectionId:"));
+						if (found != null)
+						{
+							connectionId = Guid.Parse(found.Substring(13));
+						}
+					}
+
+
 					var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-					var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, Guid.Empty);
+					var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId);
 					if (!tokenTextExisting)
 					{
 						return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
 					}
 
-					return await tokenHelper.GenerateJwtToken(user, username, Guid.Empty);
+					return await tokenHelper.GenerateJwtToken(user, username, connectionId);
 				}
 
 				return Unauthorized();
