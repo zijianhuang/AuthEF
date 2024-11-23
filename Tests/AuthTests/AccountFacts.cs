@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Net.WebSockets;
 using Xunit.Abstractions;
 using Fonlow.WebApp.Accounts.Client;
+using System.Management.Automation.Language;
 
 namespace AuthTests
 {
@@ -37,7 +38,17 @@ namespace AuthTests
 			// new user login
 			var newUserTokenText = GetTokenWithNewClient(baseUri, newUsername, newUserPassword);
 			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(newUserTokenText);
-			Assert.Equal(newUsername, newUserTokenModel.Username);
+			var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+			var jwtSecurityToken = handler.ReadJwtToken(newUserTokenModel.access_token);
+			Assert.Equal(newUsername, ExtractUsername(newUserTokenModel.access_token));
+		}
+
+		static string ExtractUsername(string accessToken)
+		{
+			var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+			var jwtSecurityToken = handler.ReadJwtToken(accessToken);
+			var v = jwtSecurityToken.Claims.FirstOrDefault(d => d.Type == "unique_name");
+			return v.Value;
 		}
 
 #if DEBUG
@@ -52,7 +63,7 @@ namespace AuthTests
 			// new user login
 			var newUserTokenText = GetTokenWithNewClient(baseUri, newUsername, newUserPassword);
 			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(newUserTokenText);
-			Assert.Equal(newUsername, newUserTokenModel.Username);
+			//Assert.Equal(newUsername, newUserTokenModel.Username);
 			using var userHttpClient = new HttpClient();
 			userHttpClient.BaseAddress = baseUri;
 			userHttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(newUserTokenModel.token_type, newUserTokenModel.access_token);
@@ -76,7 +87,7 @@ namespace AuthTests
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
 			// User refresh token to gain access without login should fail
-			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.Username, newUserTokenModel.ConnectionId));
+			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.ConnectionId));
 
 			heroesApi.GetHeros(); // the access token is still working, for a while.
 			System.Threading.Thread.Sleep(7100);
@@ -214,24 +225,23 @@ namespace AuthTests
 
 		TokenResponseModel GetTokenResponseModelByRefreshTokenWithSameClient(Uri baseUri, string refreshToken, string username, Guid connectionId)
 		{
-			return GetTokenResponseModel(baseUri, refreshToken, username, connectionId, this.httpClient);
+			return GetTokenResponseModel(baseUri, refreshToken, connectionId, this.httpClient);
 		}
 
-		TokenResponseModel GetTokenResponseModelByRefreshTokenWithNewClient(Uri baseUri, string refreshToken, string username, Guid connectionId)
+		TokenResponseModel GetTokenResponseModelByRefreshTokenWithNewClient(Uri baseUri, string refreshToken, Guid connectionId)
 		{
 			using (var client = new HttpClient())
 			{
 				client.BaseAddress = baseUri;
-				return GetTokenResponseModel(baseUri, refreshToken, username, connectionId, client);
+				return GetTokenResponseModel(baseUri, refreshToken, connectionId, client);
 			}
 		}
 
-		TokenResponseModel GetTokenResponseModel(Uri baseUri, string refreshToken, string username, Guid connectionId, HttpClient client)
+		TokenResponseModel GetTokenResponseModel(Uri baseUri, string refreshToken, Guid connectionId, HttpClient client)
 		{
 			return GetTokenResponseModel(client, (headers) =>
 			{
 				headers.Add("refreshToken", refreshToken);
-				headers.Add("username", username);
 				headers.Add("connectionId", connectionId.ToString("N"));
 			});
 		}

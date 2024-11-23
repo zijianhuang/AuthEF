@@ -1752,15 +1752,6 @@ export namespace Fonlow_WebApp_Accounts_Client {
 		 * Type: GUID
 		 */
 		connection_id?: string | null;
-
-		/**
-		 * For human readable. The app codes generaly use expires_in
-		 * Required
-		 */
-		expires?: string | null;
-
-		/** Required */
-		username?: string | null;
 	}
 
 	export interface UserInfoViewModel {

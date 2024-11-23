@@ -8144,23 +8144,6 @@ namespace Fonlow.WebApp.Accounts.Client
 		[System.Runtime.Serialization.DataMember(Name="connection_id")]
 		[System.Text.Json.Serialization.JsonPropertyName("connection_id")]
 		public System.Guid ConnectionId { get; set; }
-		
-		/// <summary>
-		/// For human readable. The app codes generaly use expires_in
-		/// Required
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.Runtime.Serialization.DataMember()]
-		[System.Text.Json.Serialization.JsonPropertyName("expires")]
-		public string Expires { get; set; }
-		
-		/// <summary>
-		/// Required
-		/// </summary>
-		[System.ComponentModel.DataAnnotations.Required()]
-		[System.Runtime.Serialization.DataMember()]
-		[System.Text.Json.Serialization.JsonPropertyName("username")]
-		public string Username { get; set; }
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
