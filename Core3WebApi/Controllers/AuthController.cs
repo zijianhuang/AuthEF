@@ -54,7 +54,7 @@ namespace WebApp.Controllers
 		[AllowAnonymous]
 		[Consumes("application/x-www-form-urlencoded")] // redundant generally because of FromForm below
 		[HttpPost]
-		public async Task<ActionResult<TokenResponseModel>> Authenticate([FromForm] RequestBase model)
+		public async Task<ActionResult<AccessTokenResponse>> Authenticate([FromForm] RequestBase model)
 		{
 			if (model is ROPCRequst)
 			{
@@ -71,9 +71,9 @@ namespace WebApp.Controllers
 					return Unauthorized(new { message = "Username or password is incorrect" });
 				}
 
-				Guid connectionId = ExtractConnectionId(ropcRequest.Scope);
+				Guid connectionId = UserTokenHelper.ExtractConnectionId(ropcRequest.Scope);
 				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, connectionId); //todo: some apps may need to deal with scope
+				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, ropcRequest.Scope); //todo: some apps may need to deal with scope
 			}
 			else if (model is RefreshAccessTokenRequest refreshAccessTokenRequest)
 			{
@@ -91,7 +91,7 @@ namespace WebApp.Controllers
 						return BadRequest(new { message = "Username or password is invalid" });
 					}
 
-					Guid connectionId = ExtractConnectionId(refreshAccessTokenRequest.Scope);
+					Guid connectionId = UserTokenHelper.ExtractConnectionId(refreshAccessTokenRequest.Scope);
 					var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
 					var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId);
 					if (!tokenTextExisting)
@@ -99,7 +99,7 @@ namespace WebApp.Controllers
 						return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
 					}
 
-					return await tokenHelper.GenerateJwtToken(user, username, connectionId);
+					return await tokenHelper.GenerateJwtToken(user, username, refreshAccessTokenRequest.Scope);
 				}
 
 				return Unauthorized();
@@ -107,51 +107,6 @@ namespace WebApp.Controllers
 
 			throw new NotSupportedException("token payload RequestBase not supported.");
 		}
-
-		static Guid ExtractConnectionId(string scope){
-			Guid connectionId = Guid.Empty;
-			if (!string.IsNullOrEmpty(scope))
-			{
-				var splits = scope.Split(" ");
-				var found = splits.FirstOrDefault(d => d.StartsWith("connectionId:"));
-				if (found != null)
-				{
-					connectionId = Guid.Parse(found.Substring(13));
-				}
-			}
-
-			return connectionId;
-		}
-
-
-		///// <summary>
-		///// Generate new JWT token according to refresh token and connectionId.
-		///// This call supports AllowAnonymous. So after the access token expires, the client may still acquire new one without login again.
-		///// However, ask your PO and IT security expert for further advice regarding UX and security.
-		///// </summary>
-		///// <param name="refreshToken"></param>
-		///// <param name="username"></param>
-		///// <param name="connectionId"></param>
-		///// <returns></returns>
-		//[AllowAnonymous]
-		//[HttpGet("tokenByRefreshToken")]
-		//public async Task<ActionResult<TokenResponseModel>> GetTokenWithRefreshToken([FromHeader] string refreshToken, [FromHeader] string username, [FromHeader] Guid connectionId)
-		//{
-		//	ApplicationUser user = await UserManager.FindByNameAsync(username);
-		//	if (user == null)
-		//	{
-		//		return BadRequest(new { message = "Username or password is invalid" });
-		//	}
-
-		//	var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-		//	var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshToken, connectionId);
-		//	if (!tokenTextExisting)
-		//	{
-		//		return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
-		//	}
-
-		//	return await tokenHelper.GenerateJwtToken(user, username, connectionId); //the old refresh token is removed
-		//}
 
 	}
 

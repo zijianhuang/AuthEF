@@ -7883,6 +7883,9 @@ namespace Fonlow.Auth.Models.Client
 		[System.Runtime.Serialization.DataMember()]
 		public string Password { get; set; }
 		
+		/// <summary>
+		/// https://oauth.net/2/scope/, https://datatracker.ietf.org/doc/html/rfc6749#section-3.3
+		/// </summary>
 		[System.Runtime.Serialization.DataMember()]
 		public string Scope { get; set; }
 		
@@ -8128,22 +8131,6 @@ namespace Fonlow.WebApp.Accounts.Client
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string UserId { get; set; }
-	}
-	
-	/// <summary>
-	/// https://datatracker.ietf.org/doc/html/rfc7519 JWT
-	/// https://www.ietf.org/rfc/rfc6749.txt, The OAuth 2.0 Authorization Framework
-	/// </summary>
-	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class TokenResponseModel : Fonlow.Auth.Models.Client.AccessTokenResponse
-	{
-		
-		/// <summary>
-		/// Custom
-		/// </summary>
-		[System.Runtime.Serialization.DataMember(Name="connection_id")]
-		[System.Text.Json.Serialization.JsonPropertyName("connection_id")]
-		public System.Guid ConnectionId { get; set; }
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]

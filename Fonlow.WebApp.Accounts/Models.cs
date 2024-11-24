@@ -38,6 +38,9 @@ namespace Fonlow.Auth.Models
 		[DataMember]
 		public string Password { get; set; }
 
+		/// <summary>
+		/// https://oauth.net/2/scope/, https://datatracker.ietf.org/doc/html/rfc6749#section-3.3
+		/// </summary>
 		[DataMember]
 		public string Scope { get; set; }
 

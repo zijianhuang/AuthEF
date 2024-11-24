@@ -1,4 +1,5 @@
 using DemoWebApi.Controllers.Client;
+using Fonlow.Auth.Models;
 using Fonlow.Net.Http;
 using Fonlow.WebApp.Accounts;
 using Newtonsoft.Json;
@@ -31,7 +32,7 @@ namespace AuthRemoteTests
 
 			// new user login
 			var newUserTokenText = GetTokenWithNewClient(baseUri, newUsername, newUserPassword);
-			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(newUserTokenText);
+			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(newUserTokenText);
 		}
 
 		[Fact]
@@ -41,7 +42,7 @@ namespace AuthRemoteTests
 
 			// new user login
 			var newUserTokenText = GetTokenWithNewClient(baseUri, newUsername, newUserPassword);
-			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(newUserTokenText);
+			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(newUserTokenText);
 			using var userHttpClient = new HttpClient();
 			userHttpClient.BaseAddress = baseUri;
 			userHttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(newUserTokenModel.token_type, newUserTokenModel.access_token);
@@ -52,7 +53,7 @@ namespace AuthRemoteTests
 			//Admin to remove user
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
 			Assert.NotEmpty(tokenText);
-			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
+			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			Assert.NotNull(tokenModel.refresh_token);
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
@@ -65,7 +66,7 @@ namespace AuthRemoteTests
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
 			// User refresh token to gain access without login should fail
-			Assert.Throws<WebApiRequestException>(() => GetTokenResponseModelByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.ConnectionId));
+			Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.ConnectionId));
 
 			heroesApi.GetHeros(); // the access token is still working, for a while.
 			System.Threading.Thread.Sleep(307100);
@@ -96,7 +97,7 @@ namespace AuthRemoteTests
 
 		HttpClient CreateAdminHttpClient(){
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
-			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
+			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
@@ -127,7 +128,7 @@ namespace AuthRemoteTests
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
 			Assert.NotEmpty(tokenText);
 
-			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<TokenResponseModel>(tokenText);
+			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			Assert.NotNull(tokenModel.refresh_token);
 
 			using var httpClient = new HttpClient();
@@ -201,29 +202,29 @@ namespace AuthRemoteTests
 		}
 
 
-		TokenResponseModel GetTokenResponseModelByRefreshTokenWithSameClient(Uri baseUri, string refreshToken, Guid connectionId)
+		AccessTokenResponse GetAccessTokenResponseByRefreshTokenWithSameClient(Uri baseUri, string refreshToken, Guid connectionId)
 		{
-			return GetTokenResponseModel(baseUri, refreshToken, connectionId, this.httpClient);
+			return GetAccessTokenResponse(baseUri, refreshToken, connectionId, this.httpClient);
 		}
 
-		TokenResponseModel GetTokenResponseModelByRefreshTokenWithNewClient(Uri baseUri, string refreshToken, Guid connectionId)
+		AccessTokenResponse GetAccessTokenResponseByRefreshTokenWithNewClient(Uri baseUri, string refreshToken, Guid connectionId)
 		{
 			using (var client = new HttpClient())
 			{
 				client.BaseAddress = baseUri;
-				return GetTokenResponseModel(baseUri, refreshToken, connectionId, client);
+				return GetAccessTokenResponse(baseUri, refreshToken, connectionId, client);
 			}
 		}
 
-		TokenResponseModel GetTokenResponseModel(Uri baseUri, string refreshToken, Guid connectionId, HttpClient client)
+		AccessTokenResponse GetAccessTokenResponse(Uri baseUri, string refreshToken, Guid connectionId, HttpClient client)
 		{
-			return GetTokenResponseModel(client, (headers) =>
+			return GetAccessTokenResponse(client, (headers) =>
 			{
 				headers.Add("refreshToken", refreshToken);
 				headers.Add("connectionId", connectionId.ToString("N"));
 			});
 		}
-		TokenResponseModel GetTokenResponseModel(HttpClient client, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		AccessTokenResponse GetAccessTokenResponse(HttpClient client, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "Token/tokenByRefreshToken";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
@@ -235,7 +236,7 @@ namespace AuthRemoteTests
 				var stream = responseMessage.Content.ReadAsStreamAsync().Result;
 				using JsonReader jsonReader = new JsonTextReader(new System.IO.StreamReader(stream));
 				var serializer = JsonSerializer.Create();
-				return serializer.Deserialize<TokenResponseModel>(jsonReader);
+				return serializer.Deserialize<AccessTokenResponse>(jsonReader);
 			}
 			finally
 			{

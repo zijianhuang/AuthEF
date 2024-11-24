@@ -1,4 +1,5 @@
 ﻿using Fonlow.AspNetCore.Identity;
+using Fonlow.Auth.Models;
 using Fonlow.WebApp.Accounts;
 using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -68,17 +69,6 @@ namespace WebApp.Utilities
 			return tokenValue == storedToken;
 		}
 
-		//public async Task<bool> MatchToken(ClaimsPrincipal userClaimsPrincipal, string purpose, string tokenValue, Guid connectionId)
-		//{
-		//	var user = await userManager.GetUserAsync(userClaimsPrincipal);
-		//	if (user==null){
-		//		return false;
-		//	}
-		//	//var isValid = await userManager.VerifyUserTokenAsync(user, authSettings.TokenProviderName, "RefreshToken", tokenValue); probably no need to call this to avoid mix token purpose usages?
-		//	//and can not handle the expiry of refresh token, or any token needs to be expired. Also, cross machines issues as documented on https://stackoverflow.com/questions/51966010/identity-framework-generateusertoken-validation-issue
-		//	return await MatchToken(user, purpose, tokenValue, connectionId);
-		//}
-
 		/// <summary>
 		/// Generate token and refreshToken.
 		/// The claim is based on the roles of the user.
@@ -86,9 +76,9 @@ namespace WebApp.Utilities
 		/// </summary>
 		/// <param name="user"></param>
 		/// <param name="username"></param>
-		/// <param name="connectionId">connection of existing user login from a device.</param>
+		/// <param name="scope"></param>
 		/// <returns></returns>
-		public async Task<ActionResult<TokenResponseModel>> GenerateJwtToken(ApplicationUser user, string username, Guid connectionId)
+		public async Task<ActionResult<AccessTokenResponse>> GenerateJwtToken(ApplicationUser user, string username, string scope)
 		{
 			IList<string> roles = await userManager.GetRolesAsync(user);
 			List<Claim> claims = roles.Select(d => new Claim(ClaimTypes.Role, d)).ToList();
@@ -107,9 +97,10 @@ namespace WebApp.Utilities
 
 			const string tokenPurpose = "RefreshToken";
 			var refreshToken = await userManager.GenerateUserTokenAsync(user, authSettings.TokenProviderName, tokenPurpose);
+			Guid connectionId = UserTokenHelper.ExtractConnectionId(scope);
 			await UpsertToken(user, tokenPurpose, refreshToken, connectionId);
 
-			return new TokenResponseModel()
+			return new AccessTokenResponse()
 			{
 				access_token = accessToken,
 				token_type = "Bearer",
@@ -117,11 +108,28 @@ namespace WebApp.Utilities
 				expires_in = Convert.ToInt32(span.TotalSeconds),
 				//Expires = expires.UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ"),
 				refresh_token = refreshToken,
-				ConnectionId = connectionId,
+				Scope=scope
 			};
 			//The token contains roles info as shown at https://jwt.io/
 
 		}
+
+		public static Guid ExtractConnectionId(string scope)
+		{
+			Guid connectionId = Guid.Empty;
+			if (!string.IsNullOrEmpty(scope))
+			{
+				var splits = scope.Split(" ");
+				var found = splits.FirstOrDefault(d => d.StartsWith("connectionId:"));
+				if (found != null)
+				{
+					connectionId = Guid.Parse(found.Substring(13));
+				}
+			}
+
+			return connectionId;
+		}
+
 	}
 
 }

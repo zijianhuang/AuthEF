@@ -1610,6 +1610,10 @@ export namespace Fonlow_Auth_Models_Client {
 
 		/** Required */
 		password?: string | null;
+
+		/**
+		 * https://oauth.net/2/scope/, https://datatracker.ietf.org/doc/html/rfc6749#section-3.3
+		 */
 		scope?: string | null;
 
 		/** Required */
@@ -1738,20 +1742,6 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	export interface SetUserPasswordBindingModel extends Fonlow_WebApp_Accounts_Client.SetPasswordBindingModel {
 		userId?: string | null;
-	}
-
-
-	/**
-	 * https://datatracker.ietf.org/doc/html/rfc7519 JWT
-	 * https://www.ietf.org/rfc/rfc6749.txt, The OAuth 2.0 Authorization Framework
-	 */
-	export interface TokenResponseModel extends Fonlow_Auth_Models_Client.AccessTokenResponse {
-
-		/**
-		 * Custom
-		 * Type: GUID
-		 */
-		connection_id?: string | null;
 	}
 
 	export interface UserInfoViewModel {
