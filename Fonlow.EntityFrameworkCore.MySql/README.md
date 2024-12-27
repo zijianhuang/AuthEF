@@ -2,6 +2,8 @@
 
 For Dependency Injection, `IDbEngineDbContext` can be used with various design patterns of IoC, as well as .NET reflection.
 
+During development or pushing to GitHub repos, `PublishMySqlPluginToWebApi.ps1` or `PublishMySqlPluginToWebApiDebug.ps1` will copy needed decoupled dependency to the deployable of Core3WebApi.
+
 Example codes are provided in Core3WebApi/Program.cs with reflection.
 
 This library is for MySql.
