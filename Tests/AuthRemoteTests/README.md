@@ -1,3 +1,0 @@
-﻿Similar to "AuthTests", this test suite by default talks to https://demoidentity.fonlow.org/ which hosts the release build of Core3WebApi, thus the clock skew is the default 5 minutes. Therefore, some of the test cases may take over 5 minutes.
-
-In a typical 3rd party auth provider like Okta, OAuth0, Azure AD and Entra etc., the provider may allow you to alter the expiry of access token and refresh token, but not the span of clock skew. This is probably because other network protocols may depends on the common clock skew 300 seconds.
