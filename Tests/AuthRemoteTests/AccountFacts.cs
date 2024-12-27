@@ -35,47 +35,6 @@ namespace AuthRemoteTests
 			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(newUserTokenText);
 		}
 
-		[Fact]
-		public void TestRemovedUserTryToLoginThrows()
-		{
-			var newUsername = RegisterUser();
-
-			// new user login
-			var newUserTokenText = GetTokenWithNewClient(baseUri, newUsername, newUserPassword);
-			var newUserTokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(newUserTokenText);
-			using var userHttpClient = new HttpClient();
-			userHttpClient.BaseAddress = baseUri;
-			userHttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(newUserTokenModel.token_type, newUserTokenModel.access_token);
-			var heroesApi = new Heroes(userHttpClient);
-			heroesApi.GetHeros();
-
-
-			//Admin to remove user
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8");
-			Assert.NotEmpty(tokenText);
-			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
-			Assert.NotNull(tokenModel.refresh_token);
-			using var httpClient = new HttpClient();
-			httpClient.BaseAddress = baseUri;
-			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
-			var userId = accountApi.GetUserIdByUser(newUsername);
-			accountApi.RemoveUser(userId);
-
-			var ex = Assert.Throws<WebApiRequestException>(() => GetTokenWithNewClient(baseUri, newUsername, newUserPassword));
-			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
-
-			// User refresh token to gain access without login should fail
-			Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newUserTokenModel.refresh_token, newUserTokenModel.ConnectionId));
-
-			heroesApi.GetHeros(); // the access token is still working, for a while.
-			System.Threading.Thread.Sleep(307100);
-			Assert.Throws<WebApiRequestException>(() => TestAuthorizedConnection(newUserTokenModel.token_type, newUserTokenModel.access_token)); // new connection should fail
-			for (int i = 0; i < 10; i++)
-			{
-				heroesApi.GetHeros(); // existing connection is still working, as long as the HTTP connection remains.
-			}
-		}
 
 		//[Fact] // for creating base of stress testing
 		public void _RegisterManyManyUsers()

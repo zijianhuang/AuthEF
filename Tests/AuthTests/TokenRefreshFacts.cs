@@ -197,12 +197,10 @@ namespace AuthTests
 			{
 				var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, currentAccesstoken, currentRefreshToken, scope);
 				Assert.NotEqual(currentRefreshToken, newTokenModel.refresh_token);
-				//Assert.NotEqual(currentAccesstoken, newTokenModel.access_token); sometimes equal, probably due to that I request frequently.
 				currentRefreshToken = newTokenModel.refresh_token;
 				currentAccesstoken = newTokenModel.access_token; // for bearer token in new request
 			}
 
-			//Assert.NotEqual(tokenModel.access_token, currentAccesstoken); sometime equal
 			TestAuthorizedNewConnection(tokenModel.token_type, currentAccesstoken);
 
 			TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token); // old token is till working. To revoke, refer to https://stackoverflow.com/questions/62874537/jwt-token-forcefully-expire-in-asp-net-core-3-1, as JWT is by design not revokeable, and ASP.NET (Core) security hornor this. Another way simplier, just to set the expiry with 5 minutes span, if 5 minutes is accetable by your enterprise security policy.
