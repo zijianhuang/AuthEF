@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Version>1.1</Version>
+		<Version>1.1.1</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>PostgreSQLDbEngineDbContext: Implementation of IDbEngineDbContext for PostgreSQL</Description>
 		<PackageReleaseNotes>.NET 9</PackageReleaseNotes>

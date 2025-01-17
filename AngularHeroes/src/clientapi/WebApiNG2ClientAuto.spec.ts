@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule, HttpErrorResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { async, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { DemoWebApi_DemoData_Client, DemoWebApi_Controllers_Client } from './WebApiCoreNg2ClientAuto';
 import { TokenInterceptor, AuthService } from '../app/_services/tokenInterceptor';
 import { AUTH_STATUSES, AuthFunctions, LoginService } from '../app/_services/tokenInterceptor';
@@ -73,7 +73,7 @@ export function errorResponseBodyToString(error: HttpErrorResponse | any,): stri
 describe('Heroes API', () => {
 	let service: DemoWebApi_Controllers_Client.Heroes;
 	let loginService: LoginService;
-	beforeEach(async(() => {
+	beforeEach( (() => {
 		TestBed.configureTestingModule({
 			imports: [HttpClientModule],
 			providers: [

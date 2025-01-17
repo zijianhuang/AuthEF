@@ -1,5 +1,5 @@
 cd $PSScriptRoot
-$target="../Release/Core3WebApi/Linux"
+$target="../Release/WebApi/Linux"
 
 Remove-Item -Recurse $target*
 

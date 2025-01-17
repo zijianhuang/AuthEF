@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Version>1.1</Version>
+		<Version>1.1.1</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>SqliteDbEngineDbContext: Implementation of IDbEngineDbContext for Sqlite</Description>
 		<PackageReleaseNotes>.NET 9</PackageReleaseNotes>
@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -4,7 +4,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<Version>1.2</Version>
+		<Version>1.2.1</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>Helper functions to established a new Identity database, and optionally seed with predefined roles and users.</Description>
 		<PackageReleaseNotes>.NET 9</PackageReleaseNotes>
@@ -21,10 +21,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
