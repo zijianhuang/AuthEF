@@ -72,7 +72,6 @@ namespace WebApp.Controllers
 					return Unauthorized(new { message = "Username or password is incorrect" });
 				}
 
-				Guid connectionId = UserTokenHelper.ExtractConnectionId(ropcRequest.Scope);
 				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
 				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, ropcRequest.Scope); //todo: some apps may need to deal with scope
 			}
@@ -92,7 +91,7 @@ namespace WebApp.Controllers
 						return BadRequest(new { message = "Username or password is invalid" });
 					}
 
-					Guid connectionId = UserTokenHelper.ExtractConnectionId(refreshAccessTokenRequest.Scope);
+					Guid connectionId = string.IsNullOrEmpty(refreshAccessTokenRequest.Scope) ? Guid.Empty : UserTokenHelper.ExtractConnectionId(refreshAccessTokenRequest.Scope);
 					var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
 					var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId);
 					if (!tokenTextExisting)

@@ -97,7 +97,7 @@ namespace WebApp.Utilities
 
 			const string tokenPurpose = "RefreshToken";
 			var refreshToken = await userManager.GenerateUserTokenAsync(user, authSettings.TokenProviderName, tokenPurpose);
-			Guid connectionId = UserTokenHelper.ExtractConnectionId(scope);
+			Guid connectionId = string.IsNullOrEmpty(scope) ? Guid.Empty : UserTokenHelper.ExtractConnectionId(scope);
 			await UpsertToken(user, tokenPurpose, refreshToken, connectionId);
 
 			return new AccessTokenResponse()

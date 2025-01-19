@@ -128,6 +128,17 @@ describe('Heroes API', () => {
 			console.error('login error: ' + errMsg);
 			fail(errMsg);
 		};
+
+		try {
+			const data = await firstValueFrom(loginService.refreshToken(AUTH_STATUSES.accessTokenResponse.refresh_token!));
+			AuthFunctions.saveJwtToken(data);
+			console.info('Refresh token done.');
+		} catch (error) {
+			const errMsg = errorResponseToString(error);
+			console.error('refresh token error: ' + errMsg);
+			fail(errMsg);
+		};
+		
 		// loginService.login(AUTH_STATUSES.username!, password).subscribe(
 		// 	data => {
 		// 		AuthFunctions.saveJwtToken(data);

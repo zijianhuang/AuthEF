@@ -4,6 +4,7 @@ import {
 import { Inject, Injectable } from '@angular/core';
 import { Observable, catchError, firstValueFrom, lastValueFrom, map } from 'rxjs';
 import { Fonlow_Auth_Models_Client } from 'src/clientapi/WebApiCoreNg2ClientAuto';
+//import { URLSearchParams } from 'url';
 
 /**
  * Intercept HTTP calls and add bearer token if the request is within BACKEND_URLS.
@@ -44,9 +45,9 @@ export class TokenInterceptor implements HttpInterceptor {
 		return httpHandler.handle(refinedRequest).pipe(catchError(err => {
 			if ([401, 403].includes(err.status)) {
 				console.debug('401 403');
-				if (AUTH_STATUSES.accessTokenResponse.refresh_token) {
-					return AuthFunctions.getNewAuthToken(this.authService, refinedRequest, httpHandler);
-				}
+				// if (AUTH_STATUSES.accessTokenResponse.refresh_token) {
+				// 	return AuthFunctions.getNewAuthToken(this.authService, refinedRequest, httpHandler);
+				// }
 			}
 
 			return Promise.reject(err);
@@ -207,11 +208,31 @@ export class LoginService {
 	 * @param password
 	 */
 	login(username: string, password: string, headers?: any) {
-		const body = 'username=' + username + '&password=' + password + '&grant_type=password';
 		const contentTypeHeader = { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8', 'ngsw-bypass': 'true' };
 		const mergedHeaders = headers ? { ...contentTypeHeader, ...headers } : contentTypeHeader;
 		const options = { headers: mergedHeaders };
-		return this.http.post<Fonlow_Auth_Models_Client.AccessTokenResponse>(this.authUri, body, options)
+		return this.http.post<Fonlow_Auth_Models_Client.AccessTokenResponse>(this.authUri, new URLSearchParams({
+			'grant_type': 'password',
+			'username': username,
+			'password': password
+		}), options)
+			.pipe(map(
+				response => {
+					//this.username = response.username;
+					return response;
+				}
+
+			));
+	}
+
+	refreshToken(refresh_token: string, headers?: any) {
+		const contentTypeHeader = { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8', 'ngsw-bypass': 'true' };
+		const mergedHeaders = headers ? { ...contentTypeHeader, ...headers } : contentTypeHeader;
+		const options = { headers: mergedHeaders };
+		return this.http.post<Fonlow_Auth_Models_Client.AccessTokenResponse>(this.authUri, new URLSearchParams({
+			'grant_type': 'refresh_token',
+			'refresh_token': refresh_token
+		}), options)
 			.pipe(map(
 				response => {
 					//this.username = response.username;
