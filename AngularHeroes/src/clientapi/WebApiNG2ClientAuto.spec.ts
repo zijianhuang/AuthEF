@@ -4,6 +4,7 @@ import { DemoWebApi_DemoData_Client, DemoWebApi_Controllers_Client } from './Web
 import { TokenInterceptor, AuthService } from '../app/_services/tokenInterceptor';
 import { AUTH_STATUSES, AuthFunctions, LoginService } from '../app/_services/tokenInterceptor';
 import { BrowserModule } from '@angular/platform-browser';
+import { firstValueFrom } from 'rxjs';
 
 //const apiBaseUri = 'http://fonlow.org/'; // for DemoCoreWeb hosted in server of different timezone.
 const apiBaseUri = 'http://localhost:5000/'; // for DemoCoreWeb
@@ -48,9 +49,11 @@ export function errorResponseToString(error: HttpErrorResponse | any,): string {
 		}
 
 		errMsg += error.error ? (' ' + JSON.stringify(error.error)) : '';
+		console.error('login: ' + errMsg);
 		return errMsg;
 	} else {
 		errMsg = error.message ? error.message : error.toString();
+		console.error('login: ' + errMsg);
 		return errMsg;
 	}
 }
@@ -74,7 +77,7 @@ export function errorResponseBodyToString(error: HttpErrorResponse | any,): stri
 describe('Heroes API', () => {
 	let service: DemoWebApi_Controllers_Client.Heroes;
 	let loginService: LoginService;
-	beforeEach( (() => {
+	beforeEach(async () => {
 		TestBed.configureTestingModule({
 			imports: [BrowserModule],
 			providers: [
@@ -118,17 +121,23 @@ describe('Heroes API', () => {
 		});
 
 		loginService = TestBed.get(LoginService);
-		loginService.login(AUTH_STATUSES.username!, password).subscribe(
-			data => {
-				AuthFunctions.saveJwtToken(data);
-			},
-			error => {
-				fail(errorResponseToString(error));
-				
-			}
-		)
+		try {
+			const data = await firstValueFrom(loginService.login(AUTH_STATUSES.username!, password+'kk'));
+			AuthFunctions.saveJwtToken(data);
+		} catch (error) {
+			fail(errorResponseToString(error));
+		};
+		// loginService.login(AUTH_STATUSES.username!, password).subscribe(
+		// 	data => {
+		// 		AuthFunctions.saveJwtToken(data);
+		// 	},
+		// 	error => {
+		// 		fail(errorResponseToString(error));
+
+		// 	}
+		// )
 		service = TestBed.get(DemoWebApi_Controllers_Client.Heroes);
-	}));
+	});
 
 	it('getAll', (done) => {
 		service.getHeros().subscribe(
