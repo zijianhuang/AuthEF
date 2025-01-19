@@ -1,8 +1,9 @@
-import { HttpClient, HttpClientModule, HttpErrorResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { DemoWebApi_DemoData_Client, DemoWebApi_Controllers_Client } from './WebApiCoreNg2ClientAuto';
 import { TokenInterceptor, AuthService } from '../app/_services/tokenInterceptor';
 import { AUTH_STATUSES, AuthFunctions, LoginService } from '../app/_services/tokenInterceptor';
+import { BrowserModule } from '@angular/platform-browser';
 
 //const apiBaseUri = 'http://fonlow.org/'; // for DemoCoreWeb hosted in server of different timezone.
 const apiBaseUri = 'http://localhost:5000/'; // for DemoCoreWeb
@@ -75,7 +76,7 @@ describe('Heroes API', () => {
 	let loginService: LoginService;
 	beforeEach( (() => {
 		TestBed.configureTestingModule({
-			imports: [HttpClientModule],
+			imports: [BrowserModule],
 			providers: [
 				{
 					provide: HTTP_INTERCEPTORS,
@@ -87,6 +88,10 @@ describe('Heroes API', () => {
 					provide: 'BACKEND_URLS',
 					useValue: [apiBaseUri]
 				},
+
+				provideHttpClient(
+					withInterceptorsFromDi()
+				),
 
 				{
 					provide: DemoWebApi_Controllers_Client.Heroes,

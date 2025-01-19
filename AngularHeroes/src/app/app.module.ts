@@ -1,7 +1,7 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import * as namespaces from '../clientapi/WebApiCoreNg2ClientAuto';
@@ -42,7 +42,6 @@ export function clientFactory(http: HttpClient) {
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule,
     BrowserAnimationsModule,
   ],
   declarations: [

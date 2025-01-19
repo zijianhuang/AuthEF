@@ -3,6 +3,7 @@ import {
 } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable, catchError, firstValueFrom, lastValueFrom, map } from 'rxjs';
+import { Fonlow_Auth_Models_Client } from 'src/clientapi/WebApiCoreNg2ClientAuto';
 
 /**
  * Intercept HTTP calls and add bearer token if the request is within BACKEND_URLS.
@@ -17,17 +18,18 @@ export class TokenInterceptor implements HttpInterceptor {
 	}
 
 	intercept(request: HttpRequest<any>, httpHandler: HttpHandler): Observable<HttpEvent<any>> {
+		console.debug('toUseAccessToken: '+ AUTH_STATUSES.accessTokenResponse.access_token);
 		var requestNeedsInterceptor = this.backendUrls.find(d => request.url.indexOf(d) >= 0);
 		if (!requestNeedsInterceptor) {
 			return httpHandler.handle(request);
 		}
 
 		let refinedRequest: HttpRequest<any>;
-		if (AUTH_STATUSES.access_token) {
+		if (AUTH_STATUSES.accessTokenResponse.access_token) {
 			//The Request/Response objects need to be immutable. Therefore, we need to clone the original request before we return it.
 			refinedRequest = request.clone({
 				setHeaders: {
-					Authorization: `Bearer ${AUTH_STATUSES.access_token}`,
+					Authorization: `Bearer ${AUTH_STATUSES.accessTokenResponse.access_token}`,
 					Accept: 'application/json,text/html;q=0.9,*/*;q=0.8',
 				}
 			});
@@ -42,7 +44,7 @@ export class TokenInterceptor implements HttpInterceptor {
 		return httpHandler.handle(refinedRequest).pipe(catchError(err => {
 			if ([401, 403].includes(err.status)) {
 				console.debug('401 403');
-				if (AUTH_STATUSES.refreshToken) {
+				if (AUTH_STATUSES.accessTokenResponse.refresh_token) {
 					return AuthFunctions.getNewAuthToken(this.authService, refinedRequest, httpHandler);
 				}
 			}
@@ -57,33 +59,27 @@ export class TokenInterceptor implements HttpInterceptor {
  * Common functions for auth
  */
 export class AuthFunctions {
-	static saveJwtToken(data: TokenResponseModel) {
-		AUTH_STATUSES.access_token = data.access_token;
-		AUTH_STATUSES.expires_in = data.expires_in.toString();
-		AUTH_STATUSES.token_type = data.token_type;
-		AUTH_STATUSES.expires = data.expires; // often up to 2 weeks by default in Asp.net identity 2.
-		AUTH_STATUSES.jwtTokenExpires = new Date(Date.now() + data.expires_in * 1000);
+	static saveJwtToken(data: Fonlow_Auth_Models_Client.AccessTokenResponse) {
+		AUTH_STATUSES.accessTokenResponse = Object.assign({}, data);
+		AUTH_STATUSES.jwtTokenExpires =data.expires_in ? new Date(Date.now() + data.expires_in * 1000) : new Date(0);
 		console.debug('jwtTokenExpires: ' + AUTH_STATUSES.jwtTokenExpires);
-		AUTH_STATUSES.username = data.username;
-		AUTH_STATUSES.connectionId = data.connection_id;
-		AUTH_STATUSES.apiKey = data.api_key!;
-		if (data.refresh_token) {
-			AUTH_STATUSES.refreshToken = data.refresh_token;
-		}
+		//AUTH_STATUSES.username = data.username;
+		//AUTH_STATUSES.connectionId = data.connection_id;
+		//AUTH_STATUSES.apiKey = data.api_key!;
 
 		console.debug('new token acquired.');
 	}
 
 	static async getNewAuthToken(authService: IAuthService, request: HttpRequest<any>, httpHandler: HttpHandler): Promise<HttpEvent<any>> {
 		return new Promise((resolve, reject) => {
-			if (AUTH_STATUSES.refreshToken) {
-				authService.getTokenWithRefreshToken(AUTH_STATUSES.refreshToken, AUTH_STATUSES.username!, AUTH_STATUSES.connectionId!).subscribe({
+			if (AUTH_STATUSES.accessTokenResponse.refresh_token) {
+				authService.getTokenWithRefreshToken(AUTH_STATUSES.accessTokenResponse.refresh_token, AUTH_STATUSES.username!, AUTH_STATUSES.connectionId!).subscribe({
 					next: data => {
 						AuthFunctions.saveJwtToken(data);
 						console.debug('Redo: ' + request.urlWithParams);
 						let refinedRequest = request.clone({
 							setHeaders: {
-								Authorization: `Bearer ${AUTH_STATUSES.access_token}`,
+								Authorization: `Bearer ${AUTH_STATUSES.accessTokenResponse.access_token}`,
 								Accept: 'application/json,text/html;q=0.9,*/*;q=0.8',
 							}
 						});
@@ -117,12 +113,13 @@ export class AuthFunctions {
  * Hold common auth data, just for current tab, similar to sessionStorage.
  */
 export class AUTH_STATUSES {
-	static access_token: string;
-	static expires_in: string;
-	static token_type: string;
-	static expires: string;
+	static accessTokenResponse: Fonlow_Auth_Models_Client.AccessTokenResponse ={};
+	// static access_token?: string | null;
+	// static expires_in?: string;
+	// static token_type: string;
+	// static expires: string;
 	static jwtTokenExpires: Date;
-	static refreshToken?: string | null;
+	//static refreshToken?: string | null;
 	static apiKey: ApiKey;
 	static username?: string;
 	static connectionId?: string | null;
@@ -169,19 +166,19 @@ export class AUTH_STATUSES {
 	}
 }
 
-/**
-* https://www.ietf.org/rfc/rfc6749.txt
-*/
-export interface TokenResponseModel {
-	access_token: string;
-	api_key?: ApiKey | null;
-	expires: string;
-	expires_in: number;
-	refresh_token?: string | null;
-	token_type: string;
-	username: string;
-	connection_id?: string | null;
-}
+// /**
+// * https://www.ietf.org/rfc/rfc6749.txt
+// */
+// export interface TokenResponseModel {
+// 	access_token: string;
+// 	api_key?: ApiKey | null;
+// 	expires: string;
+// 	expires_in: number;
+// 	refresh_token?: string | null;
+// 	token_type: string;
+// 	username: string;
+// 	connection_id?: string | null;
+// }
 
 export interface ApiKey {
 
@@ -193,8 +190,8 @@ export interface ApiKey {
 }
 
 export interface IAuthService {
-	getTokenWithRefreshToken(refreshToken: string, username: string, connectionId: string): Observable<TokenResponseModel>;
-	getTokenWithApiKey(apiKey: string, clientId: string, connectionId: string): Observable<TokenResponseModel>;
+	getTokenWithRefreshToken(refreshToken: string, username: string, connectionId: string): Observable<Fonlow_Auth_Models_Client.AccessTokenResponse>;
+	getTokenWithApiKey(apiKey: string, clientId: string, connectionId: string): Observable<Fonlow_Auth_Models_Client.AccessTokenResponse>;
 }
 
 @Injectable()
@@ -214,10 +211,10 @@ export class LoginService {
 		const contentTypeHeader = { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8', 'ngsw-bypass': 'true' };
 		const mergedHeaders = headers ? { ...contentTypeHeader, ...headers } : contentTypeHeader;
 		const options = { headers: mergedHeaders };
-		return this.http.post<TokenResponseModel>(this.authUri, body, options)
+		return this.http.post<Fonlow_Auth_Models_Client.AccessTokenResponse>(this.authUri, body, options)
 			.pipe(map(
 				response => {
-					this.username = response.username;
+					//this.username = response.username;
 					return response;
 				}
 
@@ -233,12 +230,12 @@ export class AuthService implements IAuthService {
 
 	getTokenWithApiKey(apiKey: string, clientId: string, connectionId: string) {
 		const headers = new HttpHeaders({ 'apiKey': apiKey, 'clientId': clientId, 'connectionId': connectionId });
-		return this.http.get<TokenResponseModel>(`${this.baseUri}token/apiaccesstoken`, { headers: headers });
+		return this.http.get<Fonlow_Auth_Models_Client.AccessTokenResponse>(`${this.baseUri}token/apiaccesstoken`, { headers: headers });
 	}
 
 	getTokenWithRefreshToken(refreshToken: string, username: string, connectionId: string) {
 		const headers = new HttpHeaders({ 'refreshToken': refreshToken, 'username': username, 'connectionId': connectionId });
-		return this.http.get<TokenResponseModel>(`${this.baseUri}token/tokenByRefreshToken`, { headers: headers });
+		return this.http.get<Fonlow_Auth_Models_Client.AccessTokenResponse>(`${this.baseUri}token/tokenByRefreshToken`, { headers: headers });
 	}
 
 }

@@ -9,6 +9,7 @@ import * as namespaces from '../../clientapi/WebApiCoreNg2ClientAuto';
   selector: 'app-hero-search',
   templateUrl: 'hero-search.component.html',
   styleUrls: ['hero-search.component.css'],
+  standalone: false
 })
 export class HeroSearchComponent implements OnInit {
   heroes?: Observable<namespaces.DemoWebApi_Controllers_Client.Hero[] | null>;

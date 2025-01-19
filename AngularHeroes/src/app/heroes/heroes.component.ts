@@ -5,7 +5,8 @@ import * as namespaces from '../../clientapi/WebApiCoreNg2ClientAuto';
 @Component({
   selector: 'app-heroes',
   templateUrl: './heroes.component.html',
-  styleUrls: ['./heroes.component.css']
+  styleUrls: ['./heroes.component.css'],
+  standalone: false
 })
 export class HeroesComponent implements OnInit {
   heroes?: namespaces.DemoWebApi_Controllers_Client.Hero[];

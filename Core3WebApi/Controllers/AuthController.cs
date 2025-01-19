@@ -47,7 +47,8 @@ namespace WebApp.Controllers
 		/// A client program calls to initialize login with returned bearer access token and refresh token.
 		/// Token expiration in 24 hours, however, in DEBUG build, 5 minutes plus default 5 minutes ClockSkew. https://stackoverflow.com/questions/47754556/is-there-a-minimum-expiration-time-for-jwtsecuritytoken 
 		/// However, keep-live connection is still working after the token expires. 
-		/// The user login also return a unique Id for the connection: connectionId, contained in field scope. The client should store this connection ID created by the service, to refresh token later.
+		/// The user login also return a unique Id for the connection: connectionId, contained in field scope, in the form of connectionId:{connectionId}. 
+		/// The client should store this connection ID created by the service, to refresh token later.
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns>Access token and refresh token, along with other meta data.</returns>
