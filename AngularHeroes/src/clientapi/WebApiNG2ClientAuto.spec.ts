@@ -49,11 +49,9 @@ export function errorResponseToString(error: HttpErrorResponse | any,): string {
 		}
 
 		errMsg += error.error ? (' ' + JSON.stringify(error.error)) : '';
-		console.error('login: ' + errMsg);
 		return errMsg;
 	} else {
 		errMsg = error.message ? error.message : error.toString();
-		console.error('login: ' + errMsg);
 		return errMsg;
 	}
 }
@@ -77,7 +75,8 @@ export function errorResponseBodyToString(error: HttpErrorResponse | any,): stri
 describe('Heroes API', () => {
 	let service: DemoWebApi_Controllers_Client.Heroes;
 	let loginService: LoginService;
-	beforeEach(async () => {
+	beforeAll(async () => {
+		console.debug('TestBed.configureTestingModule');
 		TestBed.configureTestingModule({
 			imports: [BrowserModule],
 			providers: [
@@ -115,17 +114,19 @@ describe('Heroes API', () => {
 					provide: LoginService,
 					useClass: LoginService,
 				}
-
-
-			]
+			],
+			teardown: {destroyAfterEach: false}
 		});
 
 		loginService = TestBed.get(LoginService);
 		try {
 			const data = await firstValueFrom(loginService.login(AUTH_STATUSES.username!, password));
 			AuthFunctions.saveJwtToken(data);
+			console.info('Login done.');
 		} catch (error) {
-			fail(errorResponseToString(error));
+			const errMsg = errorResponseToString(error);
+			console.error('login error: ' + errMsg);
+			fail(errMsg);
 		};
 		// loginService.login(AUTH_STATUSES.username!, password).subscribe(
 		// 	data => {
