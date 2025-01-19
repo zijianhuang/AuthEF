@@ -122,7 +122,7 @@ describe('Heroes API', () => {
 
 		loginService = TestBed.get(LoginService);
 		try {
-			const data = await firstValueFrom(loginService.login(AUTH_STATUSES.username!, password+'kk'));
+			const data = await firstValueFrom(loginService.login(AUTH_STATUSES.username!, password));
 			AuthFunctions.saveJwtToken(data);
 		} catch (error) {
 			fail(errorResponseToString(error));
