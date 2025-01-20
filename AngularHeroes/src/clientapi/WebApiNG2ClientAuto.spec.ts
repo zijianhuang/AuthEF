@@ -1,8 +1,7 @@
-import { HttpClient, HttpErrorResponse, HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { DemoWebApi_DemoData_Client, DemoWebApi_Controllers_Client } from './WebApiCoreNg2ClientAuto';
-import { TokenInterceptor, AuthService } from '../app/_services/tokenInterceptor';
-import { AUTH_STATUSES, AuthFunctions, LoginService } from '../app/_services/tokenInterceptor';
+import { TokenInterceptor,  AUTH_STATUSES, AuthFunctions, LoginService } from '../app/_services/tokenInterceptor';
 import { BrowserModule } from '@angular/platform-browser';
 import { firstValueFrom } from 'rxjs';
 
@@ -105,11 +104,7 @@ describe('Heroes API', () => {
 					provide: 'auth.tokenUrl',
 					useValue: apiBaseUri + 'token'
 				},
-				{
-					provide: 'IAuthService',
-					useFactory: (http: HttpClient) => new AuthService(apiBaseUri, http),
-					deps: [HttpClient],
-				},
+
 				{
 					provide: LoginService,
 					useClass: LoginService,
@@ -118,7 +113,7 @@ describe('Heroes API', () => {
 			teardown: {destroyAfterEach: false}
 		});
 
-		loginService = TestBed.get(LoginService);
+		loginService = TestBed.inject(LoginService);
 		try {
 			const data = await firstValueFrom(loginService.login(AUTH_STATUSES.username!, password));
 			AuthFunctions.saveJwtToken(data);
@@ -130,25 +125,16 @@ describe('Heroes API', () => {
 		};
 
 		try {
-			const data = await firstValueFrom(loginService.refreshToken(AUTH_STATUSES.accessTokenResponse.refresh_token!));
+			const data = await firstValueFrom(loginService.refreshToken(AUTH_STATUSES.accessTokenResponse.refresh_token!, AUTH_STATUSES.accessTokenResponse.scope!));
 			AuthFunctions.saveJwtToken(data);
-			console.info('Refresh token done.');
+			console.info('Refresh token test done.');
 		} catch (error) {
 			const errMsg = errorResponseToString(error);
 			console.error('refresh token error: ' + errMsg);
 			fail(errMsg);
 		};
 		
-		// loginService.login(AUTH_STATUSES.username!, password).subscribe(
-		// 	data => {
-		// 		AuthFunctions.saveJwtToken(data);
-		// 	},
-		// 	error => {
-		// 		fail(errorResponseToString(error));
-
-		// 	}
-		// )
-		service = TestBed.get(DemoWebApi_Controllers_Client.Heroes);
+		service = TestBed.inject(DemoWebApi_Controllers_Client.Heroes);
 	});
 
 	it('getAll', (done) => {
@@ -232,4 +218,14 @@ describe('Heroes API', () => {
 	}
 	);
 
+
+	it('AddAfterDelayForRefreshToken', async () => {
+		console.debug('Sleep for 5 seconds...');
+		await new Promise(r => setTimeout(r, 5000)); // for debug build of the service, 5 second expiry and 2 seconds clock skew, thus 4.5 seconds to refresh
+		const data = await firstValueFrom(service.post('somebodyDelay'));
+		expect(data!.name).toBe('somebodyDelay'); 
+		console.info('Debug log shows RefreshToken responded');
+		//await new Promise(r => setTimeout(r, 1000)); 
+	}
+	);
 });
