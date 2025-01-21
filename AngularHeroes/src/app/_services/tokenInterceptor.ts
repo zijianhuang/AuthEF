@@ -5,9 +5,9 @@ import {
 } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
-import { Fonlow_Auth_Models_Client } from 'src/clientapi/WebApiCoreNg2ClientAuto';
+import { Fonlow_Auth_Models_Client } from 'src/clientapi/AuthModels';
 
-const BYPASS_LOG = new HttpContextToken(() => false);
+const BYPASS_LOG = new HttpContextToken(() => false); //https://stackoverflow.com/questions/60424072/disable-angular-httpinterceptor-for-some-call
 /**
  * Intercept HTTP calls and add bearer token if the request is within BACKEND_URLS.
  * In general, the bearer token is initialized in UI login process which should return a refresh token.

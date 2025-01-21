@@ -4,10 +4,10 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<Version>1.4.1</Version>
+		<Version>1.5</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>Data models to be used in authentication and user account management.</Description>
-		<PackageReleaseNotes>.NET 9</PackageReleaseNotes>
+		<PackageReleaseNotes>Fonlow.Auth.Models moved to its own package.</PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
 		<PackageProjectUrl>https://github.com/zijianhuang/webapiclientgen</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

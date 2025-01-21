@@ -9,7 +9,7 @@ using System.Net.WebSockets;
 using Xunit.Abstractions;
 using Fonlow.WebApp.Accounts.Client;
 using System.Management.Automation.Language;
-using Fonlow.Auth.Models.Client;
+using Fonlow.Auth.Models;
 
 namespace AuthTests
 {

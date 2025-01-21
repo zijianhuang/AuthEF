@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using Xunit.Abstractions;
 using System.Text.Json;
-using Fonlow.Auth.Models.Client;
+using Fonlow.Auth.Models;
 using Fonlow.WebApp.Accounts.Client;
 
 namespace AuthTests

@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Fonlow.Net.Http;
 
-namespace Fonlow.Auth.Client
+namespace Fonlow.Auth
 {
 	public class AuthClient
 	{
@@ -33,7 +32,7 @@ namespace Fonlow.Auth.Client
 		/// <param name="model"></param>
 		/// <param name="handleHeaders"></param>
 		/// <returns></returns>
-		public async Task<Fonlow.Auth.Models.Client.AccessTokenResponse> PostRopcTokenRequestAsFormDataToAuthAsync(Fonlow.Auth.Models.Client.ROPCRequst model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<Fonlow.Auth.Models.AccessTokenResponse> PostRopcTokenRequestAsFormDataToAuthAsync(Fonlow.Auth.Models.ROPCRequst model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "token";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -49,7 +48,7 @@ namespace Fonlow.Auth.Client
 			using var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			var stream = await responseMessage.Content.ReadAsStreamAsync();
-			return JsonSerializer.Deserialize<Fonlow.Auth.Models.Client.AccessTokenResponse>(stream, jsonSerializerSettings);
+			return JsonSerializer.Deserialize<Fonlow.Auth.Models.AccessTokenResponse>(stream, jsonSerializerSettings);
 		}
 
 		/// <summary>
@@ -58,7 +57,7 @@ namespace Fonlow.Auth.Client
 		/// <param name="model"></param>
 		/// <param name="handleHeaders"></param>
 		/// <returns></returns>
-		public async Task<Fonlow.Auth.Models.Client.AccessTokenResponse> PostRefreshTokenRequestAsFormDataToAuthAsync(Fonlow.Auth.Models.Client.RefreshAccessTokenRequest model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<Fonlow.Auth.Models.AccessTokenResponse> PostRefreshTokenRequestAsFormDataToAuthAsync(Fonlow.Auth.Models.RefreshAccessTokenRequest model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "token";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -74,7 +73,39 @@ namespace Fonlow.Auth.Client
 			using var responseMessage = await client.SendAsync(httpRequestMessage);
 			responseMessage.EnsureSuccessStatusCodeEx();
 			var stream = await responseMessage.Content.ReadAsStreamAsync();
-			return JsonSerializer.Deserialize<Fonlow.Auth.Models.Client.AccessTokenResponse>(stream, jsonSerializerSettings);
+			return JsonSerializer.Deserialize<Fonlow.Auth.Models.AccessTokenResponse>(stream, jsonSerializerSettings);
+		}
+	}
+
+	internal class WebApiRequestException : HttpRequestException
+	{
+		public new System.Net.HttpStatusCode StatusCode { get; private set; }
+
+		public string Response { get; private set; }
+
+		public System.Net.Http.Headers.HttpResponseHeaders Headers { get; private set; }
+
+		public System.Net.Http.Headers.MediaTypeHeaderValue ContentType { get; private set; }
+
+		public WebApiRequestException(string message, System.Net.HttpStatusCode statusCode, string response, System.Net.Http.Headers.HttpResponseHeaders headers, System.Net.Http.Headers.MediaTypeHeaderValue contentType) : base(message)
+		{
+			StatusCode = statusCode;
+			Response = response;
+			Headers = headers;
+			ContentType = contentType;
+		}
+	}
+
+	internal static class ResponseMessageExtensions
+	{
+		public static void EnsureSuccessStatusCodeEx(this HttpResponseMessage responseMessage)
+		{
+			if (!responseMessage.IsSuccessStatusCode)
+			{
+				var responseText = responseMessage.Content.ReadAsStringAsync().Result;
+				var contentType = responseMessage.Content.Headers.ContentType;
+				throw new WebApiRequestException(responseMessage.ReasonPhrase, responseMessage.StatusCode, responseText, responseMessage.Headers, contentType);
+			}
 		}
 	}
 

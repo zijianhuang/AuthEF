@@ -1,4 +1,4 @@
-﻿using Fonlow.Auth.Client;
+﻿using Fonlow.Auth;
 using Fonlow.Testing;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Fonlow.Auth.Models.Client;
+using Fonlow.Auth.Models;
 
 namespace AuthTests
 {
@@ -55,7 +55,6 @@ namespace AuthTests
 		{
 			var r = await api.PostRopcTokenRequestAsFormDataToAuthAsync(new ROPCRequst
 			{
-				grant_type = "password",
 				Username = "admin",
 				Password = "Pppppp*8"
 			});
@@ -71,7 +70,6 @@ namespace AuthTests
 		{
 			var ra = await api.PostRopcTokenRequestAsFormDataToAuthAsync(new ROPCRequst
 			{
-				grant_type = "password",
 				Username = "admin",
 				Password = "Pppppp*8"
 			});
@@ -82,7 +80,6 @@ namespace AuthTests
 			AuthClient authClient = new AuthClient(client);
 			var r = await authClient.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
 			{
-				grant_type = "refresh_token",
 				refresh_token = ra.refresh_token
 			});
 
@@ -97,14 +94,12 @@ namespace AuthTests
 		{
 			var ra = await api.PostRopcTokenRequestAsFormDataToAuthAsync(new ROPCRequst
 			{
-				grant_type = "password",
 				Username = "admin",
 				Password = "Pppppp*8"
 			});
 
 			var ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(()=> api.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
 			{
-				grant_type = "refresh_token",
 				refresh_token = ra.refresh_token
 			}));
 
