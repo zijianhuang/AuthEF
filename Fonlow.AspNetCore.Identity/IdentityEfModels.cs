@@ -35,15 +35,15 @@ namespace Fonlow.AspNetCore.Identity.EntityFrameworkCore
 		/// <summary>
 		/// For shorter key length of MySql
 		/// </summary>
-		/// <param name="modelBuilder"></param>
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		/// <param name="builder"></param>
+		protected override void OnModelCreating(ModelBuilder builder)
 		{
-			base.OnModelCreating(modelBuilder);
+			base.OnModelCreating(builder);
 
-			modelBuilder.Entity<ApplicationIdentityRole>()
+			builder.Entity<ApplicationIdentityRole>()
 				.Property(c => c.Name).HasMaxLength(128).IsRequired();
 
-			modelBuilder.Entity<ApplicationUser>()//.ToTable("AspNetUsers")//I have to declare the table name, otherwise IdentityUser will be created
+			builder.Entity<ApplicationUser>()//.ToTable("AspNetUsers")//I have to declare the table name, otherwise IdentityUser will be created
 				.Property(c => c.UserName).HasMaxLength(128).IsRequired();
 
 

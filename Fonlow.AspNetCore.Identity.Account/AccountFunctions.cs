@@ -226,7 +226,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		public async Task<int> RemoveOldUserTokens(DateTime pastDateUtc)
 		{
 			using ApplicationDbContext context = new(options);
-			return await context.UserTokens.Where(d => d.CreatedUtc <= pastDateUtc).ExecuteDeleteAsync();
+			return await context.UserTokens.Where(d => d.CreatedUtc <= pastDateUtc).ExecuteDeleteAsync().ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -236,11 +236,11 @@ namespace Fonlow.AspNetCore.Identity.Account
 		{
 			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
 			using ApplicationDbContext context = new(options);
-			var userToken = await context.UserTokens.SingleOrDefaultAsync(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name == composedTokenName);
+			var userToken = await context.UserTokens.SingleOrDefaultAsync(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name == composedTokenName).ConfigureAwait(false);
 			if (userToken != null)
 			{
 				context.Entry(userToken).State = EntityState.Deleted;
-				await context.SaveChangesAsync();
+				await context.SaveChangesAsync().ConfigureAwait(false);
 			}
 		}
 
@@ -251,7 +251,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		public async Task<int> RemoveTokensOfUser(Guid userId, string loginProvider, string tokenName)
 		{
 			using ApplicationDbContext context = new(options);
-			return await context.UserTokens.Where(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name.StartsWith(tokenName)).ExecuteDeleteAsync();
+			return await context.UserTokens.Where(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name.StartsWith(tokenName)).ExecuteDeleteAsync().ConfigureAwait(false);
 		}
 
 

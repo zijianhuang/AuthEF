@@ -11,7 +11,9 @@ namespace Fonlow.WebApp.Accounts
 		public string Name { get; set; }
 
 		[DataMember]
+#pragma warning disable CA1056 // URI-like properties should not be strings
 		public string Url { get; set; }
+#pragma warning restore CA1056 // URI-like properties should not be strings
 
 		[DataMember]
 		public string State { get; set; }

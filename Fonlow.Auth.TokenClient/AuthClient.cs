@@ -8,12 +8,21 @@ using System.Text.Json.Serialization;
 
 namespace Fonlow.Auth
 {
+	/// <summary>
+	/// Client codes to provide HttpClient object to make auth calls for tokens.
+	/// </summary>
 	public class AuthClient
 	{
-		private System.Net.Http.HttpClient client;
+		readonly System.Net.Http.HttpClient client;
 
-		private JsonSerializerOptions jsonSerializerSettings;
+		readonly JsonSerializerOptions jsonSerializerSettings;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="client"></param>
+		/// <param name="jsonSerializerSettings">Client codes to determine how to deserialize JWT returned by the auth server. In most cases, null is OK.</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public AuthClient(System.Net.Http.HttpClient client, JsonSerializerOptions jsonSerializerSettings = null)
 		{
 			if (client == null)
@@ -36,19 +45,25 @@ namespace Fonlow.Auth
 		{
 			var requestUri = "token";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var pairs = new KeyValuePair<string, string>[]
+			var pairs = new List<KeyValuePair<string, string>>
 						{
 							new KeyValuePair<string, string>( "grant_type", model.grant_type ),
 							new KeyValuePair<string, string>( "username", model.Username ),
 							new KeyValuePair<string, string> ( "password", model.Password )
 						};
+
+			if (!string.IsNullOrEmpty(model.Scope))
+			{
+				pairs.Add(new KeyValuePair<string, string>("scope", model.Scope));
+			}
+
 			var content = new FormUrlEncodedContent(pairs);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			using var responseMessage = await client.SendAsync(httpRequestMessage);
+			using var responseMessage = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
 			responseMessage.EnsureSuccessStatusCodeEx();
-			var stream = await responseMessage.Content.ReadAsStreamAsync();
-			return JsonSerializer.Deserialize<Fonlow.Auth.Models.AccessTokenResponse>(stream, jsonSerializerSettings);
+			var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+			return await JsonSerializer.DeserializeAsync<Fonlow.Auth.Models.AccessTokenResponse>(stream, jsonSerializerSettings).ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -61,23 +76,31 @@ namespace Fonlow.Auth
 		{
 			var requestUri = "token";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var pairs = new KeyValuePair<string, string>[]
+			var pairs = new List<KeyValuePair<string, string>>
 						{
 							new KeyValuePair<string, string>( "grant_type", model.grant_type ),
 							new KeyValuePair<string, string>( "refresh_token", model.refresh_token ),
-							new KeyValuePair<string, string> ( "scope", model.Scope )
 						};
+
+
+			if (!string.IsNullOrEmpty(model.Scope))
+			{
+				pairs.Add(new KeyValuePair<string, string>("scope", model.Scope));
+			}
+
 			var content = new FormUrlEncodedContent(pairs);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			using var responseMessage = await client.SendAsync(httpRequestMessage);
+			using var responseMessage = await client.SendAsync(httpRequestMessage).ConfigureAwait(false);
 			responseMessage.EnsureSuccessStatusCodeEx();
-			var stream = await responseMessage.Content.ReadAsStreamAsync();
-			return JsonSerializer.Deserialize<Fonlow.Auth.Models.AccessTokenResponse>(stream, jsonSerializerSettings);
+			var stream = await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
+			return  await JsonSerializer.DeserializeAsync<Fonlow.Auth.Models.AccessTokenResponse>(stream, jsonSerializerSettings).ConfigureAwait(false);
 		}
 	}
 
-	internal class WebApiRequestException : HttpRequestException
+#pragma warning disable CA1032 // Implement standard exception constructors
+	public class WebApiRequestException : HttpRequestException
+#pragma warning restore CA1032 // Implement standard exception constructors
 	{
 		public new System.Net.HttpStatusCode StatusCode { get; private set; }
 

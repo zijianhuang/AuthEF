@@ -98,7 +98,7 @@ namespace AuthTests
 				Password = "Pppppp*8"
 			});
 
-			var ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(()=> api.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
+			var ex = await Assert.ThrowsAsync<Fonlow.Auth.WebApiRequestException>(()=> api.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
 			{
 				refresh_token = ra.refresh_token
 			}));

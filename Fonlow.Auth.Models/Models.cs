@@ -4,10 +4,6 @@ using System.Text.Json.Serialization;
 
 namespace Fonlow.Auth.Models
 {
-	// Data contract attbibutes are basically for NewtonSoft.Json which respects these attributes
-	//[JsonPolymorphic(TypeDiscriminatorPropertyName = "grant_type")]
-	//[JsonDerivedType(typeof(ROPCRequst), "password")]
-	//[JsonDerivedType(typeof(RefreshAccessTokenRequest), "refresh_token")]
 	[DataContract]
 	public class RequestBase
 	{
