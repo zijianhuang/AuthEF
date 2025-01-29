@@ -292,6 +292,28 @@ namespace AuthTests
 			Assert.NotEqual(tokenModel.access_token, newTokenModel.access_token);
 		}
 
+#if DEBUG
+		[Fact]
+#else
+		[Fact(Skip = "Available for Debug build with clock skew 5 seconds")]
+#endif
+		public void TestAccessTokenExpiryThenGetNewViaRefreshTokenButTooLateThrow()
+		{
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
+			Assert.NotEmpty(tokenText);
+
+			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
+			Assert.NotNull(tokenModel.refresh_token);
+			output.WriteLine($"token expires_in {tokenModel.expires_in}");
+			var scope = tokenModel.Scope;
+
+			TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token);
+			Thread.Sleep(17050);
+
+			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, scope));
+			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+		}
+
 		/// <summary>
 		/// Corrupted token should result in Unauthorized
 		/// </summary>

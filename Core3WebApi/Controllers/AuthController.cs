@@ -103,8 +103,8 @@ namespace WebApp.Controllers
 					}
 
 					Guid connectionId = string.IsNullOrEmpty(refreshAccessTokenRequest.Scope) ? Guid.Empty : UserTokenHelper.ExtractConnectionId(refreshAccessTokenRequest.Scope);
-					//var tokenTextExisting = await accountFunctions.MatchTokenWithExpiry(user, authSettings.TokenProviderName, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId, TimeSpan.FromSeconds(authSettings.RefreshTokenExpirySpanSeconds));
-					var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId);
+					var tokenTextExisting = await accountFunctions.MatchTokenWithExpiry(user, authSettings.TokenProviderName, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId, TimeSpan.FromSeconds(authSettings.RefreshTokenExpirySpanSeconds));
+					//var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId);
 
 					if (!tokenTextExisting)
 					{

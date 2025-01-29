@@ -265,12 +265,14 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// <param name="tokenName"></param>
 		/// <param name="expirySpan">The life span of the token since its created time.</param>
 		/// <returns></returns>
+		/// <remarks>This function is to replace the limitation of userManager.GetAuthenticationTokenAsync(user, authSettings.TokenProviderName, composedTokenName);
+		/// since the UserTokens table by default has no created date. And this extended Identity model has added createdUtc to the table.
+		/// </remarks>
 		async Task<string> GetAuthenticationTokenWithExpiryAsync(ApplicationUser user, string loginProvider, string tokenName, TimeSpan expirySpan)
 		{
 			using ApplicationDbContext context = new(options);
 			var stillValidTime = DateTimeOffset.Now - expirySpan;
-			//var r = context.UserTokens.SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName && d.CreatedUtc > stillValidTime);
-			var r = context.UserTokens.SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName);
+			var r = context.UserTokens.SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName && d.CreatedUtc > stillValidTime);
 			return r == null ? null : r.Value;
 		}
 
