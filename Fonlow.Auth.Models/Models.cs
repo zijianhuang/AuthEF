@@ -99,7 +99,8 @@ namespace Fonlow.Auth.Models
 		[DataMember(Name = "refresh_token")]
 		public string refresh_token { get; set; }
 
-		[DataMember]
+		[JsonPropertyName("scope")]
+		[DataMember(Name = "scope")]
 		public string Scope { get; set; }
 	}
 

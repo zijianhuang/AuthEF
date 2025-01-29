@@ -175,7 +175,7 @@ export class LoginService {
 		return this.http.post<Fonlow_Auth_Models_Client.AccessTokenResponse>(this.authUri, params, options)
 			.pipe(map(
 				response => {
-					//this.username = response.username;
+					this.username = username;
 					return response;
 				}
 

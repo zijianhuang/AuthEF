@@ -80,7 +80,8 @@ namespace AuthTests
 			AuthClient authClient = new AuthClient(client);
 			var r = await authClient.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
 			{
-				refresh_token = ra.refresh_token
+				refresh_token = ra.refresh_token,
+				Scope=ra.Scope,
 			});
 
 			Assert.Equal("bearer", r.token_type, true);

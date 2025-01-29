@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -20,8 +21,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApp.Utilities;
 
 namespace DemoWebApi.Controllers
 {
@@ -40,20 +43,18 @@ namespace DemoWebApi.Controllers
 		readonly ApplicationUserManager userManager;
 		readonly IConfiguration config;
 		readonly IAuthSettings authSettings;
-		readonly SymmetricSecurityKey symmetricSecurityKey;
+		readonly TokenValidationParameters tokenValidationParameters;
 
-		public AccountController(ApplicationUserManager userManager, DbContextOptions<ApplicationDbContext> options, SymmetricSecurityKey symmetricSecurityKey, IAuthSettings authSettings, ILogger<WebApiTrace> apiLogger,
-			IConfiguration config)
+		public AccountController(ApplicationUserManager userManager, DbContextOptions<ApplicationDbContext> options, IAuthSettings authSettings, [FromKeyedServices("NotValidateLifetime")] TokenValidationParameters tokenValidationParameters,
+		ILogger<WebApiTrace> apiLogger)
 		{
-			this.config = config;
 			this.userManager = userManager;
+			this.authSettings = authSettings;
 			this.apiLogger = apiLogger;
 			this.options = options;
-			this.authSettings = authSettings;
-			this.symmetricSecurityKey = symmetricSecurityKey;
+			this.tokenValidationParameters = tokenValidationParameters;
 			accountFunctions = new AccountFunctions(options);
 		}
-
 
 		/// <summary>
 		/// Get user info of current logged user
@@ -151,12 +152,28 @@ namespace DemoWebApi.Controllers
 		[HttpPost("Logout/{connectionId}")]
 		public async Task<IActionResult> Logout(Guid connectionId)
 		{
-			// https://learn.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x#use-httpcontext-authentication-extensions
-			await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+			if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue))
+			{
+				var scehma = headerValue.Scheme;
+				Debug.Assert("bearer".Equals(scehma, StringComparison.OrdinalIgnoreCase));
+				var accessToken = headerValue.Parameter;
+				var tokenHelper = new UserTokenHelper(userManager, tokenValidationParameters, authSettings, apiLogger);
+				var user = await tokenHelper.ValidateAccessToken(accessToken); // even if the accessToken expires
+				if (user == null)
+				{
+					return Unauthorized();
+				}
 
-			ApplicationUser currentUser = await userManager.FindByNameAsync(User.Identity.Name);
-			await accountFunctions.RemoveUserToken(currentUser.Id, authSettings.TokenProviderName, "RefreshToken", connectionId);
-			return StatusCode((int)HttpStatusCode.NoContent);
+				// https://learn.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x#use-httpcontext-authentication-extensions
+				await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+				await accountFunctions.RemoveUserToken(user.Id, authSettings.TokenProviderName, "RefreshToken", connectionId); //Up to admin to clear records if the user did not sign out.
+				return StatusCode((int)HttpStatusCode.NoContent);
+			}
+			else
+			{
+				return Unauthorized();
+			}
 		}
 
 		// POST api/Account/ChangePassword

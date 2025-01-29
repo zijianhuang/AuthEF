@@ -105,7 +105,35 @@ Console.WriteLine($"DB Engine: {identityDbEngineDbContext.DbEngineName}");
 
 #region Auth setup
 var issuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(authSetupSettings.SymmetricSecurityKeyString));
-builder.Services.AddSingleton(issuerSigningKey);
+var tokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+{
+	ValidateIssuer = true,
+	ValidateAudience = true,
+	ValidateLifetime = true,
+	ValidateIssuerSigningKey = true,
+	ValidAudience = authSettings.Audience,
+	ValidIssuer = authSettings.Issuer,
+	IssuerSigningKey = issuerSigningKey,
+#if DEBUG
+	ClockSkew = TimeSpan.FromSeconds(2), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
+#endif
+};
+
+var tokenValidationParametersNoValidateLifetime = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+{
+	ValidateIssuer = true,
+	ValidateAudience = true,
+	ValidateLifetime = false, // for refresh token and signed out
+	ValidateIssuerSigningKey = true,
+	ValidAudience = authSettings.Audience,
+	ValidIssuer = authSettings.Issuer,
+	IssuerSigningKey = issuerSigningKey,
+#if DEBUG
+	ClockSkew = TimeSpan.FromSeconds(2),
+#endif
+};
+
+builder.Services.AddKeyedSingleton("NotValidateLifetime", tokenValidationParametersNoValidateLifetime);
 builder.Services.AddSingleton(authSettings);
 
 builder.Services.AddAuthentication(
@@ -119,19 +147,7 @@ builder.Services.AddAuthentication(
 {
 	options.SaveToken = true;
 	options.RequireHttpsMetadata = false;
-	options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-	{
-		ValidateIssuer = true,
-		ValidateAudience = true,
-		ValidateLifetime = true,
-		ValidateIssuerSigningKey = true,
-		ValidAudience = authSettings.Audience,
-		ValidIssuer = authSettings.Issuer,
-		IssuerSigningKey = issuerSigningKey,
-#if DEBUG
-		ClockSkew = TimeSpan.FromSeconds(2), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
-#endif
-	}; // Thanks to https://dotnetdetail.net/asp-net-core-3-0-web-api-token-based-authentication-example-using-jwt-in-vs2019/
+	options.TokenValidationParameters = tokenValidationParameters;
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(dcob =>

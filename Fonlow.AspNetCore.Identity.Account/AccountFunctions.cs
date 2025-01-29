@@ -1,10 +1,13 @@
 ﻿using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fonlow.AspNetCore.Identity.Account
 {
 	/// <summary>
-	/// Common account management functions based on ApplicationDbContext.
+	/// Common account management functions based on ApplicationDbContext -- IdentityDbContext<ApplicationUser, ApplicationIdentityRole, Guid, 
+	/// IdentityUserClaim<Guid>, IdentityUserRole<Guid>, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, 	ApplicationUserToken>
+	/// This also overcome some inherient limitation of Identity models, and deal with the EF context directly.
 	/// </summary>
 	public class AccountFunctions
 	{
@@ -234,7 +237,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// </summary>
 		public async Task RemoveUserToken(Guid userId, string loginProvider, string tokenName, Guid connectionId)
 		{
-			string composedTokenName = $"{tokenName}_{connectionId.ToString("N")}";
+			string composedTokenName = $"{tokenName}_{connectionId.ToString()}";
 			using ApplicationDbContext context = new(options);
 			var userToken = await context.UserTokens.SingleOrDefaultAsync(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name == composedTokenName).ConfigureAwait(false);
 			if (userToken != null)
@@ -254,6 +257,38 @@ namespace Fonlow.AspNetCore.Identity.Account
 			return await context.UserTokens.Where(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name.StartsWith(tokenName)).ExecuteDeleteAsync().ConfigureAwait(false);
 		}
 
+		/// <summary>
+		/// Return token not yet expired
+		/// </summary>
+		/// <param name="user"></param>
+		/// <param name="loginProvider"></param>
+		/// <param name="tokenName"></param>
+		/// <param name="expirySpan">The life span of the token since its created time.</param>
+		/// <returns></returns>
+		async Task<string> GetAuthenticationTokenWithExpiryAsync(ApplicationUser user, string loginProvider, string tokenName, TimeSpan expirySpan)
+		{
+			using ApplicationDbContext context = new(options);
+			var stillValidTime = DateTimeOffset.Now - expirySpan;
+			//var r = context.UserTokens.SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName && d.CreatedUtc > stillValidTime);
+			var r = context.UserTokens.SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName);
+			return r == null ? null : r.Value;
+		}
 
+		/// <summary>
+		/// Lookup user tokens and find, also take care of token expiry.
+		/// however, your system should have house keeping functions to regularly clean up expired refresh token, and revoke anytime for any user, selected users and all users.
+		/// </summary>
+		/// <param name="user"></param>
+		/// <param name="purpose">token purpose</param>
+		/// <param name="tokenValue"></param>
+		/// <param name="connectionId">to become part of composed token name</param>
+		/// <param name="expirySpan">The life span of the token since its created time.</param>
+		/// <returns></returns>
+		public async Task<bool> MatchTokenWithExpiry(ApplicationUser user, string loginProvider, string purpose, string tokenValue, Guid connectionId, TimeSpan expirySpan)
+		{
+			string composedTokenName = $"{purpose}_{connectionId.ToString()}";
+			string storedToken = await GetAuthenticationTokenWithExpiryAsync(user, loginProvider, composedTokenName, expirySpan).ConfigureAwait(false);
+			return tokenValue == storedToken;
+		}
 	}
 }

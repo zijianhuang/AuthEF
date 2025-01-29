@@ -56,7 +56,7 @@ namespace AuthTests
 
 			if (!string.IsNullOrEmpty(scope))
 			{
-				pairs.Add(new KeyValuePair<string, string>("scope", scope));
+				pairs.Add(new KeyValuePair<string, string>("scope", null));
 			}
 
 			var content = new FormUrlEncodedContent(pairs);
@@ -182,8 +182,7 @@ namespace AuthTests
 		[Fact]
 		public void Test100RefreshTokenWithNewHttpClient()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
@@ -191,11 +190,12 @@ namespace AuthTests
 
 			var currentRefreshToken = tokenModel.refresh_token;
 			var currentAccesstoken = tokenModel.access_token;
+			var currentScope = tokenModel.Scope;
 			TestAuthorizedNewConnection(tokenModel.token_type, currentAccesstoken);
 
 			for (int i = 0; i < 100; i++)
 			{
-				var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, currentAccesstoken, currentRefreshToken, scope);
+				var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, currentAccesstoken, currentRefreshToken, currentScope);
 				Assert.NotEqual(currentRefreshToken, newTokenModel.refresh_token);
 				currentRefreshToken = newTokenModel.refresh_token;
 				currentAccesstoken = newTokenModel.access_token; // for bearer token in new request
@@ -209,14 +209,13 @@ namespace AuthTests
 		[Fact]
 		public void TestRefreshTokenWithNewHttpClient()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			Assert.NotNull(tokenModel.refresh_token);
 
-			var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, scope);
+			var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, tokenModel.Scope);
 			TestAuthorizedNewConnection(newTokenModel.token_type, newTokenModel.access_token);
 		}
 
@@ -273,13 +272,13 @@ namespace AuthTests
 #endif
 		public void TestAccessTokenExpiryThenGetNewViaRefreshToken()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			Assert.NotNull(tokenModel.refresh_token);
 			output.WriteLine($"token expires_in {tokenModel.expires_in}");
+			var scope = tokenModel.Scope;
 
 			TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token);
 			Thread.Sleep(7050);
@@ -299,14 +298,14 @@ namespace AuthTests
 		[Fact]
 		public void TestRefreshTokenWithCorruptedDataThrows()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			Assert.NotNull(tokenModel.refresh_token);
 
-			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token + "A", scope));
+			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token + "A", null));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 			Assert.Contains("Invalid to retrieve token through refreshToken", ex.Response);
 			output.WriteLine("throws");
@@ -318,8 +317,8 @@ namespace AuthTests
 		[Fact]
 		public void TestRefreshTokenWithInvalidConnectionIdDataThrows()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
@@ -335,8 +334,8 @@ namespace AuthTests
 		{
 			for (int i = 0; i < 100; i++)
 			{
-				string scope = $"connectionId:{Guid.NewGuid()}";
-				var tokenText = GetTokenWithSameClient(baseUri, "admin", "Pppppp*8", scope);
+	
+				var tokenText = GetTokenWithSameClient(baseUri, "admin", "Pppppp*8", null);
 				Assert.NotEmpty(tokenText);
 
 				var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
@@ -347,8 +346,8 @@ namespace AuthTests
 		[Fact]
 		public void Test100RefreshTokenWithSameHttpClient()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
@@ -356,11 +355,12 @@ namespace AuthTests
 
 			var currentRefreshToken = tokenModel.refresh_token;
 			var currentAccesstoken = tokenModel.access_token;
+			var currentScope = tokenModel.Scope;
 			TestAuthorizedNewConnection(tokenModel.token_type, currentAccesstoken);
 
 			for (int i = 0; i < 100; i++)
 			{
-				var newTokenModel = GetAccessTokenResponseWithConnectionIdByRefreshTokenWithSameClient(baseUri, tokenModel.access_token, currentRefreshToken, scope);
+				var newTokenModel = GetAccessTokenResponseWithConnectionIdByRefreshTokenWithSameClient(baseUri, tokenModel.access_token, currentRefreshToken, currentScope);
 				Assert.NotEqual(currentRefreshToken, newTokenModel.refresh_token);
 				//Assert.NotEqual(currentAccesstoken, newTokenModel.access_token); sometimes equal, probably due to that I request frequently.
 				currentRefreshToken = newTokenModel.refresh_token;
@@ -381,7 +381,7 @@ namespace AuthTests
 		{
 			Guid connectionId = Guid.NewGuid();
 			string scope = $"connectionId:{connectionId}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
@@ -392,7 +392,7 @@ namespace AuthTests
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			accountApi.Logout(connectionId); // this will remove the refresh token of the user on connnectionId
-			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, scope));
+			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, null));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
 			TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token); // still working, because JWT is stateless. This is a normal behavior.
@@ -404,54 +404,54 @@ namespace AuthTests
 		[Fact]
 		public void TestRemoveOldUserTokensThenRefreshTokenThrows()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			Assert.NotNull(tokenModel.refresh_token);
 
-			var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, scope);
+			var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, tokenModel.Scope);
 			Assert.NotEqual(tokenModel.refresh_token, newTokenModel.refresh_token);
 			TestAuthorizedNewConnection(tokenModel.token_type, newTokenModel.access_token);
 
-			GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, scope);
+			GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, newTokenModel.Scope);
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, newTokenModel.access_token);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			accountApi.RemoveOldUserTokens(DateTime.UtcNow); // Remove all user tokens, typically refresh tokens
-			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, scope));
+			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, null));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 		}
 
 		[Fact]
 		public void TestAdminRemoveUserTokensThenRefreshTokenThrows()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			Assert.NotNull(tokenModel.refresh_token);
 
-			var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, scope);
+			var newTokenModel = GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, tokenModel.Scope);
 			Assert.NotEqual(tokenModel.refresh_token, newTokenModel.refresh_token);
 			TestAuthorizedNewConnection(tokenModel.token_type, newTokenModel.access_token);
 
-			GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, scope);
+			GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, newTokenModel.Scope);
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, newTokenModel.access_token);
 			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
 			accountApi.AdminRemoverRefreshTokensOfUsers("admin");
-			Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, scope));
+			Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, null));
 		}
 
 		HttpClient CreateAdminHttpClient()
 		{
-			string scope = $"connectionId:{Guid.NewGuid()}";
-			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", scope);
+
+			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			var tokenModel = System.Text.Json.JsonSerializer.Deserialize<AccessTokenResponse>(tokenText);
 			var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;

@@ -12,9 +12,9 @@ namespace Fonlow.AspNetCore.Identity
 		/// </summary>
 		/// <returns>User Id, or Guid.Empty if there's error and throwException is false.</returns>
 		/// <exception cref="System.Security.SecurityException">Throws only if throwException is true and the user can not be added.</exception>
-		public static async Task<Guid> CreateUser(this UserManager<ApplicationUser> userManager, string userName, string email, string fullName, string password, string roleName, bool throwException = false)
+		public static async Task<Guid> CreateUser(this ApplicationUserManager userManager, string userName, string email, string fullName, string password, string roleName, bool throwException = false)
 		{
-			return await userManager.CreateUser(new ApplicationUser() { UserName = userName, Email = email, FullName=fullName }, password, roleName, throwException);
+			return await userManager.CreateUser(new ApplicationUser() { UserName = userName, Email = email, FullName = fullName }, password, roleName, throwException);
 		}
 
 		/// <summary>
@@ -22,7 +22,7 @@ namespace Fonlow.AspNetCore.Identity
 		/// </summary>
 		/// <returns>User Id, or Guid.Empty if there's error and throwException is false.</returns>
 		/// <exception cref="System.Security.SecurityException">Throws only if throwException is true and the user can not be added.</exception>
-		public static async Task<Guid> CreateUser(this UserManager<ApplicationUser> userManager, ApplicationUser user, string password, string roleName, bool throwException = false)
+		public static async Task<Guid> CreateUser(this ApplicationUserManager userManager, ApplicationUser user, string password, string roleName, bool throwException = false)
 		{
 			IdentityResult r = await userManager.CreateAsync(user, password);
 			if (r.Succeeded)

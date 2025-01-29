@@ -15,6 +15,12 @@ using System.Threading.Tasks;
 using WebApp.Utilities;
 using Fonlow.Auth.Models;
 using System.Net.Http.Headers;
+using DemoWebApi.DemoData;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Fonlow.AspNetCore.Identity.Account;
+using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 namespace WebApp.Controllers
 {
 
@@ -34,13 +40,19 @@ namespace WebApp.Controllers
 		}
 
 		readonly IAuthSettings authSettings;
-		readonly SymmetricSecurityKey symmetricSecurityKey;
+		readonly Microsoft.IdentityModel.Tokens.TokenValidationParameters tokenValidationParameters;
+		readonly ILogger<WebApiTrace> logger;
+		readonly AccountFunctions accountFunctions;
 
-		public AuthController(ApplicationUserManager userManager, SymmetricSecurityKey symmetricSecurityKey, IAuthSettings authSettings)
+		public AuthController(ApplicationUserManager userManager, DbContextOptions<ApplicationDbContext> options,
+			[FromKeyedServices("NotValidateLifetime")] Microsoft.IdentityModel.Tokens.TokenValidationParameters tokenValidationParameters,
+			IAuthSettings authSettings, ILogger<WebApiTrace> logger)
 		{
 			UserManager = userManager;
 			this.authSettings = authSettings;
-			this.symmetricSecurityKey = symmetricSecurityKey;
+			this.tokenValidationParameters = tokenValidationParameters;
+			this.logger = logger;
+			accountFunctions = new AccountFunctions(options);
 		}
 
 		/// <summary>
@@ -72,34 +84,34 @@ namespace WebApp.Controllers
 					return Unauthorized(new { message = "Username or password is incorrect" });
 				}
 
-				var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
-				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, ropcRequest.Scope); //todo: some apps may need to deal with scope
+				var tokenHelper = new UserTokenHelper(UserManager, tokenValidationParameters, authSettings, logger);
+				return await tokenHelper.GenerateJwtToken(user, ropcRequest.Username, ropcRequest.Scope, true);
 			}
 			else if (model is RefreshAccessTokenRequest refreshAccessTokenRequest)
 			{
-				if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue)){
+				if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue))
+				{
 					var scehma = headerValue.Scheme;
 					Debug.Assert("bearer".Equals(scehma, StringComparison.OrdinalIgnoreCase));
 					var accessToken = headerValue.Parameter;
-					var jwtSecurityToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
-					var uniqueNameClaim = jwtSecurityToken.Claims.Single(d => d.Type == "unique_name");
-					var username = uniqueNameClaim.Value;
-					var user = await UserManager.FindByNameAsync(username);
+					var tokenHelper = new UserTokenHelper(UserManager, tokenValidationParameters, authSettings, logger);
+					var user = await tokenHelper.ValidateAccessToken(accessToken); // even if the accessToken expires
 
 					if (user == null)
 					{
-						return BadRequest(new { message = "Username or password is invalid" });
+						return Unauthorized();
 					}
 
 					Guid connectionId = string.IsNullOrEmpty(refreshAccessTokenRequest.Scope) ? Guid.Empty : UserTokenHelper.ExtractConnectionId(refreshAccessTokenRequest.Scope);
-					var tokenHelper = new UserTokenHelper(UserManager, symmetricSecurityKey, authSettings);
+					//var tokenTextExisting = await accountFunctions.MatchTokenWithExpiry(user, authSettings.TokenProviderName, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId, TimeSpan.FromSeconds(authSettings.RefreshTokenExpirySpanSeconds));
 					var tokenTextExisting = await tokenHelper.MatchToken(user, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId);
+
 					if (!tokenTextExisting)
 					{
 						return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
 					}
 
-					return await tokenHelper.GenerateJwtToken(user, username, refreshAccessTokenRequest.Scope);
+					return await tokenHelper.GenerateJwtToken(user, user.UserName, refreshAccessTokenRequest.Scope, false);
 				}
 
 				return Unauthorized();
