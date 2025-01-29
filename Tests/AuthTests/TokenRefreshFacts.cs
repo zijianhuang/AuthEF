@@ -223,11 +223,7 @@ namespace AuthTests
 		/// Access token should expire after expiry time + clock skew.
 		/// It should not expire just after expiry time if clock skew is not zero.
 		/// </summary>
-#if DEBUG
 		[Fact]
-#else
-		[Fact(Skip = "Available for Debug build with clock skew 5 seconds")]
-#endif
 		public void TestAccessTokenExpiry()
 		{
 			Guid connectionId = Guid.NewGuid();
@@ -265,11 +261,7 @@ namespace AuthTests
 		/// <summary>
 		/// After expiry, use refresh token to accquire new access token.
 		/// </summary>
-#if DEBUG
 		[Fact]
-#else
-		[Fact(Skip = "Available for Debug build with clock skew 5 seconds")]
-#endif
 		public void TestAccessTokenExpiryThenGetNewViaRefreshToken()
 		{
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
@@ -292,11 +284,7 @@ namespace AuthTests
 			Assert.NotEqual(tokenModel.access_token, newTokenModel.access_token);
 		}
 
-#if DEBUG
 		[Fact]
-#else
-		[Fact(Skip = "Available for Debug build with clock skew 5 seconds")]
-#endif
 		public void TestAccessTokenExpiryThenGetNewViaRefreshTokenButTooLateThrow()
 		{
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);

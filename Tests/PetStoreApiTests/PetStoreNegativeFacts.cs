@@ -18,11 +18,7 @@ namespace IntegrationTests
 
 		readonly PetClient api;
 
-#if DEBUG
 		[Fact]
-#else
-		[Fact(Skip ="Available for Debug build with clock skew 5 seconds")]
-#endif
 		public async Task TestFindPetsTokenExpiresThrows()
 		{
 			Pet[] aa = await api.FindPetsByStatusAsync(PetStatus.sold);
