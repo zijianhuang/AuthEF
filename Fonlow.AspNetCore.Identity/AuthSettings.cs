@@ -37,6 +37,7 @@ namespace Fonlow.WebApp.Identity
 		string SymmetricSecurityKeyString { get; }
 		long AuthTokenExpirySpanSeconds { get; }
 		long RefreshTokenExpirySpanSeconds { get; }
+		long ClockSkewSeconds { get; }
 	}
 
 	/// <summary>
@@ -58,5 +59,10 @@ namespace Fonlow.WebApp.Identity
 		public long AuthTokenExpirySpanSeconds { get; set; }
 
 		public long RefreshTokenExpirySpanSeconds { get; set; }
+
+		/// <summary>
+		/// In ASP.NET, the default is 300 seconds. Used only for Microsoft.IdentityModel.Tokens.TokenValidationParameters of AddJwtBearer().
+		/// </summary>
+		public long ClockSkewSeconds { get; set; } = 300;
 	}
 }

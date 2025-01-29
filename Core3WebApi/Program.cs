@@ -114,9 +114,7 @@ var tokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidati
 	ValidAudience = authSettings.Audience,
 	ValidIssuer = authSettings.Issuer,
 	IssuerSigningKey = issuerSigningKey,
-#if DEBUG
-	ClockSkew = TimeSpan.FromSeconds(2), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
-#endif
+	ClockSkew = TimeSpan.FromSeconds(authSettings.ClockSkewSeconds), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
 };
 
 var tokenValidationParametersNoValidateLifetime = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
@@ -128,9 +126,7 @@ var tokenValidationParametersNoValidateLifetime = new Microsoft.IdentityModel.To
 	ValidAudience = authSettings.Audience,
 	ValidIssuer = authSettings.Issuer,
 	IssuerSigningKey = issuerSigningKey,
-#if DEBUG
-	ClockSkew = TimeSpan.FromSeconds(2),
-#endif
+	ClockSkew = TimeSpan.FromSeconds(authSettings.ClockSkewSeconds),
 };
 
 builder.Services.AddKeyedSingleton("NotValidateLifetime", tokenValidationParametersNoValidateLifetime);

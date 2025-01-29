@@ -21,7 +21,7 @@ namespace AuthTests
 				.AddJsonFile("appsettings.json")
 				.Build();
 
-			ClockSkewMilliseconds = int.Parse(config["ClockSkewSeconds"]) * 1000;
+			//ClockSkewMilliseconds = int.Parse(config["ClockSkewSeconds"]) * 1000;
 			System.Text.Json.JsonSerializerOptions jsonSerializerSettings = new System.Text.Json.JsonSerializerOptions()
 			{
 				DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
@@ -33,7 +33,7 @@ namespace AuthTests
 			BaseUrl = c.BaseUrl;
 		}
 
-		public int ClockSkewMilliseconds { get; private set; }
+		//public int ClockSkewMilliseconds { get; private set; }
 
 		public AuthClient Api { get; private set; }
 		public string BaseUrl { get; private set; }
