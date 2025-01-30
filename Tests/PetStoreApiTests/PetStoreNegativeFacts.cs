@@ -18,6 +18,10 @@ namespace IntegrationTests
 
 		readonly PetClient api;
 
+		/// <summary>
+		/// If this is not throwing exception, it could be the PetWebApi has different expiry settings for access token and clock skew.
+		/// </summary>
+		/// <returns></returns>
 		[Fact]
 		public async Task TestFindPetsTokenExpiresThrows()
 		{

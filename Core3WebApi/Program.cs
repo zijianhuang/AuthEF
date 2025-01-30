@@ -115,9 +115,10 @@ var tokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidati
 	ValidIssuer = authSettings.Issuer,
 	IssuerSigningKey = issuerSigningKey,
 	ClockSkew = TimeSpan.FromSeconds(authSettings.ClockSkewSeconds), //Default is 300 seconds. This is for testing the correctness of the auth protocol implementation between C/S.
+																	 //make sure resource server like PetWebApi has the same.
 };
 
-var tokenValidationParametersNoValidateLifetime = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+var tokenValidationParametersNoValidateLifetime = new Microsoft.IdentityModel.Tokens.TokenValidationParameters() //for refresh token only
 {
 	ValidateIssuer = true,
 	ValidateAudience = true,

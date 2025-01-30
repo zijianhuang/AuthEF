@@ -41,7 +41,7 @@ namespace Fonlow.WebApp.Identity
 	}
 
 	/// <summary>
-	/// For testing and apps that does not require rigid security mechanism.
+	/// For testing and apps that does not require rigid security mechanism, which such sensitive info is stored in the process memory.
 	/// </summary>
 	public class AuthSetupSettings : IAuthSetupSecrets, IAuthSettings
 	{
