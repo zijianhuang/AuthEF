@@ -14,7 +14,7 @@ namespace Fonlow.AspNetCore.Identity
 		/// <exception cref="System.Security.SecurityException">Throws only if throwException is true and the user can not be added.</exception>
 		public static async Task<Guid> CreateUser(this ApplicationUserManager userManager, string userName, string email, string fullName, string password, string roleName, bool throwException = false)
 		{
-			return await userManager.CreateUser(new ApplicationUser() { UserName = userName, Email = email, FullName = fullName }, password, roleName, throwException);
+			return await userManager.CreateUser(new ApplicationUser() { UserName = userName, Email = email, FullName = fullName }, password, roleName, throwException).ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -24,7 +24,7 @@ namespace Fonlow.AspNetCore.Identity
 		/// <exception cref="System.Security.SecurityException">Throws only if throwException is true and the user can not be added.</exception>
 		public static async Task<Guid> CreateUser(this ApplicationUserManager userManager, ApplicationUser user, string password, string roleName, bool throwException = false)
 		{
-			IdentityResult r = await userManager.CreateAsync(user, password);
+			IdentityResult r = await userManager.CreateAsync(user, password).ConfigureAwait(false);
 			if (r.Succeeded)
 			{
 				if (String.IsNullOrEmpty(roleName))
@@ -32,7 +32,7 @@ namespace Fonlow.AspNetCore.Identity
 					return user.Id; // no role to create
 				}
 
-				IdentityResult rr = await userManager.AddToRoleAsync(user, roleName);
+				IdentityResult rr = await userManager.AddToRoleAsync(user, roleName).ConfigureAwait(false);
 				if (rr.Succeeded)
 				{
 					System.Diagnostics.Trace.TraceInformation("User {0} added to role {1}.", user.UserName, roleName);

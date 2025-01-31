@@ -5,7 +5,6 @@ using Fonlow.AspNetCore.Identity.Account;
 using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
 using Fonlow.CodeDom.Web;
 using Fonlow.DemoApp;
-using Fonlow.WebApp.Accounts;
 using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +25,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Utilities;
 
-namespace DemoWebApi.Controllers
+namespace Fonlow.Auth.Controllers
 {
 	/// <summary>
 	/// Manage user accounts stored in ASP.NET Core Identity database.
@@ -54,6 +53,39 @@ namespace DemoWebApi.Controllers
 			this.options = options;
 			this.tokenValidationParameters = tokenValidationParameters;
 			accountFunctions = new AccountFunctions(options);
+		}
+
+		/// <summary>
+		/// Sign out.
+		/// </summary>
+		/// <param name="connectionId"></param>
+		/// <returns></returns>
+		/// <remarks>This will also remove the refresh token.</remarks>
+		[HttpPost("Logout/{connectionId}")]
+		public async Task<IActionResult> Logout(Guid connectionId)
+		{
+			if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue))
+			{
+				var scehma = headerValue.Scheme;
+				Debug.Assert("bearer".Equals(scehma, StringComparison.OrdinalIgnoreCase));
+				var accessToken = headerValue.Parameter;
+				var tokenHelper = new UserTokenHelper(userManager, tokenValidationParameters, authSettings, apiLogger);
+				var user = await tokenHelper.ValidateAccessToken(accessToken); // even if the accessToken expires
+				if (user == null)
+				{
+					return Unauthorized();
+				}
+
+				// https://learn.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x#use-httpcontext-authentication-extensions
+				await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
+				await accountFunctions.RemoveUserToken(user.Id, authSettings.TokenProviderName, "RefreshToken", connectionId); //Up to admin to clear records if the user did not sign out.
+				return StatusCode((int)HttpStatusCode.NoContent);
+			}
+			else
+			{
+				return Unauthorized();
+			}
 		}
 
 		/// <summary>
@@ -147,33 +179,6 @@ namespace DemoWebApi.Controllers
 		public UserInfoViewModel GetUserInfo([FromQuery] Guid id)
 		{
 			return GetUserInfoViewModel(id);
-		}
-
-		[HttpPost("Logout/{connectionId}")]
-		public async Task<IActionResult> Logout(Guid connectionId)
-		{
-			if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue))
-			{
-				var scehma = headerValue.Scheme;
-				Debug.Assert("bearer".Equals(scehma, StringComparison.OrdinalIgnoreCase));
-				var accessToken = headerValue.Parameter;
-				var tokenHelper = new UserTokenHelper(userManager, tokenValidationParameters, authSettings, apiLogger);
-				var user = await tokenHelper.ValidateAccessToken(accessToken); // even if the accessToken expires
-				if (user == null)
-				{
-					return Unauthorized();
-				}
-
-				// https://learn.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x#use-httpcontext-authentication-extensions
-				await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
-				await accountFunctions.RemoveUserToken(user.Id, authSettings.TokenProviderName, "RefreshToken", connectionId); //Up to admin to clear records if the user did not sign out.
-				return StatusCode((int)HttpStatusCode.NoContent);
-			}
-			else
-			{
-				return Unauthorized();
-			}
 		}
 
 		// POST api/Account/ChangePassword

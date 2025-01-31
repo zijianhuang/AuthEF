@@ -25,7 +25,6 @@
 		<ProjectReference Include="..\Fonlow.Auth.Models\Fonlow.Auth.Models.csproj" />
 		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Abstract\Fonlow.EntityFrameworkCore.Abstract.csproj" />
 		<ProjectReference Include="..\Fonlow.EntityFrameworkCore.Sqlite\Fonlow.EntityFrameworkCore.Sqlite.csproj" />
-		<ProjectReference Include="..\Fonlow.WebApp.Accounts\Fonlow.WebApp.Accounts.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
