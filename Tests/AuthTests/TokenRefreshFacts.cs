@@ -6,7 +6,8 @@ using System.Diagnostics;
 using Xunit.Abstractions;
 using System.Text.Json;
 using Fonlow.Auth.Models;
-using Fonlow.WebApp.Accounts.Client;
+using Fonlow.AspNetCore.Identity.Client;
+using Fonlow.Auth.Controllers.Client;
 
 namespace AuthTests
 {
@@ -389,8 +390,8 @@ namespace AuthTests
 		[Fact]
 		public void TestLogoutThenRefreshTokenThrows()
 		{
-			Guid connectionId = Guid.NewGuid();
-			string scope = $"connectionId:{connectionId}";
+			//Guid connectionId = Guid.NewGuid();
+			//string scope = $"connectionId:{connectionId}";
 			var tokenText = GetTokenWithNewClient(baseUri, "admin", "Pppppp*8", null);
 			Assert.NotEmpty(tokenText);
 
@@ -400,8 +401,8 @@ namespace AuthTests
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
-			accountApi.Logout(connectionId); // this will remove the refresh token of the user on connnectionId
+			var accountApi = new Account(httpClient);
+			accountApi.Logout(Guid.NewGuid()); // this will remove the refresh token of the user on connnectionId
 			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, null));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
 
@@ -429,7 +430,7 @@ namespace AuthTests
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, newTokenModel.access_token);
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			var accountApi = new Account(httpClient);
 			accountApi.RemoveOldUserTokens(DateTime.UtcNow); // Remove all user tokens, typically refresh tokens
 			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, null));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
@@ -453,7 +454,7 @@ namespace AuthTests
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, newTokenModel.access_token);
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			var accountApi = new Account(httpClient);
 			accountApi.AdminRemoverRefreshTokensOfUsers("admin");
 			Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, null));
 		}

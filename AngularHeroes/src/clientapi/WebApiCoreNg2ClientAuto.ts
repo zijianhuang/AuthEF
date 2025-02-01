@@ -45,195 +45,6 @@ export namespace DemoWebApi_Controllers_Client {
 
 
 	/**
-	 * Manage user accounts stored in ASP.NET Core Identity database.
-	 * Authorize: Bearer
-	 */
-	@Injectable()
-	export class Account {
-		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
-		}
-
-		/**
-		 * POST api/Account/AddRole?userId={userId}&roleName={roleName}
-		 * @param {string} userId Type: GUID
-		 */
-		addRole(userId?: string | null, roleName?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/Account/AddRole?userId=' + userId + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), null, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
-		 * Authorize: Roles: admin; 
-		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
-		 */
-		adminRemoverRefreshTokensOfUsers(username?: string | null, headersHandler?: () => HttpHeaders): Observable<number> {
-			return this.http.delete<number>(this.baseUri + 'api/Account/AdminRemoveUserRefreshTokens/' + (!username ? '' : encodeURIComponent(username)), { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * PUT api/Account/ChangePassword
-		 */
-		changePassword(model?: Fonlow_WebApp_Accounts_Client.ChangePasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.put(this.baseUri + 'api/Account/ChangePassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * Just a demo, but revealing some basic ForgotPassword features:
-		 * 1. If user not found, return NoContent
-		 * 2. Otherwise, send the reset token via Email or other means.
-		 * POST api/Account/ForgotPassword
-		 */
-		forgotPassword(email?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/Account/ForgotPassword', JSON.stringify(email), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * GET api/Account/AllRoleNames
-		 */
-		getAllRoleNames(headersHandler?: () => HttpHeaders): Observable<Array<string>> {
-			return this.http.get<Array<string>>(this.baseUri + 'api/Account/AllRoleNames', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * GET api/Account/idByEmail?email={email}
-		 * @return {string} Type: GUID
-		 */
-		getUserIdByEmail(email?: string | null, headersHandler?: () => HttpHeaders): Observable<string> {
-			return this.http.get<string>(this.baseUri + 'api/Account/idByEmail?email=' + (!email ? '' : encodeURIComponent(email)), { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * GET api/Account/idByFullName?cn={cn}
-		 * @return {string} Type: GUID
-		 */
-		getUserIdByFullName(cn?: string | null, headersHandler?: () => HttpHeaders): Observable<string> {
-			return this.http.get<string>(this.baseUri + 'api/Account/idByFullName?cn=' + (!cn ? '' : encodeURIComponent(cn)), { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * GET api/Account/UserIdByUser?username={username}
-		 * @return {string} Type: GUID
-		 */
-		getUserIdByUser(username?: string | null, headersHandler?: () => HttpHeaders): Observable<string> {
-			return this.http.get<string>(this.baseUri + 'api/Account/UserIdByUser?username=' + (!username ? '' : encodeURIComponent(username)), { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * Mapping between email address and user Id
-		 * GET api/Account/UserIdMapByEmail
-		 * @return {Array<{key: string, value: string }>} Key is email address, and value is user Id.
-		 */
-		getUserIdMapByEmail(headersHandler?: () => HttpHeaders): Observable<Array<{key: string, value: string }>> {
-			return this.http.get<Array<{key: string, value: string }>>(this.baseUri + 'api/Account/UserIdMapByEmail', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * Mapping between full user name and user Id
-		 * GET api/Account/UserIdMapByFullName
-		 * @return {Array<{key: string, value: string }>} Key is full name, and value is user Id.
-		 */
-		getUserIdMapByFullName(headersHandler?: () => HttpHeaders): Observable<Array<{key: string, value: string }>> {
-			return this.http.get<Array<{key: string, value: string }>>(this.baseUri + 'api/Account/UserIdMapByFullName', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * Get user info of current logged user
-		 * GET api/Account/UserInfo
-		 */
-		getUserInfo(headersHandler?: () => HttpHeaders): Observable<Fonlow_WebApp_Accounts_Client.UserInfoViewModel> {
-			return this.http.get<Fonlow_WebApp_Accounts_Client.UserInfoViewModel>(this.baseUri + 'api/Account/UserInfo', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * : InternalRoles
-		 * GET api/Account/UserInfoById?id={id}
-		 * Authorize: Roles: admin,manager; 
-		 * @param {string} id Type: GUID
-		 */
-		getUserInfoByIdOfstring(id?: string | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_WebApp_Accounts_Client.UserInfoViewModel> {
-			return this.http.get<Fonlow_WebApp_Accounts_Client.UserInfoViewModel>(this.baseUri + 'api/Account/UserInfoById?id=' + id, { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * POST api/Account/Logout/{connectionId}
-		 * @param {string} connectionId Type: GUID
-		 */
-		logout(connectionId?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/Account/Logout/' + connectionId, null, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * Create user, but without role
-		 * POST api/Account/Register
-		 * Authorize: Roles: admin,manager; 
-		 * @return {string} Type: GUID
-		 */
-		register(model?: Fonlow_WebApp_Accounts_Client.RegisterBindingModel | null, headersHandler?: () => HttpHeaders): Observable<string> {
-			return this.http.post<string>(this.baseUri + 'api/Account/Register', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
-		}
-
-		/**
-		 * Admin or scheduler clean up old user tokens
-		 * DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
-		 * Authorize: Roles: admin; 
-		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
-		 */
-		removeOldUserTokens(pastDateUtc?: Date | null, headersHandler?: () => HttpHeaders): Observable<number> {
-			return this.http.delete<number>(this.baseUri + 'api/Account/RemoveOldUserTokens/' + pastDateUtc?.toISOString(), { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * User to remove all refresh tokens of user
-		 * DELETE api/Account/RemoveRefreshTokensOfUser
-		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
-		 */
-		removeRefreshTokensOfUser(headersHandler?: () => HttpHeaders): Observable<number> {
-			return this.http.delete<number>(this.baseUri + 'api/Account/RemoveRefreshTokensOfUser', { headers: headersHandler ? headersHandler() : undefined });
-		}
-
-		/**
-		 * DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
-		 * @param {string} userId Type: GUID
-		 */
-		removeRole(userId?: string | null, roleName?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.delete(this.baseUri + 'api/Account/RemoveRole?userId=' + userId + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * Remove user and also remove from the entities table.
-		 * DELETE api/Account/RemoveUser?userId={userId}
-		 * @param {string} userId Type: GUID
-		 */
-		removeUser(userId?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.delete(this.baseUri + 'api/Account/RemoveUser?userId=' + userId, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * POST api/Account/ResetPassword
-		 */
-		resetPassword(model?: Fonlow_WebApp_Accounts_Client.ResetPasswordViewModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/Account/ResetPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * PUT api/Account/SetPassword
-		 */
-		setPassword(model?: Fonlow_WebApp_Accounts_Client.SetPasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.put(this.baseUri + 'api/Account/SetPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * : AdminOrManager
-		 * PUT api/Account/SetUserPassword
-		 * Authorize: Roles: admin,manager; 
-		 */
-		setUserPassword(model?: Fonlow_WebApp_Accounts_Client.SetUserPasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.put(this.baseUri + 'api/Account/SetUserPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
-	}
-
-
-	/**
 	 * For testing different commbinations of parameters and returns
 	 * Authorize: Bearer
 	 */
@@ -1781,58 +1592,6 @@ export namespace DemoWebApi_DemoData_Client {
 }
 
 export namespace Fonlow_AspNetCore_Identity_Client {
-	export interface IdentitySeeding {
-		roles?: Array<string>;
-		users?: Array<Fonlow_AspNetCore_Identity_Client.UserInitModel>;
-	}
-	export interface IdentitySeedingFormProperties {
-	}
-	export function CreateIdentitySeedingFormGroup() {
-		return new FormGroup<IdentitySeedingFormProperties>({
-		});
-
-	}
-
-	export interface UserInitModel extends Fonlow_AspNetCore_Identity_Client.UsernameModel {
-		email?: string | null;
-		fullName?: string | null;
-		role?: string | null;
-	}
-	export interface UserInitModelFormProperties extends Fonlow_AspNetCore_Identity_Client.UsernameModelFormProperties {
-		email: FormControl<string | null | undefined>,
-		fullName: FormControl<string | null | undefined>,
-		role: FormControl<string | null | undefined>,
-	}
-	export function CreateUserInitModelFormGroup() {
-		return new FormGroup<UserInitModelFormProperties>({
-			password: new FormControl<string | null | undefined>(undefined),
-			username: new FormControl<string | null | undefined>(undefined),
-			email: new FormControl<string | null | undefined>(undefined),
-			fullName: new FormControl<string | null | undefined>(undefined),
-			role: new FormControl<string | null | undefined>(undefined),
-		});
-
-	}
-
-	export interface UsernameModel {
-		password?: string | null;
-		username?: string | null;
-	}
-	export interface UsernameModelFormProperties {
-		password: FormControl<string | null | undefined>,
-		username: FormControl<string | null | undefined>,
-	}
-	export function CreateUsernameModelFormGroup() {
-		return new FormGroup<UsernameModelFormProperties>({
-			password: new FormControl<string | null | undefined>(undefined),
-			username: new FormControl<string | null | undefined>(undefined),
-		});
-
-	}
-
-}
-
-export namespace Fonlow_WebApp_Accounts_Client {
 	export interface AddExternalLoginBindingModel {
 
 		/** Required */
@@ -1919,25 +1678,21 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	}
 
-	export interface CustomToken {
-
-		/** Type: GUID */
-		connectionId?: string | null;
-		stamp?: Date | null;
-		tokenValue?: string | null;
+	export interface EntitySearchModel {
+		dateBegin?: Date | null;
+		dateEnd?: Date | null;
+		keyword?: string | null;
 	}
-	export interface CustomTokenFormProperties {
-
-		/** Type: GUID */
-		connectionId: FormControl<string | null | undefined>,
-		stamp: FormControl<Date | null | undefined>,
-		tokenValue: FormControl<string | null | undefined>,
+	export interface EntitySearchModelFormProperties {
+		dateBegin: FormControl<Date | null | undefined>,
+		dateEnd: FormControl<Date | null | undefined>,
+		keyword: FormControl<string | null | undefined>,
 	}
-	export function CreateCustomTokenFormGroup() {
-		return new FormGroup<CustomTokenFormProperties>({
-			connectionId: new FormControl<string | null | undefined>(undefined),
-			stamp: new FormControl<Date | null | undefined>(undefined),
-			tokenValue: new FormControl<string | null | undefined>(undefined),
+	export function CreateEntitySearchModelFormGroup() {
+		return new FormGroup<EntitySearchModelFormProperties>({
+			dateBegin: new FormControl<Date | null | undefined>(undefined),
+			dateEnd: new FormControl<Date | null | undefined>(undefined),
+			keyword: new FormControl<string | null | undefined>(undefined),
 		});
 
 	}
@@ -1961,11 +1716,23 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	}
 
+	export interface IdentitySeeding {
+		roles?: Array<string>;
+		users?: Array<Fonlow_AspNetCore_Identity_Client.UserInitModel>;
+	}
+	export interface IdentitySeedingFormProperties {
+	}
+	export function CreateIdentitySeedingFormGroup() {
+		return new FormGroup<IdentitySeedingFormProperties>({
+		});
+
+	}
+
 	export interface ManageInfoViewModel {
 		email?: string | null;
-		externalLoginProviders?: Array<Fonlow_WebApp_Accounts_Client.ExternalLoginViewModel>;
+		externalLoginProviders?: Array<Fonlow_AspNetCore_Identity_Client.ExternalLoginViewModel>;
 		localLoginProvider?: string | null;
-		logins?: Array<Fonlow_WebApp_Accounts_Client.UserLoginInfoViewModel>;
+		logins?: Array<Fonlow_AspNetCore_Identity_Client.UserLoginInfoViewModel>;
 	}
 	export interface ManageInfoViewModelFormProperties {
 		email: FormControl<string | null | undefined>,
@@ -2119,10 +1886,10 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	}
 
-	export interface SetUserPasswordBindingModel extends Fonlow_WebApp_Accounts_Client.SetPasswordBindingModel {
+	export interface SetUserPasswordBindingModel extends Fonlow_AspNetCore_Identity_Client.SetPasswordBindingModel {
 		userId?: string | null;
 	}
-	export interface SetUserPasswordBindingModelFormProperties extends Fonlow_WebApp_Accounts_Client.SetPasswordBindingModelFormProperties {
+	export interface SetUserPasswordBindingModelFormProperties extends Fonlow_AspNetCore_Identity_Client.SetPasswordBindingModelFormProperties {
 		userId: FormControl<string | null | undefined>,
 	}
 	export function CreateSetUserPasswordBindingModelFormGroup() {
@@ -2170,6 +1937,66 @@ export namespace Fonlow_WebApp_Accounts_Client {
 
 	}
 
+	export interface UserInitModel extends Fonlow_AspNetCore_Identity_Client.UsernameModel {
+		email?: string | null;
+		fullName?: string | null;
+		role?: string | null;
+	}
+	export interface UserInitModelFormProperties extends Fonlow_AspNetCore_Identity_Client.UsernameModelFormProperties {
+		email: FormControl<string | null | undefined>,
+		fullName: FormControl<string | null | undefined>,
+		role: FormControl<string | null | undefined>,
+	}
+	export function CreateUserInitModelFormGroup() {
+		return new FormGroup<UserInitModelFormProperties>({
+			password: new FormControl<string | null | undefined>(undefined),
+			username: new FormControl<string | null | undefined>(undefined),
+			email: new FormControl<string | null | undefined>(undefined),
+			fullName: new FormControl<string | null | undefined>(undefined),
+			role: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
+	export interface UserItem {
+		description?: string | null;
+
+		/** Type: GUID */
+		id: string;
+		name?: string | null;
+	}
+	export interface UserItemFormProperties {
+		description: FormControl<string | null | undefined>,
+
+		/** Type: GUID */
+		id: FormControl<string | null | undefined>,
+		name: FormControl<string | null | undefined>,
+	}
+	export function CreateUserItemFormGroup() {
+		return new FormGroup<UserItemFormProperties>({
+			description: new FormControl<string | null | undefined>(undefined),
+			id: new FormControl<string | null | undefined>(undefined),
+			name: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
+	export interface UserItemEx extends Fonlow_AspNetCore_Identity_Client.UserItem {
+		email?: string | null;
+	}
+	export interface UserItemExFormProperties extends Fonlow_AspNetCore_Identity_Client.UserItemFormProperties {
+		email: FormControl<string | null | undefined>,
+	}
+	export function CreateUserItemExFormGroup() {
+		return new FormGroup<UserItemExFormProperties>({
+			description: new FormControl<string | null | undefined>(undefined),
+			id: new FormControl<string | null | undefined>(undefined),
+			name: new FormControl<string | null | undefined>(undefined),
+			email: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
 	export interface UserLoginInfoViewModel {
 		loginProvider?: string | null;
 		providerKey?: string | null;
@@ -2182,6 +2009,87 @@ export namespace Fonlow_WebApp_Accounts_Client {
 		return new FormGroup<UserLoginInfoViewModelFormProperties>({
 			loginProvider: new FormControl<string | null | undefined>(undefined),
 			providerKey: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
+	export interface UserLookupItem {
+		fullName?: string | null;
+
+		/** Type: GUID */
+		id: string;
+		userName?: string | null;
+	}
+	export interface UserLookupItemFormProperties {
+		fullName: FormControl<string | null | undefined>,
+
+		/** Type: GUID */
+		id: FormControl<string | null | undefined>,
+		userName: FormControl<string | null | undefined>,
+	}
+	export function CreateUserLookupItemFormGroup() {
+		return new FormGroup<UserLookupItemFormProperties>({
+			fullName: new FormControl<string | null | undefined>(undefined),
+			id: new FormControl<string | null | undefined>(undefined),
+			userName: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
+	export interface UsernameModel {
+		password?: string | null;
+		username?: string | null;
+	}
+	export interface UsernameModelFormProperties {
+		password: FormControl<string | null | undefined>,
+		username: FormControl<string | null | undefined>,
+	}
+	export function CreateUsernameModelFormGroup() {
+		return new FormGroup<UsernameModelFormProperties>({
+			password: new FormControl<string | null | undefined>(undefined),
+			username: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
+	export interface UserSearchModel extends Fonlow_AspNetCore_Identity_Client.EntitySearchModel {
+		roleNames?: string | null;
+	}
+	export interface UserSearchModelFormProperties extends Fonlow_AspNetCore_Identity_Client.EntitySearchModelFormProperties {
+		roleNames: FormControl<string | null | undefined>,
+	}
+	export function CreateUserSearchModelFormGroup() {
+		return new FormGroup<UserSearchModelFormProperties>({
+			dateBegin: new FormControl<Date | null | undefined>(undefined),
+			dateEnd: new FormControl<Date | null | undefined>(undefined),
+			keyword: new FormControl<string | null | undefined>(undefined),
+			roleNames: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
+	export interface UserUpdate {
+		email?: string | null;
+		fullName?: string | null;
+
+		/** Type: GUID */
+		id?: string | null;
+		userName?: string | null;
+	}
+	export interface UserUpdateFormProperties {
+		email: FormControl<string | null | undefined>,
+		fullName: FormControl<string | null | undefined>,
+
+		/** Type: GUID */
+		id: FormControl<string | null | undefined>,
+		userName: FormControl<string | null | undefined>,
+	}
+	export function CreateUserUpdateFormGroup() {
+		return new FormGroup<UserUpdateFormProperties>({
+			email: new FormControl<string | null | undefined>(undefined),
+			fullName: new FormControl<string | null | undefined>(undefined),
+			id: new FormControl<string | null | undefined>(undefined),
+			userName: new FormControl<string | null | undefined>(undefined),
 		});
 
 	}
@@ -2256,6 +2164,225 @@ export namespace DemoCoreWeb_Controllers_Client {
 		 */
 		postAnonymousObject2(obj?: any, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
 			return this.http.post(this.baseUri + 'api/SpecialTypes/AnonymousObject2', JSON.stringify(obj), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+	}
+
+}
+
+export namespace Fonlow_Auth_Controllers_Client {
+
+	/**
+	 * Manage user accounts stored in ASP.NET Core Identity database.
+	 */
+	@Injectable()
+	export class Account {
+		constructor(@Inject('baseUri') private baseUri: string = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/', private http: HttpClient) {
+		}
+
+		/**
+		 * POST api/Account/AddRole?userId={userId}&roleName={roleName}
+		 * Authorize: Roles: admin,manager; 
+		 * @param {string} userId Type: GUID
+		 */
+		addRole(userId?: string | null, roleName?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.post(this.baseUri + 'api/Account/AddRole?userId=' + userId + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), null, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		 * Authorize: Roles: admin; 
+		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
+		 */
+		adminRemoverRefreshTokensOfUsers(username?: string | null, headersHandler?: () => HttpHeaders): Observable<number> {
+			return this.http.delete<number>(this.baseUri + 'api/Account/AdminRemoveUserRefreshTokens/' + (!username ? '' : encodeURIComponent(username)), { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * PUT api/Account/ChangePassword
+		 */
+		changePassword(model?: Fonlow_AspNetCore_Identity_Client.ChangePasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.put(this.baseUri + 'api/Account/ChangePassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * Just a demo, but revealing some basic ForgotPassword features:
+		 * 1. If user not found, return NoContent
+		 * 2. Otherwise, send the reset token via Email or other means.
+		 * POST api/Account/ForgotPassword
+		 */
+		forgotPassword(email?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.post(this.baseUri + 'api/Account/ForgotPassword', JSON.stringify(email), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * GET api/Account/AllRoleNames
+		 */
+		getAllRoleNames(headersHandler?: () => HttpHeaders): Observable<Array<string>> {
+			return this.http.get<Array<string>>(this.baseUri + 'api/Account/AllRoleNames', { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * GET api/Account/Roles?userId={userId}
+		 * @param {string} userId Type: GUID
+		 */
+		getRoles(userId?: string | null, headersHandler?: () => HttpHeaders): Observable<Array<string>> {
+			return this.http.get<Array<string>>(this.baseUri + 'api/Account/Roles?userId=' + userId, { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * GET api/Account/idByEmail?email={email}
+		 * @return {string} Type: GUID
+		 */
+		getUserIdByEmail(email?: string | null, headersHandler?: () => HttpHeaders): Observable<string> {
+			return this.http.get<string>(this.baseUri + 'api/Account/idByEmail?email=' + (!email ? '' : encodeURIComponent(email)), { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * GET api/Account/idByFullName?cn={cn}
+		 * @return {string} Type: GUID
+		 */
+		getUserIdByFullName(cn?: string | null, headersHandler?: () => HttpHeaders): Observable<string> {
+			return this.http.get<string>(this.baseUri + 'api/Account/idByFullName?cn=' + (!cn ? '' : encodeURIComponent(cn)), { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * GET api/Account/UserIdByUser?username={username}
+		 * @return {string} Type: GUID
+		 */
+		getUserIdByUser(username?: string | null, headersHandler?: () => HttpHeaders): Observable<string> {
+			return this.http.get<string>(this.baseUri + 'api/Account/UserIdByUser?username=' + (!username ? '' : encodeURIComponent(username)), { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * Mapping between email address and user Id
+		 * GET api/Account/UserIdMapByEmail
+		 * @return {Array<{key: string, value: string }>} Key is email address, and value is user Id.
+		 */
+		getUserIdMapByEmail(headersHandler?: () => HttpHeaders): Observable<Array<{key: string, value: string }>> {
+			return this.http.get<Array<{key: string, value: string }>>(this.baseUri + 'api/Account/UserIdMapByEmail', { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * Mapping between full user name and user Id
+		 * GET api/Account/UserIdMapByFullName
+		 * @return {Array<{key: string, value: string }>} Key is full name, and value is user Id.
+		 */
+		getUserIdMapByFullName(headersHandler?: () => HttpHeaders): Observable<Array<{key: string, value: string }>> {
+			return this.http.get<Array<{key: string, value: string }>>(this.baseUri + 'api/Account/UserIdMapByFullName', { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * : InternalRoles
+		 * GET api/Account/UserInfo
+		 * Authorize: Roles: admin,manager; 
+		 */
+		getUserInfo(headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel> {
+			return this.http.get<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel>(this.baseUri + 'api/Account/UserInfo', { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * : InternalRoles
+		 * GET api/Account/UserInfoById?id={id}
+		 * @param {string} id Type: GUID
+		 */
+		getUserInfoByIdOfstring(id?: string | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel> {
+			return this.http.get<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel>(this.baseUri + 'api/Account/UserInfoById?id=' + id, { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * Sign out.
+		 * POST api/Account/Logout/{connectionId}
+		 * @param {string} connectionId Type: GUID
+		 */
+		logout(connectionId?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.post(this.baseUri + 'api/Account/Logout/' + connectionId, null, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * Create user, but without role
+		 * POST api/Account/Register
+		 * Authorize: Roles: admin,manager; 
+		 * @return {string} Type: GUID
+		 */
+		register(model?: Fonlow_AspNetCore_Identity_Client.RegisterBindingModel | null, headersHandler?: () => HttpHeaders): Observable<string> {
+			return this.http.post<string>(this.baseUri + 'api/Account/Register', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
+		}
+
+		/**
+		 * Admin or scheduler clean up old user tokens
+		 * DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		 * Authorize: Roles: admin; 
+		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
+		 */
+		removeOldUserTokens(pastDateUtc?: Date | null, headersHandler?: () => HttpHeaders): Observable<number> {
+			return this.http.delete<number>(this.baseUri + 'api/Account/RemoveOldUserTokens/' + pastDateUtc?.toISOString(), { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * User to remove all refresh tokens of user
+		 * DELETE api/Account/RemoveRefreshTokensOfUser
+		 * @return {number} Type: int, -2,147,483,648 to 2,147,483,647
+		 */
+		removeRefreshTokensOfUser(headersHandler?: () => HttpHeaders): Observable<number> {
+			return this.http.delete<number>(this.baseUri + 'api/Account/RemoveRefreshTokensOfUser', { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
+		 * DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		 * Authorize: Roles: admin,manager; 
+		 * @param {string} userId Type: GUID
+		 */
+		removeRole(userId?: string | null, roleName?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.delete(this.baseUri + 'api/Account/RemoveRole?userId=' + userId + '&roleName=' + (!roleName ? '' : encodeURIComponent(roleName)), { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * DELETE api/Account/RemoveUser?userId={userId}
+		 * Authorize: Roles: admin; 
+		 * @param {string} userId Type: GUID
+		 */
+		removeUser(userId?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.delete(this.baseUri + 'api/Account/RemoveUser?userId=' + userId, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * POST api/Account/ResetPassword
+		 */
+		resetPassword(model?: Fonlow_AspNetCore_Identity_Client.ResetPasswordViewModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.post(this.baseUri + 'api/Account/ResetPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * POST api/Account/Search
+		 * Authorize: Roles: admin; 
+		 */
+		search(c?: Fonlow_AspNetCore_Identity_Client.UserSearchModel | null, headersHandler?: () => HttpHeaders): Observable<Array<Fonlow_AspNetCore_Identity_Client.UserItem>> {
+			return this.http.post<Array<Fonlow_AspNetCore_Identity_Client.UserItem>>(this.baseUri + 'api/Account/Search', JSON.stringify(c), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
+		}
+
+		/**
+		 * : AdminOrManager
+		 * PUT api/Account/SetPassword
+		 * Authorize: Roles: admin,manager; 
+		 */
+		setPassword(model?: Fonlow_AspNetCore_Identity_Client.SetPasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.put(this.baseUri + 'api/Account/SetPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * : AdminOrManager
+		 * PUT api/Account/SetUserPassword
+		 */
+		setUserPassword(model?: Fonlow_AspNetCore_Identity_Client.SetUserPasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.put(this.baseUri + 'api/Account/SetUserPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
+		}
+
+		/**
+		 * : InternalBusinessAdmins
+		 * PUT api/Account/Update
+		 */
+		update(model?: Fonlow_AspNetCore_Identity_Client.UserUpdate | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
+			return this.http.put(this.baseUri + 'api/Account/Update', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
 		}
 	}
 

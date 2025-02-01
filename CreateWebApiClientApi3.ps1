@@ -30,5 +30,7 @@ catch {
         Write-Output  $responseBody
 }
 
+#Step 3: Build the .NET lib to verify
+dotnet build ./CoreWebApi.ClientApi/CoreWebApi.ClientApi.csproj
 
 Stop-Process $process

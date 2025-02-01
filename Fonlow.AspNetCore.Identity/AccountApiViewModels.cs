@@ -101,4 +101,78 @@ namespace Fonlow.AspNetCore.Identity
 		[DataMember]
 		public DateTimeOffset ExpiryTime { get; set; }
 	}
+
+	[DataContract]
+	public class EntitySearchModel
+	{
+		[DataMember]
+		public string Keyword { get; set; }
+
+		[DataMember]
+		public DateTime? DateBegin { get; set; }
+
+		[DataMember]
+		public DateTime? DateEnd { get; set; }
+
+	}
+
+
+	[DataContract]
+	public class UserSearchModel : EntitySearchModel
+	{
+		[DataMember]
+		public string RoleNames { get; set; }
+	}
+
+	[DataContract]
+	public class UserLookupItem
+	{
+		[DataMember(IsRequired = true)]
+		public Guid Id { get; set; }
+
+		[DataMember]
+		public string UserName { get; set; }
+
+		[DataMember]
+		public string FullName { get; set; }
+
+	}
+
+	[DataContract]
+	public class UserItem
+	{
+		[DataMember(IsRequired = true)]
+		public Guid Id { get; set; }
+
+		[DataMember]
+		public string Name { get; set; }
+
+		[DataMember]
+		public string Description { get; set; }
+
+	}
+
+	[DataContract]
+	public class UserItemEx : UserItem
+	{
+		[DataMember]
+		public string Email { get; set; }
+	}
+
+	[DataContract]
+	public class UserUpdate
+	{
+		[DataMember]
+		public Guid Id { get; set; }
+
+		[DataMember]
+		public string UserName { get; set; }
+
+		[DataMember]
+		public string Email { get; set; }
+
+		[DataMember]
+		public string FullName { get; set; }
+
+	}
 }

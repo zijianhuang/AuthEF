@@ -7,9 +7,10 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Net.WebSockets;
 using Xunit.Abstractions;
-using Fonlow.WebApp.Accounts.Client;
+using Fonlow.AspNetCore.Identity.Client;
 using System.Management.Automation.Language;
 using Fonlow.Auth.Models;
+using Fonlow.Auth.Controllers.Client;
 
 namespace AuthTests
 {
@@ -68,7 +69,7 @@ namespace AuthTests
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			var accountApi = new Account(httpClient);
 			var userId = accountApi.GetUserIdByUser(newUsername);
 			accountApi.RemoveUser(userId);
 
@@ -88,7 +89,7 @@ namespace AuthTests
 		public void _RegisterManyManyUsers()
 		{
 			using var httpClient = CreateAdminHttpClient();
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			var accountApi = new Account(httpClient);
 			for (int i = 0; i < 100000; i++)
 			{
 				RegisterUserWithOneConnection(accountApi);
@@ -98,7 +99,7 @@ namespace AuthTests
 		string RegisterUser()
 		{
 			using var httpClient = CreateAdminHttpClient();
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			var accountApi = new Account(httpClient);
 			return RegisterUserWithOneConnection(accountApi);
 		}
 
@@ -115,7 +116,7 @@ namespace AuthTests
 		string RegisterUserWithOneConnection(Account accountApi){
 			var stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
 			var newUsername = "John" + stamp;
-			var newUserId = accountApi.Register(new Fonlow.WebApp.Accounts.Client.RegisterBindingModel
+			var newUserId = accountApi.Register(new RegisterBindingModel
 			{
 				UserName = newUsername,
 				Password = newUserPassword,
@@ -141,10 +142,10 @@ namespace AuthTests
 			using var httpClient = new HttpClient();
 			httpClient.BaseAddress = baseUri;
 			httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(tokenModel.token_type, tokenModel.access_token);
-			var accountApi = new DemoWebApi.Controllers.Client.Account(httpClient);
+			var accountApi = new Account(httpClient);
 			var stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
 			var newUsername = "John " + stamp; // a space make the username invalid
-			var ex = Assert.Throws<WebApiRequestException>(() => accountApi.Register(new Fonlow.WebApp.Accounts.Client.RegisterBindingModel
+			var ex = Assert.Throws<WebApiRequestException>(() => accountApi.Register(new RegisterBindingModel
 			{
 				UserName = newUsername,
 				Password = newUserPassword,

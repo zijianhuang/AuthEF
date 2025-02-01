@@ -13,14 +13,15 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NuGet.Protocol.Plugins;
 
-namespace WebApp.Utilities
+namespace Fonlow.AspNetCore.Identity
 {
 	/// <summary>
 	/// Handler user tokens for various purposes, like refresh token of JWT and oAuth2.
 	/// The user tokens table (aspnetusertokens) has primary key: UserId+LoginProvider+Name.
-	/// All functions are based on the built-in functions of ApplicationUserManager -- UserManager<ApplicationUser>.
+	/// All functions are based on the built-in functions of ApplicationUserManager 
 	/// </summary>
-	/// <remarks>There are token usages that should not be limited by the same connection Id. In those cases, don't use this help class.</remarks>
+	/// <remarks>There are token usages that should not be limited by the same connection Id. In those cases, don't use this help class.
+	/// </remarks>
 	public class UserTokenHelper
 	{
 		/// <summary>
@@ -28,6 +29,8 @@ namespace WebApp.Utilities
 		/// </summary>
 		/// <param name="userManager"></param>
 		/// <param name="authSettings">Your app token provider name, or oAuth2 token provider name.</param>
+		/// <param name="tokenValidationParameters">Program injects one</param>
+		/// <param name="logger"></param>
 		public UserTokenHelper(ApplicationUserManager userManager, TokenValidationParameters tokenValidationParameters, IAuthSettings authSettings, ILogger logger)
 		{
 			this.userManager = userManager;

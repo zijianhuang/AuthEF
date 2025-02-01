@@ -34,836 +34,6 @@ namespace DemoWebApi.Controllers.Client
 	}
 	
 	/// <summary>
-	/// Manage user accounts stored in ASP.NET Core Identity database.
-	/// Authorize: Bearer
-	/// </summary>
-	public partial class Account
-	{
-		
-		private System.Net.Http.HttpClient client;
-		
-		private JsonSerializerOptions jsonSerializerSettings;
-		
-		public Account(System.Net.Http.HttpClient client, JsonSerializerOptions jsonSerializerSettings=null)
-		{
-			if (client == null)
-				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
-
-			if (client.BaseAddress == null)
-				throw new ArgumentNullException(nameof(client), "HttpClient has no BaseAddress");
-
-			this.client = client;
-			this.jsonSerializerSettings = jsonSerializerSettings;
-		}
-		
-		/// <summary>
-		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> AddRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage AddRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
-		/// Authorize: Roles: admin; 
-		/// </summary>
-		public async Task<int> AdminRemoverRefreshTokensOfUsersAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
-		/// Authorize: Roles: admin; 
-		/// </summary>
-		public int AdminRemoverRefreshTokensOfUsers(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// PUT api/Account/ChangePassword
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> ChangePasswordAsync(Fonlow.WebApp.Accounts.Client.ChangePasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ChangePassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// PUT api/Account/ChangePassword
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage ChangePassword(Fonlow.WebApp.Accounts.Client.ChangePasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ChangePassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// Just a demo, but revealing some basic ForgotPassword features:
-		/// 1. If user not found, return NoContent
-		/// 2. Otherwise, send the reset token via Email or other means.
-		/// POST api/Account/ForgotPassword
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> ForgotPasswordAsync(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ForgotPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(email, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// Just a demo, but revealing some basic ForgotPassword features:
-		/// 1. If user not found, return NoContent
-		/// 2. Otherwise, send the reset token via Email or other means.
-		/// POST api/Account/ForgotPassword
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage ForgotPassword(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ForgotPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(email, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// GET api/Account/AllRoleNames
-		/// </summary>
-		public async Task<string[]> GetAllRoleNamesAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AllRoleNames";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<string[]>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/AllRoleNames
-		/// </summary>
-		public string[] GetAllRoleNames(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/AllRoleNames";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<string[]>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/idByEmail?email={email}
-		/// </summary>
-		public async Task<System.Guid> GetUserIdByEmailAsync(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/idByEmail?email="+(email == null ? "" : Uri.EscapeDataString(email));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/idByEmail?email={email}
-		/// </summary>
-		public System.Guid GetUserIdByEmail(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/idByEmail?email="+(email == null ? "" : Uri.EscapeDataString(email));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/idByFullName?cn={cn}
-		/// </summary>
-		public async Task<System.Guid> GetUserIdByFullNameAsync(string cn, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/idByFullName?cn="+(cn == null ? "" : Uri.EscapeDataString(cn));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/idByFullName?cn={cn}
-		/// </summary>
-		public System.Guid GetUserIdByFullName(string cn, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/idByFullName?cn="+(cn == null ? "" : Uri.EscapeDataString(cn));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/UserIdByUser?username={username}
-		/// </summary>
-		public async Task<System.Guid> GetUserIdByUserAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdByUser?username="+(username == null ? "" : Uri.EscapeDataString(username));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// GET api/Account/UserIdByUser?username={username}
-		/// </summary>
-		public System.Guid GetUserIdByUser(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdByUser?username="+(username == null ? "" : Uri.EscapeDataString(username));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Mapping between email address and user Id
-		/// GET api/Account/UserIdMapByEmail
-		/// </summary>
-		/// <returns>Key is email address, and value is user Id.</returns>
-		public async Task<System.Collections.Generic.KeyValuePair<string, System.Guid>[]> GetUserIdMapByEmailAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdMapByEmail";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Mapping between email address and user Id
-		/// GET api/Account/UserIdMapByEmail
-		/// </summary>
-		/// <returns>Key is email address, and value is user Id.</returns>
-		public System.Collections.Generic.KeyValuePair<string, System.Guid>[] GetUserIdMapByEmail(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdMapByEmail";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Mapping between full user name and user Id
-		/// GET api/Account/UserIdMapByFullName
-		/// </summary>
-		/// <returns>Key is full name, and value is user Id.</returns>
-		public async Task<System.Collections.Generic.KeyValuePair<string, System.Guid>[]> GetUserIdMapByFullNameAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdMapByFullName";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Mapping between full user name and user Id
-		/// GET api/Account/UserIdMapByFullName
-		/// </summary>
-		/// <returns>Key is full name, and value is user Id.</returns>
-		public System.Collections.Generic.KeyValuePair<string, System.Guid>[] GetUserIdMapByFullName(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserIdMapByFullName";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Get user info of current logged user
-		/// GET api/Account/UserInfo
-		/// </summary>
-		public async Task<Fonlow.WebApp.Accounts.Client.UserInfoViewModel> GetUserInfoAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserInfo";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<Fonlow.WebApp.Accounts.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Get user info of current logged user
-		/// GET api/Account/UserInfo
-		/// </summary>
-		public Fonlow.WebApp.Accounts.Client.UserInfoViewModel GetUserInfo(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserInfo";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<Fonlow.WebApp.Accounts.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// : InternalRoles
-		/// GET api/Account/UserInfoById?id={id}
-		/// Authorize: Roles: admin,manager; 
-		/// </summary>
-		public async Task<Fonlow.WebApp.Accounts.Client.UserInfoViewModel> GetUserInfoAsync(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserInfoById?id="+id;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<Fonlow.WebApp.Accounts.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// : InternalRoles
-		/// GET api/Account/UserInfoById?id={id}
-		/// Authorize: Roles: admin,manager; 
-		/// </summary>
-		public Fonlow.WebApp.Accounts.Client.UserInfoViewModel GetUserInfo(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/UserInfoById?id="+id;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<Fonlow.WebApp.Accounts.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// POST api/Account/Logout/{connectionId}
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/Logout/"+connectionId;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// POST api/Account/Logout/{connectionId}
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage Logout(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/Logout/"+connectionId;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// Create user, but without role
-		/// POST api/Account/Register
-		/// Authorize: Roles: admin,manager; 
-		/// </summary>
-		public async Task<System.Guid> RegisterAsync(Fonlow.WebApp.Accounts.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/Register";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Create user, but without role
-		/// POST api/Account/Register
-		/// Authorize: Roles: admin,manager; 
-		/// </summary>
-		public System.Guid Register(Fonlow.WebApp.Accounts.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/Register";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Admin or scheduler clean up old user tokens
-		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
-		/// Authorize: Roles: admin; 
-		/// </summary>
-		public async Task<int> RemoveOldUserTokensAsync(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// Admin or scheduler clean up old user tokens
-		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
-		/// Authorize: Roles: admin; 
-		/// </summary>
-		public int RemoveOldUserTokens(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// User to remove all refresh tokens of user
-		/// DELETE api/Account/RemoveRefreshTokensOfUser
-		/// </summary>
-		public async Task<int> RemoveRefreshTokensOfUserAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveRefreshTokensOfUser";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// User to remove all refresh tokens of user
-		/// DELETE api/Account/RemoveRefreshTokensOfUser
-		/// </summary>
-		public int RemoveRefreshTokensOfUser(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveRefreshTokensOfUser";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			try
-			{
-				responseMessage.EnsureSuccessStatusCodeEx();
-				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
-			}
-			finally
-			{
-				responseMessage.Dispose();
-			}
-		}
-		
-		/// <summary>
-		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> RemoveRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage RemoveRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// Remove user and also remove from the entities table.
-		/// DELETE api/Account/RemoveUser?userId={userId}
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> RemoveUserAsync(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveUser?userId="+userId;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// Remove user and also remove from the entities table.
-		/// DELETE api/Account/RemoveUser?userId={userId}
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage RemoveUser(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/RemoveUser?userId="+userId;
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// POST api/Account/ResetPassword
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> ResetPasswordAsync(Fonlow.WebApp.Accounts.Client.ResetPasswordViewModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ResetPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// POST api/Account/ResetPassword
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage ResetPassword(Fonlow.WebApp.Accounts.Client.ResetPasswordViewModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ResetPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// PUT api/Account/SetPassword
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> SetPasswordAsync(Fonlow.WebApp.Accounts.Client.SetPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/SetPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// PUT api/Account/SetPassword
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage SetPassword(Fonlow.WebApp.Accounts.Client.SetPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/SetPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// : AdminOrManager
-		/// PUT api/Account/SetUserPassword
-		/// Authorize: Roles: admin,manager; 
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> SetUserPasswordAsync(Fonlow.WebApp.Accounts.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/SetUserPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// : AdminOrManager
-		/// PUT api/Account/SetUserPassword
-		/// Authorize: Roles: admin,manager; 
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage SetUserPassword(Fonlow.WebApp.Accounts.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/SetUserPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-	}
-	
-	/// <summary>
 	/// For testing different commbinations of parameters and returns
 	/// Authorize: Bearer
 	/// </summary>
@@ -7764,46 +6934,6 @@ namespace Fonlow.AspNetCore.Identity.Client
 	
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class IdentitySeeding : object
-	{
-		
-		[System.Runtime.Serialization.DataMember()]
-		public string[] Roles { get; set; }
-		
-		[System.Runtime.Serialization.DataMember()]
-		public Fonlow.AspNetCore.Identity.Client.UserInitModel[] Users { get; set; }
-	}
-	
-	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class UserInitModel : Fonlow.AspNetCore.Identity.Client.UsernameModel
-	{
-		
-		[System.Runtime.Serialization.DataMember()]
-		public string Email { get; set; }
-		
-		[System.Runtime.Serialization.DataMember()]
-		public string FullName { get; set; }
-		
-		[System.Runtime.Serialization.DataMember()]
-		public string Role { get; set; }
-	}
-	
-	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class UsernameModel : object
-	{
-		
-		[System.Runtime.Serialization.DataMember()]
-		public string Password { get; set; }
-		
-		[System.Runtime.Serialization.DataMember()]
-		public string Username { get; set; }
-	}
-}
-namespace Fonlow.WebApp.Accounts.Client
-{
-	
-	
-	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class AddExternalLoginBindingModel : object
 	{
 		
@@ -7862,17 +6992,17 @@ namespace Fonlow.WebApp.Accounts.Client
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class CustomToken : object
+	public class EntitySearchModel : object
 	{
 		
 		[System.Runtime.Serialization.DataMember()]
-		public System.Guid ConnectionId { get; set; }
+		public System.Nullable<System.DateTime> DateBegin { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
-		public System.DateTimeOffset Stamp { get; set; }
+		public System.Nullable<System.DateTime> DateEnd { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
-		public string TokenValue { get; set; }
+		public string Keyword { get; set; }
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
@@ -7890,6 +7020,17 @@ namespace Fonlow.WebApp.Accounts.Client
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class IdentitySeeding : object
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string[] Roles { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public Fonlow.AspNetCore.Identity.Client.UserInitModel[] Users { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class ManageInfoViewModel : object
 	{
 		
@@ -7897,13 +7038,13 @@ namespace Fonlow.WebApp.Accounts.Client
 		public string Email { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
-		public Fonlow.WebApp.Accounts.Client.ExternalLoginViewModel[] ExternalLoginProviders { get; set; }
+		public Fonlow.AspNetCore.Identity.Client.ExternalLoginViewModel[] ExternalLoginProviders { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string LocalLoginProvider { get; set; }
 		
 		[System.Runtime.Serialization.DataMember()]
-		public Fonlow.WebApp.Accounts.Client.UserLoginInfoViewModel[] Logins { get; set; }
+		public Fonlow.AspNetCore.Identity.Client.UserLoginInfoViewModel[] Logins { get; set; }
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
@@ -8014,7 +7155,7 @@ namespace Fonlow.WebApp.Accounts.Client
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
-	public class SetUserPasswordBindingModel : Fonlow.WebApp.Accounts.Client.SetPasswordBindingModel
+	public class SetUserPasswordBindingModel : Fonlow.AspNetCore.Identity.Client.SetPasswordBindingModel
 	{
 		
 		[System.Runtime.Serialization.DataMember()]
@@ -8053,6 +7194,43 @@ namespace Fonlow.WebApp.Accounts.Client
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class UserInitModel : Fonlow.AspNetCore.Identity.Client.UsernameModel
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Email { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string FullName { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Role { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class UserItem : object
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Description { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		[System.Runtime.Serialization.DataMember(IsRequired =true)]
+		public System.Guid Id { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Name { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class UserItemEx : Fonlow.AspNetCore.Identity.Client.UserItem
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Email { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class UserLoginInfoViewModel : object
 	{
 		
@@ -8061,6 +7239,57 @@ namespace Fonlow.WebApp.Accounts.Client
 		
 		[System.Runtime.Serialization.DataMember()]
 		public string ProviderKey { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class UserLookupItem : object
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string FullName { get; set; }
+		
+		[System.ComponentModel.DataAnnotations.RequiredAttribute()]
+		[System.Runtime.Serialization.DataMember(IsRequired =true)]
+		public System.Guid Id { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string UserName { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class UsernameModel : object
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Password { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Username { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class UserSearchModel : Fonlow.AspNetCore.Identity.Client.EntitySearchModel
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string RoleNames { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class UserUpdate : object
+	{
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string Email { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string FullName { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public System.Guid Id { get; set; }
+		
+		[System.Runtime.Serialization.DataMember()]
+		public string UserName { get; set; }
 	}
 }
 namespace Core3WebApi.Controllers.Client
@@ -8447,6 +7676,981 @@ namespace DemoCoreWeb.Controllers.Client
 			{
 				responseMessage.Dispose();
 			}
+		}
+	}
+}
+namespace Fonlow.Auth.Controllers.Client
+{
+	using System;
+	using System.Linq;
+	using System.Collections.Generic;
+	using System.Threading.Tasks;
+	using System.Net.Http;
+	using System.Text.Json;
+	using System.Text.Json.Serialization;
+	using Fonlow.Net.Http;
+	
+	
+	/// <summary>
+	/// Manage user accounts stored in ASP.NET Core Identity database.
+	/// </summary>
+	public partial class Account
+	{
+		
+		private System.Net.Http.HttpClient client;
+		
+		private JsonSerializerOptions jsonSerializerSettings;
+		
+		public Account(System.Net.Http.HttpClient client, JsonSerializerOptions jsonSerializerSettings=null)
+		{
+			if (client == null)
+				throw new ArgumentNullException(nameof(client), "Null HttpClient.");
+
+			if (client.BaseAddress == null)
+				throw new ArgumentNullException(nameof(client), "HttpClient has no BaseAddress");
+
+			this.client = client;
+			this.jsonSerializerSettings = jsonSerializerSettings;
+		}
+		
+		/// <summary>
+		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> AddRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage AddRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AddRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public async Task<int> AdminRemoverRefreshTokensOfUsersAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/AdminRemoveUserRefreshTokens/{username}
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public int AdminRemoverRefreshTokensOfUsers(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AdminRemoveUserRefreshTokens/"+(username == null ? "" : Uri.EscapeDataString(username));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// PUT api/Account/ChangePassword
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> ChangePasswordAsync(Fonlow.AspNetCore.Identity.Client.ChangePasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/ChangePassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// PUT api/Account/ChangePassword
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage ChangePassword(Fonlow.AspNetCore.Identity.Client.ChangePasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/ChangePassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// Just a demo, but revealing some basic ForgotPassword features:
+		/// 1. If user not found, return NoContent
+		/// 2. Otherwise, send the reset token via Email or other means.
+		/// POST api/Account/ForgotPassword
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> ForgotPasswordAsync(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/ForgotPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(email, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// Just a demo, but revealing some basic ForgotPassword features:
+		/// 1. If user not found, return NoContent
+		/// 2. Otherwise, send the reset token via Email or other means.
+		/// POST api/Account/ForgotPassword
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage ForgotPassword(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/ForgotPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(email, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// GET api/Account/AllRoleNames
+		/// </summary>
+		public async Task<string[]> GetAllRoleNamesAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AllRoleNames";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<string[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/AllRoleNames
+		/// </summary>
+		public string[] GetAllRoleNames(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/AllRoleNames";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<string[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/Roles?userId={userId}
+		/// </summary>
+		public async Task<string[]> GetRolesAsync(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Roles?userId="+userId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<string[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/Roles?userId={userId}
+		/// </summary>
+		public string[] GetRoles(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Roles?userId="+userId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<string[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/idByEmail?email={email}
+		/// </summary>
+		public async Task<System.Guid> GetUserIdByEmailAsync(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/idByEmail?email="+(email == null ? "" : Uri.EscapeDataString(email));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/idByEmail?email={email}
+		/// </summary>
+		public System.Guid GetUserIdByEmail(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/idByEmail?email="+(email == null ? "" : Uri.EscapeDataString(email));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/idByFullName?cn={cn}
+		/// </summary>
+		public async Task<System.Guid> GetUserIdByFullNameAsync(string cn, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/idByFullName?cn="+(cn == null ? "" : Uri.EscapeDataString(cn));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/idByFullName?cn={cn}
+		/// </summary>
+		public System.Guid GetUserIdByFullName(string cn, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/idByFullName?cn="+(cn == null ? "" : Uri.EscapeDataString(cn));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/UserIdByUser?username={username}
+		/// </summary>
+		public async Task<System.Guid> GetUserIdByUserAsync(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdByUser?username="+(username == null ? "" : Uri.EscapeDataString(username));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// GET api/Account/UserIdByUser?username={username}
+		/// </summary>
+		public System.Guid GetUserIdByUser(string username, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdByUser?username="+(username == null ? "" : Uri.EscapeDataString(username));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Mapping between email address and user Id
+		/// GET api/Account/UserIdMapByEmail
+		/// </summary>
+		/// <returns>Key is email address, and value is user Id.</returns>
+		public async Task<System.Collections.Generic.KeyValuePair<string, System.Guid>[]> GetUserIdMapByEmailAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdMapByEmail";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Mapping between email address and user Id
+		/// GET api/Account/UserIdMapByEmail
+		/// </summary>
+		/// <returns>Key is email address, and value is user Id.</returns>
+		public System.Collections.Generic.KeyValuePair<string, System.Guid>[] GetUserIdMapByEmail(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdMapByEmail";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Mapping between full user name and user Id
+		/// GET api/Account/UserIdMapByFullName
+		/// </summary>
+		/// <returns>Key is full name, and value is user Id.</returns>
+		public async Task<System.Collections.Generic.KeyValuePair<string, System.Guid>[]> GetUserIdMapByFullNameAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdMapByFullName";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Mapping between full user name and user Id
+		/// GET api/Account/UserIdMapByFullName
+		/// </summary>
+		/// <returns>Key is full name, and value is user Id.</returns>
+		public System.Collections.Generic.KeyValuePair<string, System.Guid>[] GetUserIdMapByFullName(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdMapByFullName";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<System.Collections.Generic.KeyValuePair<string, System.Guid>[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// : InternalRoles
+		/// GET api/Account/UserInfo
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public async Task<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel> GetUserInfoAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserInfo";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// : InternalRoles
+		/// GET api/Account/UserInfo
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public Fonlow.AspNetCore.Identity.Client.UserInfoViewModel GetUserInfo(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserInfo";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// : InternalRoles
+		/// GET api/Account/UserInfoById?id={id}
+		/// </summary>
+		public async Task<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel> GetUserInfoAsync(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserInfoById?id="+id;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// : InternalRoles
+		/// GET api/Account/UserInfoById?id={id}
+		/// </summary>
+		public Fonlow.AspNetCore.Identity.Client.UserInfoViewModel GetUserInfo(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserInfoById?id="+id;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Sign out.
+		/// POST api/Account/Logout/{connectionId}
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Logout/"+connectionId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// Sign out.
+		/// POST api/Account/Logout/{connectionId}
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage Logout(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Logout/"+connectionId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// Create user, but without role
+		/// POST api/Account/Register
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public async Task<System.Guid> RegisterAsync(Fonlow.AspNetCore.Identity.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Register";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Create user, but without role
+		/// POST api/Account/Register
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public System.Guid Register(Fonlow.AspNetCore.Identity.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Register";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<System.Guid>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Admin or scheduler clean up old user tokens
+		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public async Task<int> RemoveOldUserTokensAsync(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Admin or scheduler clean up old user tokens
+		/// DELETE api/Account/RemoveOldUserTokens/{pastDateUtc}
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public int RemoveOldUserTokens(System.DateTime pastDateUtc, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveOldUserTokens/"+pastDateUtc.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// User to remove all refresh tokens of user
+		/// DELETE api/Account/RemoveRefreshTokensOfUser
+		/// </summary>
+		public async Task<int> RemoveRefreshTokensOfUserAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveRefreshTokensOfUser";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// User to remove all refresh tokens of user
+		/// DELETE api/Account/RemoveRefreshTokensOfUser
+		/// </summary>
+		public int RemoveRefreshTokensOfUser(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveRefreshTokensOfUser";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<int>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> RemoveRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage RemoveRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveRole?userId="+userId+"&roleName="+(roleName == null ? "" : Uri.EscapeDataString(roleName));
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/RemoveUser?userId={userId}
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> RemoveUserAsync(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveUser?userId="+userId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// DELETE api/Account/RemoveUser?userId={userId}
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage RemoveUser(System.Guid userId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/RemoveUser?userId="+userId;
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Delete, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// POST api/Account/ResetPassword
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> ResetPasswordAsync(Fonlow.AspNetCore.Identity.Client.ResetPasswordViewModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/ResetPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// POST api/Account/ResetPassword
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage ResetPassword(Fonlow.AspNetCore.Identity.Client.ResetPasswordViewModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/ResetPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// POST api/Account/Search
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public async Task<Fonlow.AspNetCore.Identity.Client.UserItem[]> SearchAsync(Fonlow.AspNetCore.Identity.Client.UserSearchModel c, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Search";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(c, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserItem[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// POST api/Account/Search
+		/// Authorize: Roles: admin; 
+		/// </summary>
+		public Fonlow.AspNetCore.Identity.Client.UserItem[] Search(Fonlow.AspNetCore.Identity.Client.UserSearchModel c, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Search";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(c, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserItem[]>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// : AdminOrManager
+		/// PUT api/Account/SetPassword
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> SetPasswordAsync(Fonlow.AspNetCore.Identity.Client.SetPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/SetPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// : AdminOrManager
+		/// PUT api/Account/SetPassword
+		/// Authorize: Roles: admin,manager; 
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage SetPassword(Fonlow.AspNetCore.Identity.Client.SetPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/SetPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// : AdminOrManager
+		/// PUT api/Account/SetUserPassword
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> SetUserPasswordAsync(Fonlow.AspNetCore.Identity.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/SetUserPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// : AdminOrManager
+		/// PUT api/Account/SetUserPassword
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage SetUserPassword(Fonlow.AspNetCore.Identity.Client.SetUserPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/SetUserPassword";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// : InternalBusinessAdmins
+		/// PUT api/Account/Update
+		/// </summary>
+		public async Task<System.Net.Http.HttpResponseMessage> UpdateAsync(Fonlow.AspNetCore.Identity.Client.UserUpdate model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Update";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
+		}
+		
+		/// <summary>
+		/// : InternalBusinessAdmins
+		/// PUT api/Account/Update
+		/// </summary>
+		public System.Net.Http.HttpResponseMessage Update(Fonlow.AspNetCore.Identity.Client.UserUpdate model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/Update";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
+			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
+			httpRequestMessage.Content = content;
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			responseMessage.EnsureSuccessStatusCodeEx();
+			return responseMessage;
 		}
 	}
 }

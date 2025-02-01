@@ -27,6 +27,7 @@ namespace IntegrationTests
 		{
 			var array = api.GetHeros();
 			Assert.NotEmpty(array);
+			Assert.NotEmpty(array[0].Name);
 		}
 
 		[Fact]

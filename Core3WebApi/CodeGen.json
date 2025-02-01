@@ -3,7 +3,7 @@
 		"ExcludedControllerNames": [
 			"DemoWebApi.Controllers.Polymorphism"
 		],
-		"DataModelAssemblyNames": [ "DemoWebApi.DemoDataCore", "Fonlow.WebApp.Accounts", "Fonlow.AspNetCore.Identity", "Core3WebApi" ],
+		"DataModelAssemblyNames": [ "DemoWebApi.DemoDataCore", "Fonlow.AspNetCore.Identity", "Core3WebApi" ],
 		"CherryPickingMethods": 3
 	},
 

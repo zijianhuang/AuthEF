@@ -141,9 +141,13 @@ namespace Fonlow.AspNetCore.Identity.Account
 
 		}
 
+		/// <summary>
+		/// Normalized names which are uppercase.
+		/// </summary>
+		/// <returns></returns>
 		public string[] GetAllRoleNames(){
 			using ApplicationDbContext context = new(options);
-			return context.Roles.Select(d => d.Name).ToArray();
+			return context.Roles.Select(d => d.NormalizedName).ToArray();
 		}
 
 		/// <summary>
@@ -235,7 +239,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// <summary>
 		/// Expected to be called when a user signs out from a device.
 		/// </summary>
-		public async Task RemoveUserToken(Guid userId, string loginProvider, string tokenName, Guid connectionId)
+		public async Task<bool> RemoveUserToken(Guid userId, string loginProvider, string tokenName, Guid connectionId)
 		{
 			string composedTokenName = $"{tokenName}_{connectionId.ToString()}";
 			using ApplicationDbContext context = new(options);
@@ -244,7 +248,10 @@ namespace Fonlow.AspNetCore.Identity.Account
 			{
 				context.Entry(userToken).State = EntityState.Deleted;
 				await context.SaveChangesAsync().ConfigureAwait(false);
+				return true;
 			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -255,6 +262,110 @@ namespace Fonlow.AspNetCore.Identity.Account
 		{
 			using ApplicationDbContext context = new(options);
 			return await context.UserTokens.Where(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name.StartsWith(tokenName)).ExecuteDeleteAsync().ConfigureAwait(false);
+		}
+
+		public UserItem[] SearchUsers(UserSearchModel conditions)
+		{
+			if (conditions == null)
+			{
+				throw new ArgumentNullException(nameof(conditions), "searrch Condition is null.");
+			}
+
+			using ApplicationDbContext context = new(options);
+			var userRoleView = from userRole in context.UserRoles
+							   join role in context.Roles
+							   on userRole.RoleId equals role.Id
+							   select new { userRole.RoleId, userRole.UserId, Rolename = role.Name };
+			var query = from user in context.Users
+						join userRole in userRoleView
+						on user.Id equals userRole.UserId into gj
+						from p in gj.DefaultIfEmpty()
+						select new
+						{
+							user.Id,
+							user.UserName,
+							RoleName = p.Rolename,
+							user.CreatedUtc,
+							user.ModifiedUtc,
+						};
+
+
+
+			if (!String.IsNullOrWhiteSpace(conditions.Keyword))
+			{
+				query = query.Where(d => EF.Functions.Like(d.UserName, "%" + conditions.Keyword + "%"));
+			}
+
+			if (conditions.DateBegin.HasValue)
+			{
+				DateTime date = conditions.DateBegin.Value.Date.ToUniversalTime();
+				query = query.Where(d => d.CreatedUtc >= date);
+			}
+
+			if (conditions.DateEnd.HasValue)
+			{
+				DateTime dateEnd = conditions.DateEnd.Value.Date.AddDays(1).AddTicks(-1).ToUniversalTime();
+				query = query.Where(d => d.CreatedUtc <= dateEnd);
+			}
+
+			if (!String.IsNullOrEmpty(conditions.RoleNames))
+			{
+				query = query.Where(d => EF.Functions.Like(conditions.RoleNames, "%" + d.RoleName + "%"));
+			}
+
+			var r = query.ToList();
+
+			var list = from p in r // EF core could not work out this in DB, so I have better to get the list from DB first then group.
+					   group p by new { p.Id, p.UserName } into g
+					   select new { Entity = g.Key, RoleNames = g.AsEnumerable().Select(d => d.RoleName) };
+
+			var list2 = list.ToList();//query is already executed here
+			IOrderedEnumerable<UserItem> list3 = list2.Select(d => new UserItem()
+			{
+				Id = d.Entity.Id,
+				Name = d.Entity.UserName,
+				Description = String.Join(", ", d.RoleNames)
+			})
+				.OrderBy(d => d.Name);
+			return list3.ToArray();
+
+		}
+
+		public IDictionary<Guid, string> GetUserIdEmailDic()
+		{
+			using ApplicationDbContext context = new(options);
+			var q = context.Users.Select(d => new { Key = d.Id, Value = d.Email }).ToArray();
+			return q.Select(d => new KeyValuePair<Guid, string>(d.Key, d.Value)).ToDictionary(p => p.Key, p => p.Value);
+		}
+
+		public IDictionary<Guid, string> GetUserIdEmailDic(Guid[] userIds)
+		{
+			if (userIds.Length > 0)
+			{
+				using ApplicationDbContext context = new(options);
+				var q = context.Users.Where(u => userIds.Contains(u.Id)).Select(d => new { Key = d.Id, Value = d.Email }).ToArray();
+				return q.Select(d => new KeyValuePair<Guid, string>(d.Key, d.Value)).ToDictionary(p => p.Key, p => p.Value);
+			}
+
+			return null;
+		}
+
+		public IDictionary<Guid, UserUpdate> GetUserInfoDic(Guid[] userIds)
+		{
+			if (userIds.Length > 0)
+			{
+				using ApplicationDbContext context = new(options);
+				var q = context.Users.Where(u => userIds.Contains(u.Id)).Select(d => new UserUpdate
+				{
+					Id = d.Id,
+					UserName = d.UserName,
+					FullName = d.FullName,
+					Email = d.Email,
+				}).ToArray();
+				return q.Select(d => new KeyValuePair<Guid, UserUpdate>(d.Id, d)).ToDictionary(p => p.Key, p => p.Value);
+			}
+
+			return new Dictionary<Guid, UserUpdate>();
 		}
 
 		/// <summary>
