@@ -2291,6 +2291,7 @@ export namespace Fonlow_Auth_Controllers_Client {
 
 		/**
 		 * Sign out.
+		 * Even though the access token may be expired and the connectionId is invalid, the signout process still return 204.
 		 * POST api/Account/Logout/{connectionId}
 		 * @param {string} connectionId Type: GUID
 		 */

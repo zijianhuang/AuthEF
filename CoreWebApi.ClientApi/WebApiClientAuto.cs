@@ -8255,6 +8255,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// Sign out.
+		/// Even though the access token may be expired and the connectionId is invalid, the signout process still return 204.
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -8268,6 +8269,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// Sign out.
+		/// Even though the access token may be expired and the connectionId is invalid, the signout process still return 204.
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage Logout(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)

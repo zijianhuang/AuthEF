@@ -1,5 +1,4 @@
-﻿using Fonlow.AspNetCore.Identity;
-using Fonlow.Auth.Models;
+﻿using Fonlow.Auth.Models;
 using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +10,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using NuGet.Protocol.Plugins;
 
 namespace Fonlow.AspNetCore.Identity
 {

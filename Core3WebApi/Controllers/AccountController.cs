@@ -1,29 +1,17 @@
 ﻿using DemoApp.Accounts;
 using DemoWebApi.DemoData;
 using Fonlow.AspNetCore.Identity;
-using Fonlow.AspNetCore.Identity.Account;
 using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
 using Fonlow.CodeDom.Web;
-using Fonlow.DemoApp;
 using Fonlow.WebApp.Identity;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using WebApp.Utilities;
 
 namespace Fonlow.Auth.Controllers
 {
@@ -49,19 +37,19 @@ namespace Fonlow.Auth.Controllers
 		/// : InternalRoles
 		/// </summary>
 		/// <returns></returns>
-		[Authorize(Roles = RoleConstants.AdminOrManager)]
+		[Authorize(Roles = RoleConstants.Admin)]
 		public override async Task<UserInfoViewModel> GetUserInfo()
 		{
 			return await base.GetUserInfo();
 		}
 
 		/// <summary>
-		/// : AdminOrManager
+		/// : Admin
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
 		/// <exception cref="AppArgumentException"></exception>
-		[Authorize(Roles = RoleConstants.AdminOrManager)]
+		[Authorize(Roles = RoleConstants.Admin)]
 		public override async Task<IActionResult> SetPassword([FromBody] SetPasswordBindingModel model)
 		{
 			return await base.SetPassword(model);
@@ -72,21 +60,21 @@ namespace Fonlow.Auth.Controllers
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		[Authorize(Roles = RoleConstants.AdminOrManager)]
+		[Authorize(Roles = RoleConstants.Admin)]
 		public override async Task<ActionResult<Guid>> Register([FromBody] RegisterBindingModel model)
 		{
 			return await base.Register(model);
 		}
 
 
-		[Authorize(Roles = RoleConstants.AdminOrManager)]
+		[Authorize(Roles = RoleConstants.Admin)]
 		public override async Task<IActionResult> AddRole([FromQuery] Guid userId, [RequiredFromQuery] string roleName)
 		{
 			return await base.AddRole(userId, roleName);
 
 		}
 
-		[Authorize(Roles = RoleConstants.AdminOrManager)]
+		[Authorize(Roles = RoleConstants.Admin)]
 		public override async Task<IActionResult> RemoveRole([FromQuery] Guid userId, [RequiredFromQuery] string roleName)
 		{
 			return await base.RemoveRole(userId, roleName);

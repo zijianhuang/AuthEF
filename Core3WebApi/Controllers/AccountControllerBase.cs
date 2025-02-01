@@ -1,10 +1,7 @@
-﻿using DemoApp.Accounts;
-using DemoWebApi.DemoData;
-using Fonlow.AspNetCore.Identity;
+﻿using Fonlow.AspNetCore.Identity;
 using Fonlow.AspNetCore.Identity.Account;
 using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
 using Fonlow.CodeDom.Web;
-using Fonlow.DemoApp;
 using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,16 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections.Generic;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Fonlow.Auth.Controllers
 {
@@ -37,7 +34,7 @@ namespace Fonlow.Auth.Controllers
 	{
 		readonly DbContextOptions<ApplicationDbContext> options;
 		readonly AccountFunctions accountFunctions;
-		readonly ILogger<WebApiTrace> apiLogger;
+		readonly ILogger apiLogger;
 
 		readonly ApplicationUserManager userManager;
 		readonly IConfiguration config;
@@ -45,7 +42,7 @@ namespace Fonlow.Auth.Controllers
 		readonly TokenValidationParameters tokenValidationParameters;
 
 		public AccountControllerBase(ApplicationUserManager userManager, DbContextOptions<ApplicationDbContext> options, IAuthSettings authSettings, [FromKeyedServices("NotValidateLifetime")] TokenValidationParameters tokenValidationParameters,
-		ILogger<WebApiTrace> apiLogger)
+		ILogger apiLogger)
 		{
 			this.userManager = userManager;
 			this.authSettings = authSettings;
@@ -81,7 +78,7 @@ namespace Fonlow.Auth.Controllers
 				await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
 				await accountFunctions.RemoveUserToken(user.Id, authSettings.TokenProviderName, "RefreshToken", connectionId); //Up to admin to clear records if the user did not sign out.
-				// No need to care about true or false.
+																															   // No need to care about true or false.
 				return StatusCode((int)HttpStatusCode.NoContent);
 			}
 			else
@@ -229,12 +226,12 @@ namespace Fonlow.Auth.Controllers
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		/// <exception cref="AppArgumentException"></exception>
+		/// <exception cref="ArgumentException"></exception>
 		[HttpPut("SetUserPassword")]
 		public virtual async Task<IActionResult> SetUserPassword([FromBody] SetUserPasswordBindingModel model)
 		{
 			if (model.NewPassword != model.ConfirmPassword)
-				throw new AppArgumentException("Passwords mismached.");
+				throw new ArgumentException("Passwords mismached.");
 
 			ApplicationUser applicationUser = await userManager.FindByIdAsync(model.UserId);
 
