@@ -382,7 +382,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		async Task<string> GetAuthenticationTokenWithExpiryAsync(ApplicationUser user, string loginProvider, string tokenName, TimeSpan expirySpan)
 		{
 			using ApplicationDbContext context = new(options);
-			var stillValidTime = DateTimeOffset.Now - expirySpan;
+			var stillValidTime = (DateTime.Now - expirySpan).ToUniversalTime(); // sqlite limitations: https://learn.microsoft.com/en-us/ef/core/providers/sqlite/limitations
 			var r = context.UserTokens.SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName && d.CreatedUtc > stillValidTime);
 			return r == null ? null : r.Value;
 		}

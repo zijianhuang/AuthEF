@@ -87,11 +87,11 @@ namespace Fonlow.AspNetCore.Identity
 			List<Claim> claims = roles.Select(d => new Claim(ClaimTypes.Role, d)).ToList();
 			claims.Add(new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.UniqueName, user.UserName));
 			TimeSpan span = TimeSpan.FromSeconds(authSettings.AuthTokenExpirySpanSeconds);
-			DateTimeOffset expires = DateTimeOffset.UtcNow.Add(span);
+			var expires = DateTime.UtcNow.Add(span).ToUniversalTime();
 			JwtSecurityToken token = new JwtSecurityToken(
 				issuer: authSettings.Issuer,
 				audience: authSettings.Audience,
-				expires: expires.UtcDateTime,
+				expires: expires,
 				claims: claims,
 				signingCredentials: new SigningCredentials(tokenValidationParameters.IssuerSigningKey, SecurityAlgorithms.HmacSha256)
 			);
