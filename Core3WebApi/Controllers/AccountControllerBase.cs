@@ -57,9 +57,10 @@ namespace Fonlow.Auth.Controllers
 		/// Even though the access token may be expired and the connectionId is invalid, the signout process still return 204.
 		/// </summary>
 		/// <param name="connectionId"></param>
-		/// <returns></returns>
+		/// <returns>200 for perfect logout. 202 Accepted for unauthorized logout however without doing anything, not to reveal user details.</returns>
 		/// <remarks>This will also remove the refresh token.</remarks>
 		[HttpPost("Logout/{connectionId}")]
+		[AllowAnonymous]
 		public async Task<IActionResult> Logout(Guid connectionId)
 		{
 			if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue))
@@ -71,7 +72,8 @@ namespace Fonlow.Auth.Controllers
 				var user = await tokenHelper.ValidateAccessToken(accessToken); // even if the accessToken expires
 				if (user == null)
 				{
-					return Unauthorized();
+					apiLogger.LogWarning("User not found with access token");
+					return StatusCode((int)HttpStatusCode.Accepted);
 				}
 
 				// https://learn.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x#use-httpcontext-authentication-extensions
@@ -79,11 +81,12 @@ namespace Fonlow.Auth.Controllers
 
 				await accountFunctions.RemoveUserToken(user.Id, authSettings.TokenProviderName, "RefreshToken", connectionId); //Up to admin to clear records if the user did not sign out.
 																															   // No need to care about true or false.
-				return StatusCode((int)HttpStatusCode.NoContent);
+				return StatusCode((int)HttpStatusCode.OK);
 			}
 			else
 			{
-				return Unauthorized();
+				apiLogger.LogWarning("Someone want to logout witnout access token");
+				return StatusCode((int)HttpStatusCode.Accepted);
 			}
 		}
 
@@ -686,6 +689,15 @@ namespace Fonlow.Auth.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Of all users
+		/// </summary>
+		/// <returns></returns>
+		[HttpGet("UserIdFullNameDic")]
+		public virtual IDictionary<Guid, string> GetUserIdFullNameDic()
+		{
+			return accountFunctions.GetUserIdFullNameDic();
+		}
 
 		/// <summary>
 		/// Add IdentityResult.Errors to ModelState. And ModelState.IsValid will then become false.

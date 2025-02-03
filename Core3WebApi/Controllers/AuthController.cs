@@ -110,7 +110,7 @@ namespace Fonlow.AspNetCore.Identity.Controllers
 
 					if (!tokenTextExisting)
 					{
-						return StatusCode(401, new { message = "Invalid to retrieve token through refreshToken" }); // message may be omitted in prod build, to avoid exposing implementation details.
+						return StatusCode(401, new { message = "Invalid to refresh token. Please sign in again." });
 					}
 
 					return await tokenHelper.GenerateJwtToken(user, user.UserName, refreshAccessTokenRequest.Scope, false);

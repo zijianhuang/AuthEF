@@ -105,6 +105,15 @@ namespace WebApp.Utilities
 			{
 				code = HttpStatusCode.InternalServerError;
 			}
+			else if (typeof(Microsoft.Data.Sqlite.SqliteException).IsAssignableFrom(ex.GetType()))
+			{
+				var exSqlite = ex as Microsoft.Data.Sqlite.SqliteException;
+				if (exSqlite.Message.Contains("Error 14"))
+				{
+					logger.LogError("Sqlite file location may be invalid");
+				}
+				code = HttpStatusCode.InternalServerError;
+			}
 
 			context.Response.ContentType = "text/plain";
 			context.Response.StatusCode = (int)code;

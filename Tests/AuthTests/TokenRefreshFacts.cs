@@ -318,7 +318,7 @@ namespace AuthTests
 
 			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token + "A", null));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
-			Assert.Contains("Invalid to retrieve token through refreshToken", ex.Response);
+			Assert.Contains("refresh", ex.Response);
 			output.WriteLine("throws");
 		}
 
@@ -337,7 +337,7 @@ namespace AuthTests
 
 			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, $"connectionId:{Guid.NewGuid()}"));
 			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
-			Assert.Contains("Invalid to retrieve token through refreshToken", ex.Response);
+			Assert.Contains("refresh", ex.Response);
 		}
 
 		[Fact]
