@@ -35,7 +35,7 @@ namespace IntegrationTests
 
 		protected override void Dispose(bool disposing)
 		{
-			Api.Logout(Guid.NewGuid());//so to test Logout. Random Id is ok, since the logout process does not really care
+			Task.Run(async ()=> await Api.LogoutAsync(Guid.NewGuid())).Wait();//so to test Logout. Random Id is ok, since the logout process does not really care
 			base.Dispose(disposing);
 		}
 	}
@@ -56,33 +56,33 @@ namespace IntegrationTests
 
 
 		[Fact]
-		public void TestGetUserInfo()
+		public async Task TestGetUserInfo()
 		{
-			UserInfoViewModel info = api.GetUserInfo();
+			UserInfoViewModel info = await api.GetUserInfoAsync();
 			Assert.False(String.IsNullOrEmpty(info.FullName));
 			Assert.False(String.IsNullOrEmpty(info.Email));
 		}
 
 		[Fact]
-		public void TestGetUserIdMapByFullName()
+		public async Task TestGetUserIdMapByFullName()
 		{
-			KeyValuePair<string, Guid>[] map = api.GetUserIdMapByFullName();
+			KeyValuePair<string, Guid>[] map = await api.GetUserIdMapByFullNameAsync();
 			Assert.True(map.Length > 0);
 		}
 
 		[Fact]
-		public void TestGetUserIdMapByEmail()
+		public async Task TestGetUserIdMapByEmail()
 		{
-			KeyValuePair<string, Guid>[] map = api.GetUserIdMapByEmail();
+			KeyValuePair<string, Guid>[] map = await api.GetUserIdMapByEmailAsync();
 			Assert.True(map.Length > 0);
 		}
 
 		[Fact]
-		public void TestChangePasswordConfirmFail()
+		public async Task TestChangePasswordConfirmFail()
 		{
-			Fonlow.Net.Http.WebApiRequestException ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() =>
+			Fonlow.Net.Http.WebApiRequestException ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(async () =>
 			 {
-				 HttpResponseMessage response = api.ChangePassword(new ChangePasswordBindingModel
+				 HttpResponseMessage response = await api.ChangePasswordAsync(new ChangePasswordBindingModel
 				 {
 					 OldPassword = "Mmmmmm*8",
 					 NewPassword = "Mmmmmm*8",
@@ -96,11 +96,11 @@ namespace IntegrationTests
 		}
 
 		[Fact]
-		public void TestRegisterUser()
+		public async Task TestRegisterUser()
 		{
 			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
 			string username = "ApiUserZ" + stamp;
-			var id = api.Register(new RegisterBindingModel
+			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
 //                Email = username + "@somewhere.com",
@@ -115,12 +115,12 @@ namespace IntegrationTests
 		}
 
 		[Fact]
-		public void TestRegisterUserWithUnmatchedPasswordShouldThrow()
+		public async Task TestRegisterUserWithUnmatchedPasswordShouldThrow()
 		{
 			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmss");
-			Fonlow.Net.Http.WebApiRequestException ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() =>
+			Fonlow.Net.Http.WebApiRequestException ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(async () =>
 			{
-				var response = api.Register(new RegisterBindingModel
+				var response = await api.RegisterAsync(new RegisterBindingModel
 				{
 					UserName = username,
 					Email = username + "@somewhere.com",
@@ -133,10 +133,10 @@ namespace IntegrationTests
 		}
 
 		[Fact]
-		public void TestRegisterUserAndAddRole()
+		public async Task TestRegisterUserAndAddRole()
 		{
 			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
-			var id = api.Register(new RegisterBindingModel
+			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
 				Email = username + "@somewhere.com",
@@ -146,17 +146,17 @@ namespace IntegrationTests
 
 			Assert.NotEqual(default(Guid), id);
 
-			api.AddRole(id, "Manager");
-			api.AddRole(id, "Admin");
+			await api.AddRoleAsync(id, "Manager");
+			await api.AddRoleAsync(id, "Admin");
 			string[] roles = api.GetRoles(id);
 			Assert.Equal(2, roles.Length);
 		}
 
 		[Fact]
-		public void TestRegisterUserAndAddBadRoleNameThrow()
+		public async Task TestRegisterUserAndAddBadRoleNameThrow()
 		{
 			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
-			var id = api.Register(new RegisterBindingModel
+			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
 				Email = username + "@somewhere.com",
@@ -171,10 +171,10 @@ namespace IntegrationTests
 		}
 
 		[Fact]
-		public void TestRegisterUserAndAddRoleThenRemove()
+		public async Task TestRegisterUserAndAddRoleThenRemove()
 		{
 			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
-			var id = api.Register(new RegisterBindingModel
+			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
 				Email = username + "@somewhere.com",
@@ -184,15 +184,15 @@ namespace IntegrationTests
 
 			Assert.NotEqual(default(Guid), id);
 
-			api.AddRole(id, "Manager");
-			api.RemoveRole(id, "Manager");
+			await api.AddRoleAsync(id, "Manager");
+			await api.RemoveRoleAsync(id, "Manager");
 		}
 
 		[Fact]
-		public void TestRegisterUserAndAddRoleThenRemoveAnother()
+		public async Task TestRegisterUserAndAddRoleThenRemoveAnother()
 		{
 			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
-			var id = api.Register(new RegisterBindingModel
+			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
 				Email = username + "@somewhere.com",
@@ -207,10 +207,10 @@ namespace IntegrationTests
 		}
 
 		[Fact]
-		public void TestRegisterUserAndAddRoleThenRemoveBadOne()
+		public async Task TestRegisterUserAndAddRoleThenRemoveBadOne()
 		{
 			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
-			var id = api.Register(new RegisterBindingModel
+			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
 				Email = username + "@somewhere.com",
@@ -224,15 +224,15 @@ namespace IntegrationTests
 		}
 
 		[Fact]
-		public void TestDeleteUserWithInvalidUserId()
+		public async Task TestDeleteUserWithInvalidUserId()
 		{
-			HttpResponseMessage r = api.RemoveUser(Guid.NewGuid());
+			HttpResponseMessage r = await api.RemoveUserAsync(Guid.NewGuid());
 			Assert.Equal(System.Net.HttpStatusCode.NoContent, r.StatusCode);
 		}
 
 
 		[Fact]
-		public void TestRegisterUserThenUpdate()
+		public async Task TestRegisterUserThenUpdate()
 		{
 			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
 			RegisterBindingModel model = new RegisterBindingModel
@@ -243,7 +243,7 @@ namespace IntegrationTests
 				ConfirmPassword = "Mmmm*123",
 			};
 
-			var id = api.Register(model);
+			var id = await api.RegisterAsync(model);
 
 			Assert.NotEqual(default(Guid), id);
 

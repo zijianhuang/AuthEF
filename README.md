@@ -1,7 +1,7 @@
 This repository serves multiple purposes:
-1. Demonstrate "[Decouple ASP.NET Core Identity, Authentication and Database Engines](https://www.codeproject.com/Articles/5378824/Decouple-ASP-NET-Core-Identity-Authentication-and)"
-2. Demonstrate "[Share Identity Bear Tokens among ASP.NET Core Web APIs](https://www.codeproject.com/Articles/5382165/Share-Identity-Bear-Tokens-among-ASP-NET-Core-Web)" 
-3. Demonstrate "[Resource Owner Password Credentials Grant and Refreshing Token with ASP.NET Core Identity](https://www.codeproject.com/Articles/5385175/ROPC-and-Refresh-Token-with-ASP-NET-Core-Identity)"
+1. Demonstrate "[Decouple ASP.NET Core Identity, Authentication and Database Engines](https://www.codeproject.com/Articles/5378824/Decouple-ASP-NET-Core-Identity-Authentication-and)" / [Local Copy](Docs/Articles/Article1/Decouple%20ASP.NET%20Core%20Identity,%20Authentication%20and%20Database%20Engines.md)
+2. Demonstrate "[Share Identity Bear Tokens among ASP.NET Core Web APIs](https://www.codeproject.com/Articles/5382165/Share-Identity-Bear-Tokens-among-ASP-NET-Core-Web)" / [Local Copy](Docs/Articles/CodeProject/Share%20Identity%20Bearer%20Tokens%20among%20ASP.NET%20Core%20Web%20APIs%20-%20CodeProject.html)
+3. Demonstrate "[Resource Owner Password Credentials Grant and Refreshing Token with ASP.NET Core Identity](https://www.codeproject.com/Articles/5385175/ROPC-and-Refresh-Token-with-ASP-NET-Core-Identity)" / [Local Copy](Docs/Articles/CodeProject/ROPC%20and%20Refresh%20Token%20with%20ASP.NET%20Core%20Identity%20-%20CodeProject.html)
 4. Provide some plugin components that decouple business modules from concrete SQL database engines.
 5. Provide some components that decouple ASP.NET Core Identity with concrete database engines.
 6. Demonstrate how to craft integration tests and run on local dev PC as much as possible, and the artifacts could be easily reused in a team CI server like GitHub Actions/Workflow.

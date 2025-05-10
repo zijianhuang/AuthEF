@@ -8,6 +8,9 @@ using Fonlow.Auth.Models;
 
 namespace WebApp.Utilities
 {
+	/// <summary>
+	/// This is to be injected to AddControllers() with configure.ModelBinderProviders.Insert(0, new OAuth2RequestBinderProvider());
+	/// </summary>
 	public class OAuth2RequestBinderProvider : Microsoft.AspNetCore.Mvc.ModelBinding.IModelBinderProvider
 	{
 		public IModelBinder GetBinder(ModelBinderProviderContext context)

@@ -72,6 +72,8 @@ namespace Fonlow.AspNetCore.Identity.Controllers
 		[HttpPost]
 		public async Task<ActionResult<AccessTokenResponse>> Authenticate([FromForm] RequestBase model)
 		{
+			ArgumentNullException.ThrowIfNull("Model required", nameof(model));
+
 			if (model is ROPCRequst)
 			{
 				ROPCRequst ropcRequest = model as ROPCRequst;
@@ -117,6 +119,11 @@ namespace Fonlow.AspNetCore.Identity.Controllers
 				}
 
 				return Unauthorized();
+			}
+
+			if (model == null)
+			{
+				throw new ArgumentNullException(nameof(model));
 			}
 
 			throw new NotSupportedException("token payload RequestBase not supported.");
