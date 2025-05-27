@@ -100,7 +100,7 @@ namespace Fonlow.Auth.Controllers
 		}
 
 		[Authorize(Roles = RoleConstants.Admin)]
-		public override UserItem[] Search([FromBody] UserSearchModel c)
+		public override UserItemEx[] Search([FromBody] UserSearchModel c)
 		{
 			return base.Search(c);
 		}
@@ -109,6 +109,11 @@ namespace Fonlow.Auth.Controllers
 		public override Task<IActionResult> RemoveUser([FromQuery] Guid userId)
 		{
 			return base.RemoveUser(userId);
+		}
+
+		protected override Task<IActionResult> DeliverResetLink(string emailAddress, string callbackUrl)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

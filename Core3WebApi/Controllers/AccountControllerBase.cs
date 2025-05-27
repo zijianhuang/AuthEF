@@ -324,7 +324,7 @@ namespace Fonlow.Auth.Controllers
 		}
 
 		[HttpPost("Search")]
-		public virtual UserItem[] Search([FromBody] UserSearchModel c)
+		public virtual UserItemEx[] Search([FromBody] UserSearchModel c)
 		{
 			return accountFunctions.SearchUsers(c);
 		}
@@ -470,7 +470,7 @@ namespace Fonlow.Auth.Controllers
 		//}
 
 		/// <summary>
-		/// Create user, but without role
+		/// Create user, but without role. If post handling after registering the user is needed, override PostRegister().
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
@@ -495,7 +495,23 @@ namespace Fonlow.Auth.Controllers
 				return new ConflictObjectResult(errors);
 			}
 
-			return user.Id;
+			var resultOfPostHandling = await PostRegister(model);
+			if (resultOfPostHandling == null)
+			{
+				return user.Id;
+			}
+
+			return resultOfPostHandling;
+		}
+
+		/// <summary>
+		/// Derived function should return null after successful post handling of register, or one of the derived class objects of ObjectResult like UnprocessableEntityObjectResult
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		protected virtual Task<ActionResult<Guid>> PostRegister(RegisterBindingModel model)
+		{
+			return null;
 		}
 
 		[HttpPost("AddRole")]
@@ -606,10 +622,10 @@ namespace Fonlow.Auth.Controllers
 		/// <returns></returns>
 		[AllowAnonymous]
 		[HttpPost("ForgotPassword")]
-		public virtual async Task<IActionResult> ForgotPassword([FromBody] string email)
+		public virtual async Task<IActionResult> ForgotPassword([FromBody] string emailAddress)
 		{
 
-			ApplicationUser user = await userManager.FindByEmailAsync(email);
+			ApplicationUser user = await userManager.FindByEmailAsync(emailAddress);
 			if (user == null)// || !(await UserManager.IsEmailConfirmedAsync(user.Id))) the default is to confirm Email, not sure BM would like it
 			{
 				// Don't reveal that the user does not exist or is not confirmed
@@ -629,9 +645,17 @@ namespace Fonlow.Auth.Controllers
 			Debug.WriteLine("Reset uri is: " + callbackUrl);
 			// ...
 
-			throw new NotImplementedException("This is DemoApp, No Email will be sent");
+			var emailResult = await DeliverResetLink(emailAddress, callbackUrl);
+			return emailResult;
 		}
 
+		protected abstract Task<IActionResult> DeliverResetLink(string emailAddress, string callbackUrl);
+
+		/// <summary>
+		/// Called by the callbackUrl from the ForgotPassword function, when user clicks the link.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
 		[AllowAnonymous]
 		[HttpPost("ResetPassword")]
 		public virtual async Task<IActionResult> ResetPassword([FromBody] ResetPasswordViewModel model)

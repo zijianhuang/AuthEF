@@ -264,7 +264,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 			return await context.UserTokens.Where(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name.StartsWith(tokenName)).ExecuteDeleteAsync().ConfigureAwait(false);
 		}
 
-		public UserItem[] SearchUsers(UserSearchModel conditions)
+		public UserItemEx[] SearchUsers(UserSearchModel conditions)
 		{
 			if (conditions == null)
 			{
@@ -287,6 +287,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 							RoleName = p.Rolename,
 							user.CreatedUtc,
 							user.ModifiedUtc,
+							user.Email,
 						};
 
 
@@ -316,15 +317,16 @@ namespace Fonlow.AspNetCore.Identity.Account
 			var r = query.ToList();
 
 			var list = from p in r // EF core could not work out this in DB, so I have better to get the list from DB first then group.
-					   group p by new { p.Id, p.UserName } into g
+					   group p by new { p.Id, p.UserName, p.Email } into g
 					   select new { Entity = g.Key, RoleNames = g.AsEnumerable().Select(d => d.RoleName) };
 
 			var list2 = list.ToList();//query is already executed here
-			IOrderedEnumerable<UserItem> list3 = list2.Select(d => new UserItem()
+			IOrderedEnumerable<UserItemEx> list3 = list2.Select(d => new UserItemEx()
 			{
 				Id = d.Entity.Id,
 				Name = d.Entity.UserName,
-				Description = String.Join(", ", d.RoleNames)
+				Email=d.Entity.Email,
+				Description = String.Join(", ", d.RoleNames.OrderBy(k=>k))
 			})
 				.OrderBy(d => d.Name);
 			return list3.ToArray();
