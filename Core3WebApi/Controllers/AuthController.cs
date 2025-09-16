@@ -1,29 +1,17 @@
-﻿using Fonlow.AspNetCore.Identity;
+﻿using Fonlow.AspNetCore.Identity.Account;
+using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
+using Fonlow.Auth.Models;
 using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using WebApp.Utilities;
-using Fonlow.Auth.Models;
-using System.Net.Http.Headers;
-using DemoWebApi.DemoData;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Fonlow.AspNetCore.Identity.Account;
-using Fonlow.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace Fonlow.AspNetCore.Identity.Controllers
 {
-
 	/// <summary>
 	/// Based on ASP.NET Core Identity, this controller takes care of authentication and authorization, as well as refresh token and oAuth2.
 	/// Account management functions are with AccountController, which use the same set of Identity DB tables.
@@ -37,7 +25,7 @@ namespace Fonlow.AspNetCore.Identity.Controllers
 		readonly ApplicationUserManager userManager;
 		readonly IAuthSettings authSettings;
 		readonly Microsoft.IdentityModel.Tokens.TokenValidationParameters tokenValidationParameters;
-		readonly ILogger<WebApiTrace> logger;
+		readonly ILogger<AuthController> logger;
 		readonly AccountFunctions accountFunctions;
 
 		/// <summary>
@@ -50,7 +38,7 @@ namespace Fonlow.AspNetCore.Identity.Controllers
 		/// <param name="logger"></param>
 		public AuthController(ApplicationUserManager userManager, DbContextOptions<ApplicationDbContext> options,
 			[FromKeyedServices("NotValidateLifetime")] Microsoft.IdentityModel.Tokens.TokenValidationParameters tokenValidationParameters,
-			IAuthSettings authSettings, ILogger<WebApiTrace> logger)
+			IAuthSettings authSettings, ILogger<AuthController> logger)
 		{
 			this.userManager = userManager;
 			this.authSettings = authSettings;
@@ -94,36 +82,19 @@ namespace Fonlow.AspNetCore.Identity.Controllers
 			}
 			else if (model is RefreshAccessTokenRequest refreshAccessTokenRequest) //Section 1.5 of rfc6749
 			{
-				if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue))
+
+				Guid connectionId = string.IsNullOrEmpty(refreshAccessTokenRequest.Scope) ? Guid.Empty : UserTokenHelper.ExtractConnectionId(refreshAccessTokenRequest.Scope);
+				var userId = await accountFunctions.FindUserIdByUserToken(authSettings.TokenProviderName, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId, TimeSpan.FromSeconds(authSettings.RefreshTokenExpirySpanSeconds));
+
+				if (userId == null)
 				{
-					var scehma = headerValue.Scheme;
-					Debug.Assert("bearer".Equals(scehma, StringComparison.OrdinalIgnoreCase));
-					var accessToken = headerValue.Parameter;
-					var tokenHelper = new UserTokenHelper(userManager, tokenValidationParameters, authSettings, logger);
-					var user = await tokenHelper.ValidateAccessToken(accessToken); // even if the accessToken expires
-
-					if (user == null)
-					{
-						return Unauthorized();
-					}
-
-					Guid connectionId = string.IsNullOrEmpty(refreshAccessTokenRequest.Scope) ? Guid.Empty : UserTokenHelper.ExtractConnectionId(refreshAccessTokenRequest.Scope);
-					var tokenTextExisting = await accountFunctions.MatchTokenWithExpiry(user, authSettings.TokenProviderName, "RefreshToken", refreshAccessTokenRequest.refresh_token, connectionId, TimeSpan.FromSeconds(authSettings.RefreshTokenExpirySpanSeconds));
-
-					if (!tokenTextExisting)
-					{
-						return StatusCode(401, new { message = "Invalid to refresh token. Please sign in again." });
-					}
-
-					return await tokenHelper.GenerateJwtToken(user, user.UserName, refreshAccessTokenRequest.Scope, false);
+					return StatusCode(400, new { message = "Invalid to refresh token. Please sign in again." });
+					//refresh token invalid, expired, revoked or malformed according to https://datatracker.ietf.org/doc/html/rfc6749#section-5.2 
 				}
 
-				return Unauthorized();
-			}
-
-			if (model == null)
-			{
-				throw new ArgumentNullException(nameof(model));
+				var tokenHelper = new UserTokenHelper(userManager, tokenValidationParameters, authSettings, logger);
+				var user = await userManager.FindByIdAsync(userId.Value);
+				return await tokenHelper.GenerateJwtToken(user, user.UserName, refreshAccessTokenRequest.Scope, false);
 			}
 
 			throw new NotSupportedException("token payload RequestBase not supported.");

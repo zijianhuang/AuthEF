@@ -72,13 +72,13 @@ namespace Fonlow.AspNetCore.Identity
 		}
 
 		/// <summary>
-		/// Generate token and refreshToken.
+		/// Generate token and refreshToken, which includes connectionId in scope.
 		/// The claim is based on the roles of the user.
 		/// The refresh token is stored in the UserTokens table (aspnetusertokens) as JSON text data, for supporting multiple connections of the same user.
 		/// </summary>
 		/// <param name="user"></param>
 		/// <param name="username"></param>
-		/// <param name="scope"></param>
+		/// <param name="scope">Optional which may be included in the scope of the access token response, along with connectionId:connectionId.</param>
 		/// <param name="isToSignIn">Used by the intial signed in call.</param>
 		/// <returns></returns>
 		public async Task<ActionResult<AccessTokenResponse>> GenerateJwtToken(ApplicationUser user, string username, string scope, bool isToSignIn = false)

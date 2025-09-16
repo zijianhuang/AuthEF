@@ -8,6 +8,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 	/// Common account management functions based on ApplicationDbContext -- IdentityDbContext<ApplicationUser, ApplicationIdentityRole, Guid, 
 	/// IdentityUserClaim<Guid>, IdentityUserRole<Guid>, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, 	ApplicationUserToken>
 	/// This also overcome some inherient limitation of Identity models, and deal with the EF context directly.
+	/// Applications may inherite this class for specific cases and roles.
 	/// </summary>
 	public class AccountFunctions
 	{
@@ -21,12 +22,12 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// <summary>
 		/// Guid.empty if not found
 		/// </summary>
-		/// <param name="cn"></param>
+		/// <param name="fullName"></param>
 		/// <returns></returns>
-		public Guid GetUserIdByFullName(string cn)
+		public Guid GetUserIdByFullName(string fullName)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser us = context.Users.SingleOrDefault(d => d.FullName == cn);
+			ApplicationUser us = context.Users.AsNoTracking().SingleOrDefault(d => d.FullName == fullName);
 			if (us == null)
 			{
 				return Guid.Empty;
@@ -38,7 +39,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		public Guid GetUserIdByEmail(string email)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser us = context.Users.SingleOrDefault(d => d.Email == email);
+			ApplicationUser us = context.Users.AsNoTracking().SingleOrDefault(d => d.Email == email);
 			if (us == null)
 			{
 				return Guid.Empty;
@@ -50,7 +51,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		public Guid GetUserIdByUser(string username)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser us = context.Users.SingleOrDefault(d => d.UserName == username);
+			ApplicationUser us = context.Users.AsNoTracking().SingleOrDefault(d => d.UserName == username);
 			if (us == null)
 			{
 				return Guid.Empty;
@@ -67,14 +68,14 @@ namespace Fonlow.AspNetCore.Identity.Account
 		[return: System.Diagnostics.CodeAnalysis.MaybeNull]
 		public string GetUserNameByUserId(Guid userId)
 		{
-			using ApplicationDbContext context = new(options);
-			ApplicationUser us = context.Users.SingleOrDefault(d => d.Id == userId);
-			if (us == null)
-			{
-				return null;
-			}
+			return GetUserByUserId(userId).UserName;
+		}
 
-			return us.UserName;
+		public ApplicationUser GetUserByUserId(Guid userId)
+		{
+			using ApplicationDbContext context = new(options);
+			ApplicationUser us = context.Users.AsNoTracking().SingleOrDefault(d => d.Id == userId);
+			return us;
 		}
 
 		public KeyValuePair<string, Guid>[] GetUserIdMapByEmail()
@@ -193,35 +194,35 @@ namespace Fonlow.AspNetCore.Identity.Account
 		public string GetFullName(string loginName)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser u = context.Users.SingleOrDefault(d => d.UserName == loginName);
+			ApplicationUser u = context.Users.AsNoTracking().SingleOrDefault(d => d.UserName == loginName);
 			return u?.FullName;
 		}
 
 		public Guid GetId(string loginName)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser u = context.Users.SingleOrDefault(d => d.UserName == loginName);
+			ApplicationUser u = context.Users.AsNoTracking().SingleOrDefault(d => d.UserName == loginName);
 			return u.Id;
 		}
 
 		public string GetUserName(string fullName)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser u = context.Users.SingleOrDefault(d => d.FullName == fullName);
+			ApplicationUser u = context.Users.AsNoTracking().SingleOrDefault(d => d.FullName == fullName);
 			return u?.UserName;
 		}
 
 		public string GetEmailAddress(string fullName)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser u = context.Users.SingleOrDefault(d => d.FullName == fullName);
+			ApplicationUser u = context.Users.AsNoTracking().SingleOrDefault(d => d.FullName == fullName);
 			return u?.Email;
 		}
 
 		public string GetEmailAddressByUserName(string fullName)
 		{
 			using ApplicationDbContext context = new(options);
-			ApplicationUser u = context.Users.SingleOrDefault(d => d.UserName == fullName);
+			ApplicationUser u = context.Users.AsNoTracking().SingleOrDefault(d => d.UserName == fullName);
 			return u?.Email;
 		}
 
@@ -243,7 +244,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		{
 			string composedTokenName = $"{tokenName}_{connectionId.ToString()}";
 			using ApplicationDbContext context = new(options);
-			var userToken = await context.UserTokens.SingleOrDefaultAsync(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name == composedTokenName).ConfigureAwait(false);
+			var userToken = await context.UserTokens.AsNoTracking().SingleOrDefaultAsync(d => d.UserId == userId && d.LoginProvider == loginProvider && d.Name == composedTokenName).ConfigureAwait(false);
 			if (userToken != null)
 			{
 				context.Entry(userToken).State = EntityState.Deleted;
@@ -381,12 +382,18 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// <remarks>This function is to replace the limitation of userManager.GetAuthenticationTokenAsync(user, authSettings.TokenProviderName, composedTokenName);
 		/// since the UserTokens table by default has no created date. And this extended Identity model has added createdUtc to the table.
 		/// </remarks>
-		async Task<string> GetAuthenticationTokenWithExpiryAsync(ApplicationUser user, string loginProvider, string tokenName, TimeSpan expirySpan)
+		async Task<string> GetUserTokenValueWithExpiryAsync(ApplicationUser user, string loginProvider, string tokenName, TimeSpan expirySpan)
+		{
+			var r = await GetUserTokenWithExpiryAsync(user, loginProvider, tokenName, expirySpan).ConfigureAwait(false);
+			return r?.Value;
+		}
+
+		async Task<ApplicationUserToken> GetUserTokenWithExpiryAsync(ApplicationUser user, string loginProvider, string tokenName, TimeSpan expirySpan)
 		{
 			using ApplicationDbContext context = new(options);
 			var stillValidTime = (DateTime.Now - expirySpan).ToUniversalTime(); // sqlite limitations: https://learn.microsoft.com/en-us/ef/core/providers/sqlite/limitations
-			var r = context.UserTokens.SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName && d.CreatedUtc > stillValidTime);
-			return r == null ? null : r.Value;
+			var r = context.UserTokens.AsNoTracking().SingleOrDefault(d => d.UserId == user.Id && d.LoginProvider == loginProvider && d.Name == tokenName && d.CreatedUtc > stillValidTime);
+			return r;
 		}
 
 		/// <summary>
@@ -402,8 +409,28 @@ namespace Fonlow.AspNetCore.Identity.Account
 		public async Task<bool> MatchTokenWithExpiry(ApplicationUser user, string loginProvider, string purpose, string tokenValue, Guid connectionId, TimeSpan expirySpan)
 		{
 			string composedTokenName = $"{purpose}_{connectionId.ToString()}";
-			string storedToken = await GetAuthenticationTokenWithExpiryAsync(user, loginProvider, composedTokenName, expirySpan).ConfigureAwait(false);
+			string storedToken = await GetUserTokenValueWithExpiryAsync(user, loginProvider, composedTokenName, expirySpan).ConfigureAwait(false);
 			return tokenValue == storedToken;
+		}
+
+		/// <summary>
+		/// UserTokens table may have multiple records for user tokens of the same user. Find the userId associated with the user token
+		/// </summary>
+		/// <param name="loginProvider"></param>
+		/// <param name="purpose"></param>
+		/// <param name="tokenValue"></param>
+		/// <param name="connectionId"></param>
+		/// <param name="expirySpan"></param>
+		/// <returns>ApplicationUser returned should not be used by UserManager for updating/deleting.</returns>
+		/// <remarks>If the ApplicationUser object is returned with AsNoTracking, UserManager in the client codes may still complain: System.InvalidOperationException: The instance of entity type 'ApplicationUser' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.</remarks>
+		public async Task<Guid?> FindUserIdByUserToken(string loginProvider, string purpose, string tokenValue, Guid connectionId, TimeSpan expirySpan)
+		{
+			using ApplicationDbContext context = new(options);
+			string composedTokenName = $"{purpose}_{connectionId.ToString()}";
+			var stillValidTime = (DateTime.Now - expirySpan).ToUniversalTime(); // sqlite limitations: https://learn.microsoft.com/en-us/ef/core/providers/sqlite/limitations
+			var list = context.UserTokens.Where(d => d.LoginProvider == loginProvider && d.Name == composedTokenName && d.CreatedUtc > stillValidTime).OrderByDescending(d=>d.CreatedUtc);
+			var first = list.AsNoTracking().FirstOrDefault();
+			return first == null ? null : first.UserId;
 		}
 	}
 }

@@ -94,7 +94,6 @@ namespace Fonlow.Auth.Controllers
 		/// Get user info of current logged user
 		/// </summary>
 		/// <returns></returns>
-		//[Authorize(AuthenticationSchemes = "ExternalBearer")]
 		[HttpGet("UserInfo")]
 		public virtual async Task<UserInfoViewModel> GetUserInfo()
 		{
@@ -330,24 +329,21 @@ namespace Fonlow.Auth.Controllers
 		}
 
 		/// <summary>
-		/// : InternalBusinessAdmins
+		/// Update user
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
 		[HttpPut("Update")]
 		public virtual async Task<IActionResult> Update([FromBody] UserUpdate model)
 		{
-			if (!ModelState.IsValid)//Though not explicitly verify in codes, ConfirmPassword is verified apparently by the runtime.
+			if (!ModelState.IsValid)
 			{
 				return new BadRequestObjectResult("ModelState");
-				//throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.BadRequest) { ReasonPhrase = "ModelState" });
 			}
 
-			//UserManager is useless, reporting different types of conflicits during tests, so I have better to work on the dbcontext directly.
-			using ApplicationDbContext context = new ApplicationDbContext(options);
 			try
 			{
-				ApplicationUser user = context.Users.SingleOrDefault(d => d.Id == model.Id);
+				ApplicationUser user = await userManager.FindByIdAsync(model.Id);
 				if (user == null)
 				{
 					apiLogger.LogWarning("User {0} not found, so it can't be updated.", model.Id);
@@ -358,17 +354,21 @@ namespace Fonlow.Auth.Controllers
 				user.Email = model.Email;
 				UpperInvariantLookupNormalizer normalizer = new UpperInvariantLookupNormalizer();
 				user.NormalizedEmail = normalizer.NormalizeEmail(model.Email);
-				context.Users.Attach(user);
-				context.Entry(user).State = EntityState.Modified;
-				await context.SaveChangesAsync();
-				return StatusCode((int)HttpStatusCode.NoContent);
+				var result = await userManager.UpdateAsync(user);
+				if (result.Succeeded)
+				{
+					return StatusCode((int)HttpStatusCode.NoContent);
+				}
+				else
+				{
+					return new BadRequestObjectResult(result.Errors);
+				}
 			}
 			catch (Exception ex)
 			{
-				apiLogger.LogError("Cannot delete user: " + ex.ToString());
+				apiLogger.LogError("Cannot update user: " + ex.ToString());
 				throw;
 			}
-
 		}
 
 		//// GET api/Account/ExternalLogin
@@ -474,6 +474,7 @@ namespace Fonlow.Auth.Controllers
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
+		/// <exception cref="InvalidOperationException"></exception>
 		[HttpPost("Register")]
 		public virtual async Task<ActionResult<Guid>> Register([FromBody] RegisterBindingModel model)
 		{
@@ -486,7 +487,17 @@ namespace Fonlow.Auth.Controllers
 
 			ApplicationUser user = new ApplicationUser() { UserName = model.UserName, Email = model.Email, FullName = model.FullName };
 
-			IdentityResult result = await userManager.CreateAsync(user, model.Password);
+			IdentityResult result;
+			try
+			{
+				result = await userManager.CreateAsync(user, model.Password);
+
+			}
+			catch (InvalidOperationException ex)
+			{
+				apiLogger.LogError(ex.ToString());
+				return BadRequest("Email address has been used for the other account. Email address is used for reseting password. If you cannot resolve through using other Email address, please contact system admin.");
+			}
 
 			if (!result.Succeeded)
 			{
