@@ -423,7 +423,7 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// <param name="expirySpan"></param>
 		/// <returns>ApplicationUser returned should not be used by UserManager for updating/deleting.</returns>
 		/// <remarks>If the ApplicationUser object is returned with AsNoTracking, UserManager in the client codes may still complain: System.InvalidOperationException: The instance of entity type 'ApplicationUser' cannot be tracked because another instance with the same key value for {'Id'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.</remarks>
-		public async Task<Guid?> FindUserIdByUserToken(string loginProvider, string purpose, string tokenValue, Guid connectionId, TimeSpan expirySpan)
+		public async Task<Guid?> FindUserIdByUserToken(string loginProvider, string purpose, Guid connectionId, TimeSpan expirySpan)
 		{
 			using ApplicationDbContext context = new(options);
 			string composedTokenName = $"{purpose}_{connectionId.ToString()}";

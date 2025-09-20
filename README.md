@@ -35,6 +35,14 @@ Please read the readme.md file of each library.
 * Even if you don't use ASP.NET Core Identity for authentication, but something like Okta, Auth0 or Azure AD / MS Entra ID, doupling main business modules from the authentication implementation is beneficial to CI and business, and having a locally hosted ASP.NET Core Identity implementation makes integration tests fast as explained below.
 * Microsoft has provided similar classes out of the box from libraries or scaffolding codes of ASP.NET MVC, however, using string for ID, while these libraries use GUID.
 
+## Better Solutions
+
+The solution offered in this project is offering what slightly better than very old username+password only authentication, and slightly worse thant ROPC of oAuth 2.0 because client id and PKCE is are not utilized, while ROPC is generally not recommended for SPA.
+
+For more secure .NET solutions free and open sourced:
+
+* [Identity Server 8](https://github.com/alexhiggins732/IdentityServer8)
+* [OpenIddict](https://github.com/openiddict/openiddict-core)
 
 
 ===Article later ===========

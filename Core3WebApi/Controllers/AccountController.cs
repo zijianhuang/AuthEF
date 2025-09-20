@@ -110,10 +110,5 @@ namespace Fonlow.Auth.Controllers
 		{
 			return base.RemoveUser(userId);
 		}
-
-		protected override Task<IActionResult> DeliverResetLink(string emailAddress, string callbackUrl)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

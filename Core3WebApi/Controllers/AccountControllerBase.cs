@@ -9,18 +9,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Fonlow.Auth.Controllers
 {
@@ -34,10 +33,9 @@ namespace Fonlow.Auth.Controllers
 	{
 		readonly DbContextOptions<ApplicationDbContext> options;
 		readonly AccountFunctions accountFunctions;
-		readonly ILogger apiLogger;
+		protected readonly ILogger apiLogger;
 
-		readonly ApplicationUserManager userManager;
-		readonly IConfiguration config;
+		protected readonly ApplicationUserManager userManager;
 		readonly IAuthSettings authSettings;
 		readonly TokenValidationParameters tokenValidationParameters;
 
@@ -59,8 +57,8 @@ namespace Fonlow.Auth.Controllers
 		/// <param name="connectionId"></param>
 		/// <returns>200 for perfect logout. 202 Accepted for unauthorized logout however without doing anything, not to reveal user details.</returns>
 		/// <remarks>This will also remove the refresh token.</remarks>
-		[HttpPost("Logout/{connectionId}")]
 		[AllowAnonymous]
+		[HttpPost("Logout/{connectionId}")]
 		public async Task<IActionResult> Logout(Guid connectionId)
 		{
 			if (AuthenticationHeaderValue.TryParse(Request.Headers.Authorization, out var headerValue))
@@ -79,8 +77,15 @@ namespace Fonlow.Auth.Controllers
 				// https://learn.microsoft.com/en-us/aspnet/core/migration/1x-to-2x/identity-2x#use-httpcontext-authentication-extensions
 				await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
-				await accountFunctions.RemoveUserToken(user.Id, authSettings.TokenProviderName, "RefreshToken", connectionId); //Up to admin to clear records if the user did not sign out.
-																															   // No need to care about true or false.
+				try
+				{
+					await accountFunctions.RemoveUserToken(user.Id, authSettings.TokenProviderName, "RefreshToken", connectionId); //Up to admin to clear records if the user did not sign out.
+				}
+				catch (Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException ex)
+				{
+					apiLogger.LogWarning(ex.Message);
+				}
+				// No need to care about true or false.
 				return StatusCode((int)HttpStatusCode.OK);
 			}
 			else
@@ -296,11 +301,11 @@ namespace Fonlow.Auth.Controllers
 					}
 				}
 
-				await userManager.RemoveFromRolesAsync(user, roleNames.ToArray());//because of the foreigh key constraints, need to remove roles first.
-																				  //this is part of the fix against some bugs in Identity 2.1
+				// await userManager.RemoveFromRolesAsync(user, roleNames.ToArray());// no need anymore. MS has fixed the bug.
 
-				await userManager.RemoveAuthenticationTokenAsync(user, authSettings.TokenProviderName, "RefreshToken");
-				apiLogger.LogInformation($"User {User.Identity.Name} removed from userTokens.");
+				// await userManager.RemoveAuthenticationTokenAsync(user, authSettings.TokenProviderName, "RefreshToken"); one is not enough
+				var c = await RemoveUserTokens(user);
+				apiLogger.LogInformation($"User {User.Identity.Name} removed from userTokens, total: {c}.");
 				IdentityResult result = await userManager.DeleteAsync(user);
 				if (!result.Succeeded)
 				{
@@ -470,23 +475,38 @@ namespace Fonlow.Auth.Controllers
 		//}
 
 		/// <summary>
-		/// Create user, but without role. If post handling after registering the user is needed, override PostRegister().
+		/// Create user, but without role
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		/// <exception cref="InvalidOperationException"></exception>
 		[HttpPost("Register")]
 		public virtual async Task<ActionResult<Guid>> Register([FromBody] RegisterBindingModel model)
+		{
+			var r = await RegisterBasic(model);
+			if (r.Item1 != null) // error
+			{
+				return r.Item1;
+			}
+
+			var resultOfPostHandling = await PostRegister(model);
+			if (resultOfPostHandling == null)
+			{
+				return r.Item2;
+			}
+
+			return resultOfPostHandling;
+		}
+
+		protected async Task<Tuple<ObjectResult, Guid>> RegisterBasic(RegisterBindingModel model)
 		{
 			Debug.WriteLine($"Register user: {model.UserName}, fullName: {model.FullName}, email: {model.Email}");
 			if (!ModelState.IsValid)//Though not explicitly verify in codes, ConfirmPassword is verified apparently by the runtime.
 			{
 				apiLogger.LogWarning("Bad request. Why?");
-				return new BadRequestObjectResult("ModelState");
+				return Tuple.Create<ObjectResult, Guid>(new BadRequestObjectResult("ModelState"), Guid.Empty);
 			}
 
 			ApplicationUser user = new ApplicationUser() { UserName = model.UserName, Email = model.Email, FullName = model.FullName };
-
 			IdentityResult result;
 			try
 			{
@@ -496,24 +516,19 @@ namespace Fonlow.Auth.Controllers
 			catch (InvalidOperationException ex)
 			{
 				apiLogger.LogError(ex.ToString());
-				return BadRequest("Email address has been used for the other account. Email address is used for reseting password. If you cannot resolve through using other Email address, please contact system admin.");
+				return Tuple.Create<ObjectResult, Guid>(BadRequest($"Email address has been used for the other account. Email address is used for reseting password. If you cannot resolve through using other Email address, please contact system admin. {ex.Message}"), Guid.Empty);
 			}
 
 			if (!result.Succeeded)
 			{
 				string errors = String.Join(Environment.NewLine, result.Errors.Select(d => d.Description));
 				apiLogger.LogError(errors);
-				return new ConflictObjectResult(errors);
+				return Tuple.Create<ObjectResult, Guid>(new ConflictObjectResult(errors), Guid.Empty);
 			}
 
-			var resultOfPostHandling = await PostRegister(model);
-			if (resultOfPostHandling == null)
-			{
-				return user.Id;
-			}
-
-			return resultOfPostHandling;
+			return Tuple.Create<ObjectResult, Guid>(null, user.Id);
 		}
+
 
 		/// <summary>
 		/// Derived function should return null after successful post handling of register, or one of the derived class objects of ObjectResult like UnprocessableEntityObjectResult
@@ -525,6 +540,12 @@ namespace Fonlow.Auth.Controllers
 			return null;
 		}
 
+		/// <summary>
+		/// Role names in uppercase
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="roleName"></param>
+		/// <returns></returns>
 		[HttpPost("AddRole")]
 		public virtual async Task<IActionResult> AddRole([FromQuery] Guid userId, [RequiredFromQuery] string roleName)
 		{
@@ -536,7 +557,7 @@ namespace Fonlow.Auth.Controllers
 				return new BadRequestObjectResult("OnlyAdmin");
 			}
 
-			var roleNames = accountFunctions.GetAllRoleNames();
+			var roleNames = accountFunctions.GetAllRoleNames(); //upper case already.
 			bool roleNameIsValid = roleNames.Any(d => d == roleName.ToUpper());
 			if (!roleNameIsValid)
 			{
@@ -629,38 +650,58 @@ namespace Fonlow.Auth.Controllers
 		/// Just a demo, but revealing some basic ForgotPassword features:
 		/// 1. If user not found, return NoContent
 		/// 2. Otherwise, send the reset token via Email or other means.
+		/// 
+		/// Real world applications may have different rules.
 		/// </summary>
 		/// <returns></returns>
-		[AllowAnonymous]
-		[HttpPost("ForgotPassword")]
-		public virtual async Task<IActionResult> ForgotPassword([FromBody] string emailAddress)
+		/// <remarks>For simple application, probably no need to support reseting password because of dependency on SMTP or other authentication authority.</remarks>
+		protected virtual async Task<IActionResult> ForgotPassword([FromBody] string emailAddress)
 		{
 
-			ApplicationUser user = await userManager.FindByEmailAsync(emailAddress);
-			if (user == null)// || !(await UserManager.IsEmailConfirmedAsync(user.Id))) the default is to confirm Email, not sure BM would like it
+			if (ModelState.IsValid)
 			{
-				// Don't reveal that the user does not exist or is not confirmed
-				return StatusCode((int)HttpStatusCode.NoContent);
+				ApplicationUser user;
+				try
+				{
+					user = await userManager.FindByEmailAsync(emailAddress);
+				}
+				catch (InvalidOperationException ex)
+				{
+					apiLogger.LogError(ex.ToString());
+					return BadRequest("Email address is assoicated with multiple accounts. Please contact system admin to resolve.");
+				}
+
+				if (user == null)
+				{
+					// Don't reveal that the user does not exist or is not confirmed
+					return StatusCode((int)HttpStatusCode.NoContent);
+				}
+
+				// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+				// Send an email with this link
+				string code = await userManager.GeneratePasswordResetTokenAsync(user);
+				Debug.WriteLine("Reset code is : " + code);
+				var uiHost = Request.Headers["origin"];
+				var requestHostUri = new Uri(uiHost);
+				string resetQuery = $"resetpassword?userId={user.Id}&code={Uri.EscapeDataString(code)}";
+
+				Uri resetUri = new Uri(requestHostUri, resetQuery);
+				string callbackUrl = resetUri.ToString();
+				Debug.WriteLine("Reset uri is: " + callbackUrl);
+
+				var emailResult = await DeliverResetLink(user, callbackUrl);
+				return emailResult;
+
 			}
 
-			// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-			// Send an email with this link
-			string code = await userManager.GeneratePasswordResetTokenAsync(user);
-			Debug.WriteLine("Reset code is : " + code);
-			var uiHost = Request.Headers["origin"];
-			var requestHostUri = new Uri(uiHost);
-			string resetQuery = $"resetpassword?userId={user.Id}&code={Uri.EscapeDataString(code)}";
-
-			Uri resetUri = new Uri(requestHostUri, resetQuery);
-			string callbackUrl = resetUri.ToString();
-			Debug.WriteLine("Reset uri is: " + callbackUrl);
-			// ...
-
-			var emailResult = await DeliverResetLink(emailAddress, callbackUrl);
-			return emailResult;
+			// If we got this far, something failed, not to tell if the operation is successful.
+			return StatusCode((int)HttpStatusCode.NoContent);
 		}
 
-		protected abstract Task<IActionResult> DeliverResetLink(string emailAddress, string callbackUrl);
+		protected virtual Task<IActionResult> DeliverResetLink(ApplicationUser user, string callbackUrl)
+		{
+			throw new NotImplementedException("Derived class of AccountControllerBase should implement this.");
+		}
 
 		/// <summary>
 		/// Called by the callbackUrl from the ForgotPassword function, when user clicks the link.
@@ -754,6 +795,12 @@ namespace Fonlow.Auth.Controllers
 			}
 
 			return null;
+		}
+
+		async Task<int> RemoveUserTokens(ApplicationUser user)
+		{
+			using ApplicationDbContext context = new(options);
+			return await context.UserTokens.Where(d => d.UserId == user.Id).ExecuteDeleteAsync();
 		}
 
 		private IActionResult GetErrorResult(IdentityResult result)

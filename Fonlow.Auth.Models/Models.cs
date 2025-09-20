@@ -15,7 +15,7 @@ namespace Fonlow.Auth.Models
 	}
 
 	/// <summary>
-	/// Section 4.3 and 4.3.2.
+	/// Resource Owner Password Credentials Grant. Section 4.3 and 4.3.2.
 	/// GrantType must be Value MUST be set to "password".
 	/// </summary>
 	[DataContract]

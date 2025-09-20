@@ -300,7 +300,7 @@ namespace AuthTests
 			Thread.Sleep(17050);
 
 			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, scope));
-			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 		}
 
 		/// <summary>
@@ -317,7 +317,7 @@ namespace AuthTests
 			Assert.NotNull(tokenModel.refresh_token);
 
 			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token + "A", null));
-			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 			Assert.Contains("refresh", ex.Response);
 			output.WriteLine("throws");
 		}
@@ -336,7 +336,7 @@ namespace AuthTests
 			Assert.NotNull(tokenModel.refresh_token);
 
 			var ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, $"connectionId:{Guid.NewGuid()}"));
-			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 			Assert.Contains("refresh", ex.Response);
 		}
 
@@ -404,7 +404,7 @@ namespace AuthTests
 			var accountApi = new Account(httpClient);
 			accountApi.Logout(Guid.NewGuid()); // this will remove the refresh token of the user on connnectionId
 			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, tokenModel.access_token, tokenModel.refresh_token, null));
-			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 
 			TestAuthorizedNewConnection(tokenModel.token_type, tokenModel.access_token); // still working, because JWT is stateless. This is a normal behavior.
 		}
@@ -433,7 +433,7 @@ namespace AuthTests
 			var accountApi = new Account(httpClient);
 			accountApi.RemoveOldUserTokens(DateTime.UtcNow); // Remove all user tokens, typically refresh tokens
 			var ex = Assert.Throws<WebApiRequestException>(() => GetAccessTokenResponseByRefreshTokenWithNewClient(baseUri, newTokenModel.access_token, newTokenModel.refresh_token, null));
-			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 		}
 
 		[Fact]

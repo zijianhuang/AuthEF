@@ -101,10 +101,11 @@ namespace AuthTests
 
 			var ex = await Assert.ThrowsAsync<Fonlow.Auth.WebApiRequestException>(()=> api.PostRefreshTokenRequestAsFormDataToAuthAsync(new RefreshAccessTokenRequest
 			{
-				refresh_token = ra.refresh_token
+				refresh_token = ra.refresh_token,
+				//Scope = ra.Scope, so the request is invalid
 			}));
 
-			Assert.Equal(System.Net.HttpStatusCode.Unauthorized, ex.StatusCode);
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 		}
 
 
