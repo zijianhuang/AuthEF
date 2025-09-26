@@ -7715,7 +7715,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> AddRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -7728,7 +7728,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// POST api/Account/AddRole?userId={userId}&roleName={roleName}
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage AddRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -7806,42 +7806,6 @@ namespace Fonlow.Auth.Controllers.Client
 			var requestUri = "api/Account/ChangePassword";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, requestUri);
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = client.SendAsync(httpRequestMessage).Result;
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// Just a demo, but revealing some basic ForgotPassword features:
-		/// 1. If user not found, return NoContent
-		/// 2. Otherwise, send the reset token via Email or other means.
-		/// POST api/Account/ForgotPassword
-		/// </summary>
-		public async Task<System.Net.Http.HttpResponseMessage> ForgotPasswordAsync(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ForgotPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(email, mediaType: null, jsonSerializerSettings);
-			httpRequestMessage.Content = content;
-			handleHeaders?.Invoke(httpRequestMessage.Headers);
-			var responseMessage = await client.SendAsync(httpRequestMessage);
-			responseMessage.EnsureSuccessStatusCodeEx();
-			return responseMessage;
-		}
-		
-		/// <summary>
-		/// Just a demo, but revealing some basic ForgotPassword features:
-		/// 1. If user not found, return NoContent
-		/// 2. Otherwise, send the reset token via Email or other means.
-		/// POST api/Account/ForgotPassword
-		/// </summary>
-		public System.Net.Http.HttpResponseMessage ForgotPassword(string email, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
-		{
-			var requestUri = "api/Account/ForgotPassword";
-			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
-			var content = System.Net.Http.Json.JsonContent.Create(email, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.SendAsync(httpRequestMessage).Result;
@@ -8064,6 +8028,50 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Of all users
+		/// GET api/Account/UserIdFullNameDic
+		/// </summary>
+		public async Task<System.Collections.Generic.IDictionary<System.Guid, string>> GetUserIdFullNameDicAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdFullNameDic";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = await client.SendAsync(httpRequestMessage);
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = await responseMessage.Content.ReadAsStreamAsync();
+				return JsonSerializer.Deserialize<System.Collections.Generic.IDictionary<System.Guid, string>>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
+		/// Of all users
+		/// GET api/Account/UserIdFullNameDic
+		/// </summary>
+		public System.Collections.Generic.IDictionary<System.Guid, string> GetUserIdFullNameDic(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		{
+			var requestUri = "api/Account/UserIdFullNameDic";
+			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
+			handleHeaders?.Invoke(httpRequestMessage.Headers);
+			var responseMessage = client.SendAsync(httpRequestMessage).Result;
+			try
+			{
+				responseMessage.EnsureSuccessStatusCodeEx();
+				var stream = responseMessage.Content.ReadAsStream();
+				return JsonSerializer.Deserialize<System.Collections.Generic.IDictionary<System.Guid, string>>(stream, jsonSerializerSettings);
+			}
+			finally
+			{
+				responseMessage.Dispose();
+			}
+		}
+		
+		/// <summary>
 		/// Mapping between email address and user Id
 		/// GET api/Account/UserIdMapByEmail
 		/// </summary>
@@ -8162,7 +8170,7 @@ namespace Fonlow.Auth.Controllers.Client
 		/// <summary>
 		/// : InternalRoles
 		/// GET api/Account/UserInfo
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel> GetUserInfoAsync(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8186,7 +8194,7 @@ namespace Fonlow.Auth.Controllers.Client
 		/// <summary>
 		/// : InternalRoles
 		/// GET api/Account/UserInfo
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public Fonlow.AspNetCore.Identity.Client.UserInfoViewModel GetUserInfo(Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8208,12 +8216,12 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : InternalRoles
-		/// GET api/Account/UserInfoById?id={id}
+		/// : InternalRoles. Derived class should restrict access
+		/// GET api/Account/Users/{id}
 		/// </summary>
-		public async Task<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel> GetUserInfoAsync(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel> GetUserInfoByIdAsync(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/UserInfoById?id="+id;
+			var requestUri = "api/Account/Users/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = await client.SendAsync(httpRequestMessage);
@@ -8231,12 +8239,12 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : InternalRoles
-		/// GET api/Account/UserInfoById?id={id}
+		/// : InternalRoles. Derived class should restrict access
+		/// GET api/Account/Users/{id}
 		/// </summary>
-		public Fonlow.AspNetCore.Identity.Client.UserInfoViewModel GetUserInfo(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public Fonlow.AspNetCore.Identity.Client.UserInfoViewModel GetUserInfoById(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/UserInfoById?id="+id;
+			var requestUri = "api/Account/Users/"+id;
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, requestUri);
 			handleHeaders?.Invoke(httpRequestMessage.Headers);
 			var responseMessage = client.SendAsync(httpRequestMessage).Result;
@@ -8258,6 +8266,7 @@ namespace Fonlow.Auth.Controllers.Client
 		/// Even though the access token may be expired and the connectionId is invalid, the signout process still return 204.
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
+		/// <returns>200 for perfect logout. 202 Accepted for unauthorized logout however without doing anything, not to reveal user details.</returns>
 		public async Task<System.Net.Http.HttpResponseMessage> LogoutAsync(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "api/Account/Logout/"+connectionId;
@@ -8272,6 +8281,7 @@ namespace Fonlow.Auth.Controllers.Client
 		/// Even though the access token may be expired and the connectionId is invalid, the signout process still return 204.
 		/// POST api/Account/Logout/{connectionId}
 		/// </summary>
+		/// <returns>200 for perfect logout. 202 Accepted for unauthorized logout however without doing anything, not to reveal user details.</returns>
 		public System.Net.Http.HttpResponseMessage Logout(System.Guid connectionId, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "api/Account/Logout/"+connectionId;
@@ -8283,12 +8293,12 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// Create user, but without role
-		/// POST api/Account/Register
-		/// Authorize: Roles: admin,manager; 
+		/// POST api/Account/Users
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<System.Guid> RegisterAsync(Fonlow.AspNetCore.Identity.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/Register";
+			var requestUri = "api/Account/Users";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
@@ -8308,12 +8318,12 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// Create user, but without role
-		/// POST api/Account/Register
-		/// Authorize: Roles: admin,manager; 
+		/// POST api/Account/Users
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public System.Guid Register(Fonlow.AspNetCore.Identity.Client.RegisterBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
-			var requestUri = "api/Account/Register";
+			var requestUri = "api/Account/Users";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
 			var content = System.Net.Http.Json.JsonContent.Create(model, mediaType: null, jsonSerializerSettings);
 			httpRequestMessage.Content = content;
@@ -8423,7 +8433,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> RemoveRoleAsync(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8437,7 +8447,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage RemoveRole(System.Guid userId, string roleName, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8478,6 +8488,7 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Called by the callbackUrl from the ForgotPassword function, when user clicks the link.
 		/// POST api/Account/ResetPassword
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> ResetPasswordAsync(Fonlow.AspNetCore.Identity.Client.ResetPasswordViewModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -8493,6 +8504,7 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
+		/// Called by the callbackUrl from the ForgotPassword function, when user clicks the link.
 		/// POST api/Account/ResetPassword
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage ResetPassword(Fonlow.AspNetCore.Identity.Client.ResetPasswordViewModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -8511,7 +8523,7 @@ namespace Fonlow.Auth.Controllers.Client
 		/// POST api/Account/Search
 		/// Authorize: Roles: admin; 
 		/// </summary>
-		public async Task<Fonlow.AspNetCore.Identity.Client.UserItem[]> SearchAsync(Fonlow.AspNetCore.Identity.Client.UserSearchModel c, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public async Task<Fonlow.AspNetCore.Identity.Client.UserItemEx[]> SearchAsync(Fonlow.AspNetCore.Identity.Client.UserSearchModel c, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "api/Account/Search";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -8524,7 +8536,7 @@ namespace Fonlow.Auth.Controllers.Client
 				responseMessage.EnsureSuccessStatusCodeEx();
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = await responseMessage.Content.ReadAsStreamAsync();
-				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserItem[]>(stream, jsonSerializerSettings);
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserItemEx[]>(stream, jsonSerializerSettings);
 			}
 			finally
 			{
@@ -8536,7 +8548,7 @@ namespace Fonlow.Auth.Controllers.Client
 		/// POST api/Account/Search
 		/// Authorize: Roles: admin; 
 		/// </summary>
-		public Fonlow.AspNetCore.Identity.Client.UserItem[] Search(Fonlow.AspNetCore.Identity.Client.UserSearchModel c, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
+		public Fonlow.AspNetCore.Identity.Client.UserItemEx[] Search(Fonlow.AspNetCore.Identity.Client.UserSearchModel c, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
 			var requestUri = "api/Account/Search";
 			using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -8549,7 +8561,7 @@ namespace Fonlow.Auth.Controllers.Client
 				responseMessage.EnsureSuccessStatusCodeEx();
 				if (responseMessage.StatusCode == System.Net.HttpStatusCode.NoContent) { return null; }
 				var stream = responseMessage.Content.ReadAsStream();
-				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserItem[]>(stream, jsonSerializerSettings);
+				return JsonSerializer.Deserialize<Fonlow.AspNetCore.Identity.Client.UserItemEx[]>(stream, jsonSerializerSettings);
 			}
 			finally
 			{
@@ -8558,9 +8570,9 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : AdminOrManager
+		/// : Admin
 		/// PUT api/Account/SetPassword
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> SetPasswordAsync(Fonlow.AspNetCore.Identity.Client.SetPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8575,9 +8587,9 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : AdminOrManager
+		/// : Admin
 		/// PUT api/Account/SetPassword
-		/// Authorize: Roles: admin,manager; 
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage SetPassword(Fonlow.AspNetCore.Identity.Client.SetPasswordBindingModel model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8624,7 +8636,7 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : InternalBusinessAdmins
+		/// Update user
 		/// PUT api/Account/Update
 		/// </summary>
 		public async Task<System.Net.Http.HttpResponseMessage> UpdateAsync(Fonlow.AspNetCore.Identity.Client.UserUpdate model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
@@ -8640,7 +8652,7 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : InternalBusinessAdmins
+		/// Update user
 		/// PUT api/Account/Update
 		/// </summary>
 		public System.Net.Http.HttpResponseMessage Update(Fonlow.AspNetCore.Identity.Client.UserUpdate model, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)

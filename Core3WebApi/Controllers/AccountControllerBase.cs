@@ -6,6 +6,7 @@ using Fonlow.WebApp.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -176,12 +177,12 @@ namespace Fonlow.Auth.Controllers
 		}
 
 		/// <summary>
-		/// : InternalRoles
+		/// Derived class should restrict access through decorating with admin
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		[HttpGet("UserInfoById")]
-		public virtual UserInfoViewModel GetUserInfo([FromQuery] Guid id)
+		[HttpGet("Users/{id}")]
+		public virtual UserInfoViewModel GetUserInfoById(Guid id)
 		{
 			return GetUserInfoViewModel(id);
 		}
@@ -376,110 +377,12 @@ namespace Fonlow.Auth.Controllers
 			}
 		}
 
-		//// GET api/Account/ExternalLogin
-		//[OverrideAuthentication]
-		//[HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
-		//[AllowAnonymous]
-		//[Route("ExternalLogin", Name = "ExternalLogin")]
-		//public async Task<IActionResult> GetExternalLogin(string provider, string error = null)
-		//{
-		//	if (error != null)
-		//	{
-		//		return Redirect(Url.Content("~/") + "#error=" + Uri.EscapeDataString(error));
-		//	}
-
-		//	if (!User.Identity.IsAuthenticated)
-		//	{
-		//		return new ChallengeResult(provider, this);
-		//	}
-
-		//	ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-
-		//	if (externalLogin == null)
-		//	{
-		//		return InternalServerError();
-		//	}
-
-		//	if (externalLogin.LoginProvider != provider)
-		//	{
-		//		Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-		//		return new ChallengeResult(provider, this);
-		//	}
-
-		//	ApplicationUser user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
-		//		externalLogin.ProviderKey));
-
-		//	bool hasRegistered = user != null;
-
-		//	if (hasRegistered)
-		//	{
-		//		Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-
-		//		ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-		//		   OAuthDefaults.AuthenticationType);
-		//		ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
-		//			CookieAuthenticationDefaults.AuthenticationType);
-
-		//		AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
-		//		Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
-		//	}
-		//	else
-		//	{
-		//		IEnumerable<Claim> claims = externalLogin.GetClaims();
-		//		ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-		//		Authentication.SignIn(identity);
-		//	}
-
-		//	return StatusCode((int)HttpStatusCode.NoContent);
-		//}
-
-		//// GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
-		//[AllowAnonymous]
-		//[Route("ExternalLogins")]
-		//public IEnumerable<ExternalLoginViewModel> GetExternalLogins(string returnUrl, bool generateState = false)
-		//{
-		//	IEnumerable<AuthenticationDescription> descriptions = Authentication.GetExternalAuthenticationTypes();
-		//	List<ExternalLoginViewModel> logins = new List<ExternalLoginViewModel>();
-
-		//	string state;
-
-		//	if (generateState)
-		//	{
-		//		const int strengthInBits = 256;
-		//		state = RandomOAuthStateGenerator.Generate(strengthInBits);
-		//	}
-		//	else
-		//	{
-		//		state = null;
-		//	}
-
-		//	foreach (AuthenticationDescription description in descriptions)
-		//	{
-		//		ExternalLoginViewModel login = new ExternalLoginViewModel
-		//		{
-		//			Name = description.Caption,
-		//			Url = Url.Route("ExternalLogin", new
-		//			{
-		//				provider = description.AuthenticationType,
-		//				response_type = "token",
-		//				client_id = Startup.PublicClientId,
-		//				redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
-		//				state = state
-		//			}),
-		//			State = state
-		//		};
-		//		logins.Add(login);
-		//	}
-
-		//	return logins;
-		//}
-
 		/// <summary>
 		/// Create user, but without role
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
-		[HttpPost("Register")]
+		[HttpPost("Users")]
 		public virtual async Task<ActionResult<Guid>> Register([FromBody] RegisterBindingModel model)
 		{
 			var r = await RegisterBasic(model);
@@ -491,10 +394,14 @@ namespace Fonlow.Auth.Controllers
 			var resultOfPostHandling = await PostRegister(model);
 			if (resultOfPostHandling == null)
 			{
-				return r.Item2;
+				return CreatedAtAction(nameof(GetUserInfoById), new { id = r.Item2 }, // route value
+				r.Item2 // returned body
+				); //RESTful
 			}
-
-			return resultOfPostHandling;
+			else
+			{
+				return resultOfPostHandling;
+			}
 		}
 
 		protected async Task<Tuple<ObjectResult, Guid>> RegisterBasic(RegisterBindingModel model)
@@ -534,8 +441,8 @@ namespace Fonlow.Auth.Controllers
 		/// Derived function should return null after successful post handling of register, or one of the derived class objects of ObjectResult like UnprocessableEntityObjectResult
 		/// </summary>
 		/// <param name="model"></param>
-		/// <returns></returns>
-		protected virtual Task<ActionResult<Guid>> PostRegister(RegisterBindingModel model)
+		/// <returns>Null if no drama, otherwise, an error result to return the client</returns>
+		protected virtual async Task<ActionResult> PostRegister(RegisterBindingModel model)
 		{
 			return null;
 		}

@@ -2181,7 +2181,7 @@ export namespace Fonlow_Auth_Controllers_Client {
 
 		/**
 		 * POST api/Account/AddRole?userId={userId}&roleName={roleName}
-		 * Authorize: Roles: admin,manager; 
+		 * Authorize: Roles: admin; 
 		 * @param {string} userId Type: GUID
 		 */
 		addRole(userId?: string | null, roleName?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
@@ -2202,16 +2202,6 @@ export namespace Fonlow_Auth_Controllers_Client {
 		 */
 		changePassword(model?: Fonlow_AspNetCore_Identity_Client.ChangePasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
 			return this.http.put(this.baseUri + 'api/Account/ChangePassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
-		}
-
-		/**
-		 * Just a demo, but revealing some basic ForgotPassword features:
-		 * 1. If user not found, return NoContent
-		 * 2. Otherwise, send the reset token via Email or other means.
-		 * POST api/Account/ForgotPassword
-		 */
-		forgotPassword(email?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
-			return this.http.post(this.baseUri + 'api/Account/ForgotPassword', JSON.stringify(email), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
 		}
 
 		/**
@@ -2254,6 +2244,14 @@ export namespace Fonlow_Auth_Controllers_Client {
 		}
 
 		/**
+		 * Of all users
+		 * GET api/Account/UserIdFullNameDic
+		 */
+		getUserIdFullNameDic(headersHandler?: () => HttpHeaders): Observable<{[id: string]: string }> {
+			return this.http.get<{[id: string]: string }>(this.baseUri + 'api/Account/UserIdFullNameDic', { headers: headersHandler ? headersHandler() : undefined });
+		}
+
+		/**
 		 * Mapping between email address and user Id
 		 * GET api/Account/UserIdMapByEmail
 		 * @return {Array<{key: string, value: string }>} Key is email address, and value is user Id.
@@ -2274,19 +2272,19 @@ export namespace Fonlow_Auth_Controllers_Client {
 		/**
 		 * : InternalRoles
 		 * GET api/Account/UserInfo
-		 * Authorize: Roles: admin,manager; 
+		 * Authorize: Roles: admin; 
 		 */
 		getUserInfo(headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel> {
 			return this.http.get<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel>(this.baseUri + 'api/Account/UserInfo', { headers: headersHandler ? headersHandler() : undefined });
 		}
 
 		/**
-		 * : InternalRoles
-		 * GET api/Account/UserInfoById?id={id}
+		 * : InternalRoles. Derived class should restrict access
+		 * GET api/Account/Users/{id}
 		 * @param {string} id Type: GUID
 		 */
-		getUserInfoByIdOfstring(id?: string | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel> {
-			return this.http.get<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel>(this.baseUri + 'api/Account/UserInfoById?id=' + id, { headers: headersHandler ? headersHandler() : undefined });
+		getUserInfoById(id?: string | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel> {
+			return this.http.get<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel>(this.baseUri + 'api/Account/Users/' + id, { headers: headersHandler ? headersHandler() : undefined });
 		}
 
 		/**
@@ -2294,6 +2292,7 @@ export namespace Fonlow_Auth_Controllers_Client {
 		 * Even though the access token may be expired and the connectionId is invalid, the signout process still return 204.
 		 * POST api/Account/Logout/{connectionId}
 		 * @param {string} connectionId Type: GUID
+		 * @return {response} 200 for perfect logout. 202 Accepted for unauthorized logout however without doing anything, not to reveal user details.
 		 */
 		logout(connectionId?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
 			return this.http.post(this.baseUri + 'api/Account/Logout/' + connectionId, null, { headers: headersHandler ? headersHandler() : undefined, observe: 'response', responseType: 'text' });
@@ -2301,12 +2300,12 @@ export namespace Fonlow_Auth_Controllers_Client {
 
 		/**
 		 * Create user, but without role
-		 * POST api/Account/Register
-		 * Authorize: Roles: admin,manager; 
+		 * POST api/Account/Users
+		 * Authorize: Roles: admin; 
 		 * @return {string} Type: GUID
 		 */
 		register(model?: Fonlow_AspNetCore_Identity_Client.RegisterBindingModel | null, headersHandler?: () => HttpHeaders): Observable<string> {
-			return this.http.post<string>(this.baseUri + 'api/Account/Register', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
+			return this.http.post<string>(this.baseUri + 'api/Account/Users', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
 		}
 
 		/**
@@ -2330,7 +2329,7 @@ export namespace Fonlow_Auth_Controllers_Client {
 
 		/**
 		 * DELETE api/Account/RemoveRole?userId={userId}&roleName={roleName}
-		 * Authorize: Roles: admin,manager; 
+		 * Authorize: Roles: admin; 
 		 * @param {string} userId Type: GUID
 		 */
 		removeRole(userId?: string | null, roleName?: string | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
@@ -2347,6 +2346,7 @@ export namespace Fonlow_Auth_Controllers_Client {
 		}
 
 		/**
+		 * Called by the callbackUrl from the ForgotPassword function, when user clicks the link.
 		 * POST api/Account/ResetPassword
 		 */
 		resetPassword(model?: Fonlow_AspNetCore_Identity_Client.ResetPasswordViewModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
@@ -2357,14 +2357,14 @@ export namespace Fonlow_Auth_Controllers_Client {
 		 * POST api/Account/Search
 		 * Authorize: Roles: admin; 
 		 */
-		search(c?: Fonlow_AspNetCore_Identity_Client.UserSearchModel | null, headersHandler?: () => HttpHeaders): Observable<Array<Fonlow_AspNetCore_Identity_Client.UserItem>> {
-			return this.http.post<Array<Fonlow_AspNetCore_Identity_Client.UserItem>>(this.baseUri + 'api/Account/Search', JSON.stringify(c), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
+		search(c?: Fonlow_AspNetCore_Identity_Client.UserSearchModel | null, headersHandler?: () => HttpHeaders): Observable<Array<Fonlow_AspNetCore_Identity_Client.UserItemEx>> {
+			return this.http.post<Array<Fonlow_AspNetCore_Identity_Client.UserItemEx>>(this.baseUri + 'api/Account/Search', JSON.stringify(c), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }) });
 		}
 
 		/**
-		 * : AdminOrManager
+		 * : Admin
 		 * PUT api/Account/SetPassword
-		 * Authorize: Roles: admin,manager; 
+		 * Authorize: Roles: admin; 
 		 */
 		setPassword(model?: Fonlow_AspNetCore_Identity_Client.SetPasswordBindingModel | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {
 			return this.http.put(this.baseUri + 'api/Account/SetPassword', JSON.stringify(model), { headers: headersHandler ? headersHandler().append('Content-Type', 'application/json;charset=UTF-8') : new HttpHeaders({ 'Content-Type': 'application/json;charset=UTF-8' }), observe: 'response', responseType: 'text' });
@@ -2379,7 +2379,7 @@ export namespace Fonlow_Auth_Controllers_Client {
 		}
 
 		/**
-		 * : InternalBusinessAdmins
+		 * Update user
 		 * PUT api/Account/Update
 		 */
 		update(model?: Fonlow_AspNetCore_Identity_Client.UserUpdate | null, headersHandler?: () => HttpHeaders): Observable<HttpResponse<string>> {

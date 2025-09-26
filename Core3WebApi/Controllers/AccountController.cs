@@ -43,6 +43,12 @@ namespace Fonlow.Auth.Controllers
 			return await base.GetUserInfo();
 		}
 
+		[Authorize(Roles = RoleConstants.Admin)]
+		public override UserInfoViewModel GetUserInfoById(Guid id)
+		{
+			return base.GetUserInfoById(id);
+		}
+
 		/// <summary>
 		/// : Admin
 		/// </summary>
@@ -57,6 +63,7 @@ namespace Fonlow.Auth.Controllers
 
 		/// <summary>
 		/// Create user, but without role
+		/// Response header is with status 201 and header Location: http://YourDomain/api/Account/Users/0d7bd467-9005-4107-92e2-805872152537
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
