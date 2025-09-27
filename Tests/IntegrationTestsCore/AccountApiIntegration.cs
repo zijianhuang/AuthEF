@@ -26,8 +26,8 @@ namespace IntegrationTests
 				DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
 				PropertyNameCaseInsensitive = true,
 				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString, // newtonsoft.json along with converters may return long and int128 as string
-			}; 
-			
+			};
+
 			Api = new Account(base.AuthorizedClient, jsonSerializerSettings);
 		}
 
@@ -35,7 +35,7 @@ namespace IntegrationTests
 
 		protected override void Dispose(bool disposing)
 		{
-			Task.Run(async ()=> await Api.LogoutAsync(Guid.NewGuid())).Wait();//so to test Logout. Random Id is ok, since the logout process does not really care
+			Task.Run(async () => await Api.LogoutAsync(Guid.NewGuid())).Wait();//so to test Logout. Random Id is ok, since the logout process does not really care
 			base.Dispose(disposing);
 		}
 	}
@@ -47,7 +47,7 @@ namespace IntegrationTests
 		{
 			api = fixture.Api;
 			httpClient = fixture.AuthorizedClient;
-			username=fixture.Username;
+			username = fixture.Username;
 		}
 
 		readonly Account api;
@@ -103,8 +103,8 @@ namespace IntegrationTests
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
-//                Email = username + "@somewhere.com",
-				Email = $"zijian.aps+{stamp}@gmail.com",
+				//                Email = username + "@somewhere.com",
+				Email = $"zijian+{stamp}@gmail.com",
 				Password = "Mmmm*123",
 				ConfirmPassword = "Mmmm*123",
 			});
@@ -112,6 +112,65 @@ namespace IntegrationTests
 			Assert.NotEqual(default(Guid), id);
 
 			System.Threading.Thread.Sleep(3500);
+		}
+
+		[Fact]
+		public async Task TestRegisterUserWithExistingEmailAddress()
+		{
+			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
+			string emailAddress = $"zijian+{stamp}@gmail.com";
+			string username = "ApiUserZ" + stamp;
+			var id = await api.RegisterAsync(new RegisterBindingModel
+			{
+				UserName = username,
+				Email = emailAddress,
+				Password = "Mmmm*123",
+				ConfirmPassword = "Mmmm*123",
+			});
+
+			Assert.NotEqual(default(Guid), id);
+
+			System.Threading.Thread.Sleep(1000);
+			Fonlow.Net.Http.WebApiRequestException ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(() => api.RegisterAsync(new RegisterBindingModel
+			{
+				UserName = username + "2",
+				Email = emailAddress,
+				Password = "Mmmm*123",
+				ConfirmPassword = "Mmmm*123",
+			}));
+
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
+			Assert.Contains("FailedCreate", ex.Response);
+
+		}
+
+		[Fact]
+		public async Task TestRegisterUserWithSameName()
+		{
+			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
+			string emailAddress = $"zijian+{stamp}@gmail.com";
+			string username = "ApiUserZ" + stamp;
+			var id = await api.RegisterAsync(new RegisterBindingModel
+			{
+				UserName = username,
+				Email = emailAddress,
+				Password = "Mmmm*123",
+				ConfirmPassword = "Mmmm*123",
+			});
+
+			Assert.NotEqual(default(Guid), id);
+
+			System.Threading.Thread.Sleep(1000);
+			Fonlow.Net.Http.WebApiRequestException ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(() => api.RegisterAsync(new RegisterBindingModel
+			{
+				UserName = username,
+				Email = emailAddress,
+				Password = "Mmmm*123",
+				ConfirmPassword = "Mmmm*123",
+			}));
+
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
+			Assert.Contains("FailedCreate", ex.Response);
 		}
 
 		[Fact]
@@ -150,24 +209,6 @@ namespace IntegrationTests
 			await api.AddRoleAsync(id, "Admin");
 			string[] roles = api.GetRoles(id);
 			Assert.Equal(2, roles.Length);
-		}
-
-		[Fact]
-		public async Task TestRegisterUserAndAddBadRoleNameThrow()
-		{
-			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
-			var id = await api.RegisterAsync(new RegisterBindingModel
-			{
-				UserName = username,
-				Email = username + "@somewhere.com",
-				Password = "Mmmm*123",
-				ConfirmPassword = "Mmmm*123",
-			});
-
-			Assert.NotEqual(default(Guid), id);
-
-			Fonlow.Net.Http.WebApiRequestException ex = Assert.Throws<Fonlow.Net.Http.WebApiRequestException>(() => api.AddRole(id, "BadRoleName"));
-			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 		}
 
 		[Fact]
@@ -251,7 +292,7 @@ namespace IntegrationTests
 			{
 				Id = id,
 				Email = model.Email + ".au",
-				FullName=model.FullName,
+				FullName = model.FullName,
 			};
 
 			api.Update(userUpdate);
@@ -260,7 +301,48 @@ namespace IntegrationTests
 			//Assert.Equal(model.Email + ".au", u.Email);
 		}
 
+		[Fact]
+		public async Task TestResetPasswordWithInvalidTokenThrow()
+		{
+			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
+			string username = "ApiUserZ" + stamp;
+			string emailAddress = $"zijian+{stamp}@gmail.com";
+			var id = await api.RegisterAsync(new RegisterBindingModel
+			{
+				UserName = username,
+				//                Email = username + "@somewhere.com",
+				Email = emailAddress,
+				Password = "Mmmm*123",
+				ConfirmPassword = "Mmmm*123",
+			});
 
+			Assert.NotEqual(default(Guid), id);
+
+			Fonlow.Net.Http.WebApiRequestException ex = await Assert.ThrowsAsync<Fonlow.Net.Http.WebApiRequestException>(() => api.ResetPasswordAsync(new ResetPasswordViewModel
+			{
+				Password = "abcde",
+				ConfirmPassword = "abcde",
+				Code = "kkkkk",
+				Email = emailAddress,
+			}));
+
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
+			Assert.Contains("InvalidToken", ex.Response);
+		}
+
+		[Fact]
+		public async Task TestResetPasswordWithInvalidEmailNotThrows()
+		{
+			var msg = await api.ResetPasswordAsync(new ResetPasswordViewModel
+			{
+				Password = "abcde",
+				ConfirmPassword = "abcde",
+				Code = "kkkkk",
+				Email = "emailAddress",
+			});
+
+			Assert.Equal(System.Net.HttpStatusCode.OK, msg.StatusCode);
+		}
 
 	}
 

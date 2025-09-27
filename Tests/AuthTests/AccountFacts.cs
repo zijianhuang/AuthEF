@@ -154,7 +154,7 @@ namespace AuthTests
 				Email = newUsername + "@where.com"
 			}));
 
-			Assert.Equal(System.Net.HttpStatusCode.Conflict, ex.StatusCode);
+			Assert.Equal(System.Net.HttpStatusCode.BadRequest, ex.StatusCode);
 		}
 
 		void TestAuthorizedConnection(string tokenType, string accessToken)

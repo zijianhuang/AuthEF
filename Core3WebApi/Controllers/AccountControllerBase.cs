@@ -381,7 +381,7 @@ namespace Fonlow.Auth.Controllers
 		/// Create user, but without role
 		/// </summary>
 		/// <param name="model"></param>
-		/// <returns></returns>
+		/// <returns>Id of user. If error, the response could be ModelError[] or IdentityError[].</returns>
 		[HttpPost("Users")]
 		public virtual async Task<ActionResult<Guid>> Register([FromBody] RegisterBindingModel model)
 		{
@@ -410,27 +410,28 @@ namespace Fonlow.Auth.Controllers
 			if (!ModelState.IsValid)//Though not explicitly verify in codes, ConfirmPassword is verified apparently by the runtime.
 			{
 				apiLogger.LogWarning("Bad request. Why?");
-				return Tuple.Create<ObjectResult, Guid>(new BadRequestObjectResult("ModelState"), Guid.Empty);
+				return Tuple.Create<ObjectResult, Guid>(new BadRequestObjectResult(ModelState.Values.FirstOrDefault()?.Errors), Guid.Empty);
+			}
+
+			ApplicationUser existing = await userManager.FindByEmailAsync(model.Email);
+			if (existing != null)
+			{
+				return Tuple.Create<ObjectResult, Guid>(new BadRequestObjectResult(new IdentityError[]{new IdentityError{
+					Code= "FailedCreate",
+					Description="If an account exists for this email, you’ll receive further instructions."
+				} }), Guid.Empty);
 			}
 
 			ApplicationUser user = new ApplicationUser() { UserName = model.UserName, Email = model.Email, FullName = model.FullName };
 			IdentityResult result;
-			try
-			{
-				result = await userManager.CreateAsync(user, model.Password);
 
-			}
-			catch (InvalidOperationException ex)
-			{
-				apiLogger.LogError(ex.ToString());
-				return Tuple.Create<ObjectResult, Guid>(BadRequest($"Email address has been used for the other account. Email address is used for reseting password. If you cannot resolve through using other Email address, please contact system admin. {ex.Message}"), Guid.Empty);
-			}
+			result = await userManager.CreateAsync(user, model.Password);
 
 			if (!result.Succeeded)
 			{
 				string errors = String.Join(Environment.NewLine, result.Errors.Select(d => d.Description));
 				apiLogger.LogError(errors);
-				return Tuple.Create<ObjectResult, Guid>(new ConflictObjectResult(errors), Guid.Empty);
+				return Tuple.Create<ObjectResult, Guid>(new BadRequestObjectResult(result.Errors), Guid.Empty);
 			}
 
 			return Tuple.Create<ObjectResult, Guid>(null, user.Id);
@@ -623,7 +624,7 @@ namespace Fonlow.Auth.Controllers
 			if (user == null)
 			{
 				// Don't reveal that the user does not exist
-				return StatusCode((int)HttpStatusCode.NoContent);
+				return Ok();
 			}
 
 			Debug.WriteLine($"userId: {user.Id} password: {model.Password} code: {model.Code}");
@@ -633,8 +634,9 @@ namespace Fonlow.Auth.Controllers
 				apiLogger.LogInformation($"Successfully reset password for user {user.UserName}");
 				return Ok();
 			}
+
 			apiLogger.LogError($"Failed to reset password for user {user.UserName}");
-			return StatusCode((int)HttpStatusCode.Conflict);
+			return new BadRequestObjectResult(result.Errors);
 		}
 
 
