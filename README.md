@@ -1,3 +1,7 @@
+This project is based on [ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity).
+
+## Overview
+
 This repository serves multiple purposes:
 1. Demonstrate "[Decouple ASP.NET Core Identity, Authentication and Database Engines](https://www.codeproject.com/Articles/5378824/Decouple-ASP-NET-Core-Identity-Authentication-and)" / [Local Copy](Docs/Articles/Article1/Decouple%20ASP.NET%20Core%20Identity,%20Authentication%20and%20Database%20Engines.md)
 2. Demonstrate "[Share Identity Bear Tokens among ASP.NET Core Web APIs](https://www.codeproject.com/Articles/5382165/Share-Identity-Bear-Tokens-among-ASP-NET-Core-Web)" / [Local Copy](Docs/Articles/CodeProject/Share%20Identity%20Bearer%20Tokens%20among%20ASP.NET%20Core%20Web%20APIs%20-%20CodeProject.html)
@@ -5,6 +9,20 @@ This repository serves multiple purposes:
 4. Provide some plugin components that decouple business modules from concrete SQL database engines.
 5. Provide some components that decouple ASP.NET Core Identity with concrete database engines.
 6. Demonstrate how to craft integration tests and run on local dev PC as much as possible, and the artifacts could be easily reused in a team CI server like GitHub Actions/Workflow.
+
+In a nutshell:
+1. "AuthController" provides "Resource Owner Password Credentials Grant" of OAuth 2.0 but without client_id and PKCE involved, for SPA and desktop apps.
+1. "AccountController" provides basic user account APIs.
+1. With "connectionId", one user can have multiple logins on multiple devices concurrently.
+
+Remarks:
+* What demonstrated with ROPC may not be hacker proof when being used in SPA.
+
+References:
+
+* [How to use Identity to secure a Web API backend for SPAs](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization), along with [the recommendation](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization#use-token-based-authentication) about token vs cookie.
+* [Scaffold Identity in ASP.NET Core projects](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity) for Blazor and MVC.
+
 
 ## Decoupling Entity Framework and DB Engines
 

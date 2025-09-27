@@ -8216,8 +8216,8 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : InternalRoles. Derived class should restrict access
 		/// GET api/Account/Users/{id}
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public async Task<Fonlow.AspNetCore.Identity.Client.UserInfoViewModel> GetUserInfoByIdAsync(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8239,8 +8239,8 @@ namespace Fonlow.Auth.Controllers.Client
 		}
 		
 		/// <summary>
-		/// : InternalRoles. Derived class should restrict access
 		/// GET api/Account/Users/{id}
+		/// Authorize: Roles: admin; 
 		/// </summary>
 		public Fonlow.AspNetCore.Identity.Client.UserInfoViewModel GetUserInfoById(System.Guid id, Action<System.Net.Http.Headers.HttpRequestHeaders> handleHeaders = null)
 		{
@@ -8293,6 +8293,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// Create user, but without role
+		/// Response header is with status 201 and header Location: http://YourDomain/api/Account/Users/0d7bd467-9005-4107-92e2-805872152537
 		/// POST api/Account/Users
 		/// Authorize: Roles: admin; 
 		/// </summary>
@@ -8318,6 +8319,7 @@ namespace Fonlow.Auth.Controllers.Client
 		
 		/// <summary>
 		/// Create user, but without role
+		/// Response header is with status 201 and header Location: http://YourDomain/api/Account/Users/0d7bd467-9005-4107-92e2-805872152537
 		/// POST api/Account/Users
 		/// Authorize: Roles: admin; 
 		/// </summary>

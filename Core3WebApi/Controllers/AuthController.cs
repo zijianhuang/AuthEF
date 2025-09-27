@@ -16,7 +16,7 @@ namespace Fonlow.AspNetCore.Identity.Controllers
 	/// Based on ASP.NET Core Identity, this controller takes care of authentication and authorization, as well as refresh token and oAuth2.
 	/// Account management functions are with AccountController, which use the same set of Identity DB tables.
 	/// This also supports one user with multiple connections from different devices and browser tabs, governed by server generated uuid/GUID stated in Scope as ConnectionId:ServerGeneratedGuid.
-	/// This supports ROPC without registering and checking client_id and PKCE.
+	/// This supports ROPC without registering and checking client_id as described in https://datatracker.ietf.org/doc/html/rfc6749#section-2.2 and PKCE.
 	/// For more secure solution free and open sourced, check https://identityserver8.readthedocs.io/en/latest/quickstarts/6_aspnet_identity.html
 	/// </summary>
 	[ApiExplorerSettings(IgnoreApi = true)]

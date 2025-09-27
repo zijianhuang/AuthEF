@@ -2279,8 +2279,8 @@ export namespace Fonlow_Auth_Controllers_Client {
 		}
 
 		/**
-		 * : InternalRoles. Derived class should restrict access
 		 * GET api/Account/Users/{id}
+		 * Authorize: Roles: admin; 
 		 * @param {string} id Type: GUID
 		 */
 		getUserInfoById(id?: string | null, headersHandler?: () => HttpHeaders): Observable<Fonlow_AspNetCore_Identity_Client.UserInfoViewModel> {
@@ -2300,6 +2300,7 @@ export namespace Fonlow_Auth_Controllers_Client {
 
 		/**
 		 * Create user, but without role
+		 * Response header is with status 201 and header Location: http://YourDomain/api/Account/Users/0d7bd467-9005-4107-92e2-805872152537
 		 * POST api/Account/Users
 		 * Authorize: Roles: admin; 
 		 * @return {string} Type: GUID
