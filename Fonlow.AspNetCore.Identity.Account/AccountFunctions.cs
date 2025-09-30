@@ -418,7 +418,6 @@ namespace Fonlow.AspNetCore.Identity.Account
 		/// </summary>
 		/// <param name="loginProvider"></param>
 		/// <param name="purpose"></param>
-		/// <param name="tokenValue"></param>
 		/// <param name="connectionId"></param>
 		/// <param name="expirySpan"></param>
 		/// <returns>ApplicationUser returned should not be used by UserManager for updating/deleting.</returns>

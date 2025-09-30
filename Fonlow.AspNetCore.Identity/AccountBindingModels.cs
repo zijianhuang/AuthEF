@@ -113,4 +113,20 @@ namespace Fonlow.AspNetCore.Identity
 		[DataMember]
 		public string UserId { get; set; }
 	}
+
+	[DataContract]
+	public class ForgotPasswordModel
+	{
+		/// <summary>
+		/// Unique Email address associated with the user account
+		/// </summary>
+		[DataMember]
+		public string EmailAddress { get; set; }
+
+		/// <summary>
+		/// The client app provides a Web link path leading to a UI for reseting password .
+		/// </summary>
+		[DataMember]
+		public string ResetLinkPath { get; set; }
+	}
 }

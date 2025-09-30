@@ -7020,6 +7020,23 @@ namespace Fonlow.AspNetCore.Identity.Client
 	}
 	
 	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
+	public class ForgotPasswordModel : object
+	{
+		
+		/// <summary>
+		/// Unique Email address associated with the user account
+		/// </summary>
+		[System.Runtime.Serialization.DataMember()]
+		public string EmailAddress { get; set; }
+		
+		/// <summary>
+		/// The client app provides a Web link path leading to a UI for reseting password .
+		/// </summary>
+		[System.Runtime.Serialization.DataMember()]
+		public string ResetLinkPath { get; set; }
+	}
+	
+	[System.Runtime.Serialization.DataContract(Namespace="http://demoapp.client/2024")]
 	public class IdentitySeeding : object
 	{
 		

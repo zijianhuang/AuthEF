@@ -1716,6 +1716,38 @@ export namespace Fonlow_AspNetCore_Identity_Client {
 
 	}
 
+	export interface ForgotPasswordModel {
+
+		/**
+		 * Unique Email address associated with the user account
+		 */
+		emailAddress?: string | null;
+
+		/**
+		 * The client app provides a Web link path leading to a UI for reseting password .
+		 */
+		resetLinkPath?: string | null;
+	}
+	export interface ForgotPasswordModelFormProperties {
+
+		/**
+		 * Unique Email address associated with the user account
+		 */
+		emailAddress: FormControl<string | null | undefined>,
+
+		/**
+		 * The client app provides a Web link path leading to a UI for reseting password .
+		 */
+		resetLinkPath: FormControl<string | null | undefined>,
+	}
+	export function CreateForgotPasswordModelFormGroup() {
+		return new FormGroup<ForgotPasswordModelFormProperties>({
+			emailAddress: new FormControl<string | null | undefined>(undefined),
+			resetLinkPath: new FormControl<string | null | undefined>(undefined),
+		});
+
+	}
+
 	export interface IdentitySeeding {
 		roles?: Array<string>;
 		users?: Array<Fonlow_AspNetCore_Identity_Client.UserInitModel>;

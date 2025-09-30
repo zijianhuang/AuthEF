@@ -555,7 +555,7 @@ namespace Fonlow.Auth.Controllers
 		}
 
 		/// <summary>
-		/// Just a demo, but revealing some basic ForgotPassword features:
+		/// Basic ForgotPassword features:
 		/// 1. If user not found, return NoContent
 		/// 2. Otherwise, send the reset token via Email or other means.
 		/// 
@@ -563,7 +563,7 @@ namespace Fonlow.Auth.Controllers
 		/// </summary>
 		/// <returns></returns>
 		/// <remarks>For simple application, probably no need to support reseting password because of dependency on SMTP or other authentication authority.</remarks>
-		protected virtual async Task<IActionResult> ForgotPassword([FromBody] string emailAddress)
+		protected virtual async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
 		{
 
 			if (ModelState.IsValid)
@@ -571,7 +571,7 @@ namespace Fonlow.Auth.Controllers
 				ApplicationUser user;
 				try
 				{
-					user = await userManager.FindByEmailAsync(emailAddress);
+					user = await userManager.FindByEmailAsync(model.EmailAddress);
 				}
 				catch (InvalidOperationException ex)
 				{
@@ -585,15 +585,15 @@ namespace Fonlow.Auth.Controllers
 					return StatusCode((int)HttpStatusCode.NoContent);
 				}
 
-				// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
 				// Send an email with this link
-				string code = await userManager.GeneratePasswordResetTokenAsync(user);
+				string code = await userManager.GeneratePasswordResetTokenAsync(user); //expiry 24 hours by default
 				Debug.WriteLine("Reset code is : " + code);
-				var uiHost = Request.Headers["origin"];
-				var requestHostUri = new Uri(uiHost);
-				string resetQuery = $"resetpassword?userId={user.Id}&code={Uri.EscapeDataString(code)}";
+				//var uiHost = Request.Headers["origin"];
+				//var acceptLanguage = Request.Headers["accept-language"];
+				//var requestHostUri = new Uri(uiHost);
+				string resetQuery = $"?code={Uri.EscapeDataString(code)}";
 
-				Uri resetUri = new Uri(requestHostUri, resetQuery);
+				Uri resetUri = new Uri(new Uri(model.ResetLinkPath), resetQuery);
 				string callbackUrl = resetUri.ToString();
 				Debug.WriteLine("Reset uri is: " + callbackUrl);
 
