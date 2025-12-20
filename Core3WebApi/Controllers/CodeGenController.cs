@@ -3,12 +3,17 @@ using Fonlow.CodeDom.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using System.Net;
+using System;
 using System.Linq;
+using System.Net;
 
 namespace Fonlow.WebApiClientGen
 {
+	/// <summary>
+	/// For CodeGen triggered by a client call.
+	/// </summary>
 	[ApiExplorerSettings(IgnoreApi = true)]
+	[ApiController]
 	[Route("api/[controller]")]
 	public class CodeGenController : ControllerBase
 	{
@@ -49,20 +54,15 @@ namespace Fonlow.WebApiClientGen
 			}
 			catch (Fonlow.Web.Meta.CodeGenException e)
 			{
-				System.Diagnostics.Trace.TraceWarning(e.Message);
+				Console.Error.WriteLine(e.Message);
 				return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
 			}
 			catch (System.InvalidOperationException e)
 			{
-				System.Diagnostics.Trace.TraceWarning(e.Message);
+				Console.Error.WriteLine(e.Message);
 				return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
 			}
 
-			if (!settings.ClientApiOutputs.CamelCase.HasValue)
-			{
-				settings.ClientApiOutputs.CamelCase = true;
-			}
-			
 			try
 			{
 				CodeGen.GenerateClientAPIs(this.webRootPath, settings, webApiDescriptions);
@@ -70,7 +70,7 @@ namespace Fonlow.WebApiClientGen
 			catch (Fonlow.Web.Meta.CodeGenException e)
 			{
 				string msg = e.Message + (string.IsNullOrEmpty(e.Description) ? string.Empty : (" : " + e.Description));
-				System.Diagnostics.Trace.TraceError(msg);
+				Console.Error.WriteLine(msg);
 				return BadRequest(msg);
 			}
 
