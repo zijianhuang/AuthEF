@@ -3,10 +3,10 @@
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Version>1.1.1</Version>
+		<Version>1.2</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>SqliteDbEngineDbContext: Implementation of IDbEngineDbContext for Sqlite</Description>
-		<PackageReleaseNotes>.NET 9</PackageReleaseNotes>
+		<PackageReleaseNotes>.NET 10</PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
 		<PackageProjectUrl>https://github.com/zijianhuang/AuthEF</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

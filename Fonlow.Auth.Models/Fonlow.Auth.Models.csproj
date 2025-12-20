@@ -3,10 +3,10 @@
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Version>1.0</Version>
+		<Version>1.1</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>OAuth2 data models</Description>
-		<PackageReleaseNotes>initial</PackageReleaseNotes>
+		<PackageReleaseNotes>.NET 10</PackageReleaseNotes>
 		<NeutralLanguage>en</NeutralLanguage>
 		<PackageProjectUrl>https://github.com/zijianhuang/AuthEF</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
