@@ -4,7 +4,7 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<Version>1.3</Version>
+		<Version>1.3.1</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>Helper functions to established a new Identity database, and optionally seed with predefined roles and users.</Description>
 		<PackageReleaseNotes>.NET 10</PackageReleaseNotes>
@@ -21,10 +21,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.7" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

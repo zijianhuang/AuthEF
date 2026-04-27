@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Version>1.2</Version>
+		<Version>1.2.1</Version>
 		<Authors>Zijian Huang</Authors>
 		<Description>PostgreSQLDbEngineDbContext: Implementation of IDbEngineDbContext for PostgreSQL</Description>
 		<PackageReleaseNotes>.NET 10</PackageReleaseNotes>
@@ -16,7 +16,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
