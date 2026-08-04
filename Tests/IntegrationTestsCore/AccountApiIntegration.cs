@@ -104,7 +104,7 @@ namespace IntegrationTests
 			{
 				UserName = username,
 				//                Email = username + "@somewhere.com",
-				Email = $"zijian+{stamp}@gmail.com",
+				Email = $"zijianh+{stamp}@gmail.com",
 				Password = "Mmmm*123",
 				ConfirmPassword = "Mmmm*123",
 			});
@@ -118,7 +118,7 @@ namespace IntegrationTests
 		public async Task TestRegisterUserWithExistingEmailAddress()
 		{
 			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
-			string emailAddress = $"zijian+{stamp}@gmail.com";
+			string emailAddress = $"zijianzuj+{stamp}@gmail.com";
 			string username = "ApiUserZ" + stamp;
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
@@ -148,7 +148,7 @@ namespace IntegrationTests
 		public async Task TestRegisterUserWithSameName()
 		{
 			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
-			string emailAddress = $"zijian+{stamp}@gmail.com";
+			string emailAddress = $"zijiangkk+{stamp}@gmail.com";
 			string username = "ApiUserZ" + stamp;
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
