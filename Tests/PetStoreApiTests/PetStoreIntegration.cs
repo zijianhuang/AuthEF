@@ -12,7 +12,7 @@ namespace IntegrationTests
 	{
 		public PetsFixture()
 		{
-			Uri baseUri = new("http://localhost:6000");
+			Uri baseUri = new("http://localhost:7000");
 
 			httpClient = new System.Net.Http.HttpClient
 			{

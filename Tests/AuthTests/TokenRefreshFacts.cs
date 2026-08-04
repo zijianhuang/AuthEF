@@ -3,7 +3,6 @@ using Fonlow.Net.Http;
 using Fonlow.Testing;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
-using Xunit.Abstractions;
 using System.Text.Json;
 using Fonlow.Auth.Models;
 using Fonlow.AspNetCore.Identity.Client;
@@ -151,6 +150,7 @@ namespace AuthTests
 	}
 
 	[Collection(IntegrationTests.TestConstants.LaunchWebApiAndInit)]
+	[TestClass(DisableParallelization = true)]
 	public class TokenRefreshFacts : TokenFactsBase, IClassFixture<TokenTestsFixture>
 	{
 		public TokenRefreshFacts(TokenTestsFixture fixture, ITestOutputHelper output): base(fixture, output)

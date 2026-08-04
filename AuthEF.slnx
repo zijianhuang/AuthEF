@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/Security/">
+    <Project Path="Fonlow.AspNetCore.Identity.Account/Fonlow.AspNetCore.Identity.Account.csproj" />
+    <Project Path="Fonlow.AspNetCore.Identity/Fonlow.AspNetCore.Identity.csproj" />
+    <Project Path="Fonlow.Auth.Models/Fonlow.Auth.Models.csproj" />
+    <Project Path="Fonlow.Auth.TokenClient/Fonlow.Auth.TokenClient.csproj" />
+    <Project Path="Fonlow.AuthDbCreator/Fonlow.AuthDbCreator.csproj" />
+    <Project Path="Fonlow.EntityFrameworkCore.Abstract/Fonlow.EntityFrameworkCore.Abstract.csproj" />
+    <Project Path="Fonlow.EntityFrameworkCore.MsSql/Fonlow.EntityFrameworkCore.MsSql.csproj" />
+    <Project Path="Fonlow.EntityFrameworkCore.MySql/Fonlow.EntityFrameworkCore.MySql.csproj" />
+    <Project Path="Fonlow.EntityFrameworkCore.PostgreSQL/Fonlow.EntityFrameworkCore.PostgreSQL.csproj" />
+    <Project Path="Fonlow.EntityFrameworkCore.Sqlite/Fonlow.EntityFrameworkCore.Sqlite.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="BuildRelease.ps1" />
+    <File Path="DotNetPack.ps1" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <File Path="Tests/README.md" />
+    <Project Path="Tests/AuthTests/AuthTests.csproj">
+      <BuildDependency Project="Core3WebApi/Core3WebApi.csproj" />
+    </Project>
+    <Project Path="Tests/IntegrationTestsCore/IntegrationTestsCore.csproj" />
+    <Project Path="Tests/IntegrationTestShared/IntegrationTestShared.shproj" />
+    <Project Path="Tests/PetStoreApiTests/PetStoreApiTests.csproj" />
+    <Project Path="Tests/PetStoreClientApi/PetStoreClientApi.csproj" />
+  </Folder>
+  <Project Path="AuthDbCreator/AuthDbCreator.csproj" />
+  <Project Path="Core3WebApi/Core3WebApi.csproj" />
+  <Project Path="CoreWebApi.ClientApi/CoreWebApi.ClientApi.csproj" />
+  <Project Path="DemoWebApi.DemoDataCore/DemoWebApi.DemoDataCore.csproj" />
+  <Project Path="PetWebApi/PetWebApi.csproj" />
+</Solution>

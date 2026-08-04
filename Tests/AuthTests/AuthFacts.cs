@@ -40,6 +40,7 @@ namespace AuthTests
 	}
 
 	[Collection(IntegrationTests.TestConstants.LaunchWebApiAndInit)]
+	[TestClass(DisableParallelization = true)]
 	public class AuthFacts : IClassFixture<AuthTestsFixture>
 	{
 		public AuthFacts(AuthTestsFixture fixture)

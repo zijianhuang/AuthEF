@@ -194,7 +194,7 @@ namespace IntegrationTests
 		[Fact]
 		public async Task TestRegisterUserAndAddRole()
 		{
-			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
+			string username = "ApiUserAddRole" + DateTime.Now.ToString("yyMMddHHmmssfff");
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
@@ -214,7 +214,7 @@ namespace IntegrationTests
 		[Fact]
 		public async Task TestRegisterUserAndAddRoleThenRemove()
 		{
-			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
+			string username = "ApiUserAddRoleRemove" + DateTime.Now.ToString("yyMMddHHmmssfff");
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
@@ -232,7 +232,7 @@ namespace IntegrationTests
 		[Fact]
 		public async Task TestRegisterUserAndAddRoleThenRemoveAnother()
 		{
-			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
+			string username = "ApiUserAddRoleRemoveAnother" + DateTime.Now.ToString("yyMMddHHmmssfff");
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
@@ -250,7 +250,7 @@ namespace IntegrationTests
 		[Fact]
 		public async Task TestRegisterUserAndAddRoleThenRemoveBadOne()
 		{
-			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
+			string username = "ApiUserAddRoleBadOne" + DateTime.Now.ToString("yyMMddHHmmssfff");
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
@@ -275,7 +275,7 @@ namespace IntegrationTests
 		[Fact]
 		public async Task TestRegisterUserThenUpdate()
 		{
-			string username = "ApiUser" + DateTime.Now.ToString("yyMMddHHmmssfff");
+			string username = "ApiUserUpdate" + DateTime.Now.ToString("yyMMddHHmmssfff");
 			RegisterBindingModel model = new RegisterBindingModel
 			{
 				UserName = username,
@@ -305,8 +305,8 @@ namespace IntegrationTests
 		public async Task TestResetPasswordWithInvalidTokenThrow()
 		{
 			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
-			string username = "ApiUserZ" + stamp;
-			string emailAddress = $"zijian+{stamp}@gmail.com";
+			string username = "ApiUserZE" + stamp;
+			string emailAddress = $"zijianZE+{stamp}@gmail.com";
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,

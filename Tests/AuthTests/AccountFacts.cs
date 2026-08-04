@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Net.WebSockets;
-using Xunit.Abstractions;
 using Fonlow.AspNetCore.Identity.Client;
 using System.Management.Automation.Language;
 using Fonlow.Auth.Models;
