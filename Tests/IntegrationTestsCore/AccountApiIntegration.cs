@@ -99,7 +99,7 @@ namespace IntegrationTests
 		public async Task TestRegisterUser()
 		{
 			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
-			string username = "ApiUserZ" + stamp;
+			string username = "ApiUserZa" + stamp;
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
@@ -119,7 +119,7 @@ namespace IntegrationTests
 		{
 			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
 			string emailAddress = $"zijianzuj+{stamp}@gmail.com";
-			string username = "ApiUserZ" + stamp;
+			string username = "ApiUserZb" + stamp;
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,
@@ -148,8 +148,8 @@ namespace IntegrationTests
 		public async Task TestRegisterUserWithSameName()
 		{
 			string stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
-			string emailAddress = $"zijiangkk+{stamp}@gmail.com";
-			string username = "ApiUserZ" + stamp;
+			string emailAddress = $"zijiangkkgg+{stamp}@gmail.com";
+			string username = "ApiUserZc" + stamp;
 			var id = await api.RegisterAsync(new RegisterBindingModel
 			{
 				UserName = username,

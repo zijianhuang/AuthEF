@@ -23,7 +23,7 @@ IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile(System.IO.Pat
 var appSettings = config.GetSection("appSettings");
 var environment = appSettings.GetValue<string>("environment");
 var dbEngineDbContextPlugins = appSettings.GetSection("dbEngineDbContextPlugins").Get<string[]>();
-var identityConnectionString = config.GetConnectionString("IdentityConnection");
+//var identityConnectionString = config.GetConnectionString("IdentityConnection");
 IAuthSetupSecrets authSetupSettings = null;
 IAuthSettings authSettings = null;
 
@@ -63,8 +63,14 @@ var options = new WebApplicationOptions
 };
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(options);
+var identityConnectionString = builder.Configuration.GetConnectionString("IdentityConnection"); // launch script may declare one for the sake of testing.
 builder.Configuration.AddConfiguration(config);
 Console.WriteLine($"Start at contentRootPath: {builder.Environment.ContentRootPath}; WebRootPath: {builder.Environment.WebRootPath}; Current: {Directory.GetCurrentDirectory()}");
+if (string.IsNullOrEmpty(identityConnectionString)) //otherwise, use what declare in the app config.
+{
+	identityConnectionString = builder.Configuration.GetConnectionString("IdentityConnection");
+}
+Console.WriteLine($"identityConnectionString: {identityConnectionString}");
 
 
 builder.Services.AddControllers(configure =>
