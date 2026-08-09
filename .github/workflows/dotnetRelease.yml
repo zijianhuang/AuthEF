@@ -42,4 +42,4 @@ jobs:
     # - name: Test
     #   run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName!~RemoteTests
     - name: Test
-      run: dotnet test --verbosity normal --configuration Release --no-build --max-parallel-test-modules 1 --solution AuthEF.slnx
+      run: dotnet test --verbosity normal --configuration Release --no-build --solution AuthEF.slnx
