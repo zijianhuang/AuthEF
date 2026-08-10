@@ -114,12 +114,12 @@ namespace AuthTests
 
 		string RegisterUserWithOneConnection(Account accountApi){
 			var stamp = DateTime.Now.ToString("yyMMddHHmmssfff");
-			var newUsername = "John" + stamp;
+			var newUsername = "JohnK" + stamp;
 			var newUserId = accountApi.Register(new RegisterBindingModel
 			{
 				UserName = newUsername,
 				Password = newUserPassword,
-				FullName = "John " + stamp,
+				FullName = "JohnK " + stamp,
 				ConfirmPassword = newUserPassword,
 				Email = newUsername + "@where.com"
 			});
