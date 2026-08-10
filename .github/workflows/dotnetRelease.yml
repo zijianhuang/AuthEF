@@ -34,7 +34,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build AuthEF.slnx --no-restore  --configuration Debug --no-incremental
+      run: dotnet build AuthEF.slnx --no-restore  --configuration Release --no-incremental
     - name: Setup Auth Db
       shell: pwsh
       run: ./AuthDbCreator/CreateBlankMySql.ps1
@@ -45,4 +45,4 @@ jobs:
     #   run: dotnet test -m:1 AuthEF.sln --no-build --verbosity normal --configuration Release --filter FullyQualifiedName!~RemoteTests
     - name: Test
       shell: pwsh
-      run: dotnet test --verbosity normal --configuration Debug --no-build --solution AuthEF.slnx
+      run: dotnet test --verbosity normal --configuration Release --no-build --solution AuthEF.slnx
